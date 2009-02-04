@@ -16,7 +16,7 @@ render(ControlId, Record) ->
         ]
     },
     wf:wire(ButtonId, 
-        #event{ type=click, delegate=web_backlogs, 
+        #event{ type=click, delegate=web_index, 
             postback={remove, {backlog, Record#backlog_el.backlog_id}}
         }
     ),
