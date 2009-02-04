@@ -5,6 +5,7 @@
 -include("elements.hrl").
 
 render(ControlId, Record) ->
+    %% TODO(jwall): change to temp ids wf:temp_id()
     Name = Record#backlog_el.backlog_id ++ "_BacklogEditBox",
     ButtonId = Name ++ "CloseButton",
     Button = #button{ id=ButtonId, text="close"},
@@ -21,4 +22,3 @@ render(ControlId, Record) ->
         }
     ),
     element_panel:render(ControlId, Panel).
-

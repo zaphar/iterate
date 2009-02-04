@@ -16,6 +16,7 @@ body() ->
         #tablecell{ body=[story_panel()] }
     ]}.
 
+%% TODO(jwall): change to an element module
 backlog_panel() ->
     #rounded_panel{id=sidebar,
                    body=[
@@ -26,11 +27,13 @@ backlog_panel() ->
                    ]
     }. 
 
+%% TODO(jwall): change to an element module
 story_panel() ->
     #rounded_panel{ id=workspace, 
                     body=[story_list()]
     }.
 
+%% TODO(jwall): change to an element module
 backlog_list() ->
     #list{ id=backlog_list, numbered=ol, body=[
                 backlog("Default")
@@ -39,14 +42,18 @@ backlog_list() ->
     }.
 
 backlog(Name) when is_list(Name) ->
+    %% TODO(jwall): change to using temp id's
     #panel{ id=Name
         , body=[ 
             #listitem{
+                    %% TODO(jwall): change to an element module
                     body=[Name, " " 
-                        , #link{text="Edit ", postback={show, {backlog, Name}}}
-                    ],
-                    actions=#event{type=click,
-                               postback={show, {stories, Name}}
+                        , #link{text="Edit ", 
+                                postback={show, {backlog, Name}}
+                        }
+                    ]
+                    , actions=#event{type=click,
+                                   postback={show, {stories, Name}}
                     } 
                     
             }
@@ -54,17 +61,19 @@ backlog(Name) when is_list(Name) ->
         ]
     }.
 
+%% TODO(jwall): change to an element module
 story_list() ->
     #list{ id=story_list, body=[
         "click a backlog to see stories" 
     ]}.
 
+%% TODO(jwall): change to an element module
 story(Name) ->
     #listitem{ id=Name,
         body=[Name]
     }.
 
-%% TODO(jwall): move events into a different module?
+%% TODO(jwall): move events into a different module perhaps element modules?
 
 %% showing stories
 event({show, {stories, "Default"}}) ->
