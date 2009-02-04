@@ -4,7 +4,7 @@
 -compile(export_all).
 
 %%TODO(jwall): move the following into the main index page
-main() -> 
+main() ->
 	#template { file="./wwwroot/template.html"}.
 
 title() ->
@@ -25,11 +25,11 @@ backlog_panel() ->
                                body=[backlog_list()]
                         }
                    ]
-    }. 
+    }.
 
 %% TODO(jwall): change to an element module
 story_panel() ->
-    #rounded_panel{ id=workspace, 
+    #rounded_panel{ id=workspace,
                     body=[story_list()]
     }.
 
@@ -44,21 +44,21 @@ backlog_list() ->
 backlog(Name) when is_list(Name) ->
     %% TODO(jwall): change to using temp id's
     #panel{ id=Name
-        , body=[ 
-            #listitem{ body=#backlog{backlog_name=Name} } 
+        , body=[
+            #listitem{ body=#backlog{backlog_name=Name} }
         ]
     }.
 
 %% TODO(jwall): change to an element module
 story_list() ->
     #list{ id=story_list, body=[
-        "click a backlog to see stories" 
+        "click a backlog to see stories"
     ]}.
 
 %% TODO(jwall): change to an element module
 story(Name) ->
     #listitem{ id=Name,
-        body=[Name]
+        body=#story{story_name=Name}
     }.
 
 %% TODO(jwall): move events into a different module perhaps element modules?
