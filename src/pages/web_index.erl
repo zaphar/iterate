@@ -45,19 +45,7 @@ backlog(Name) when is_list(Name) ->
     %% TODO(jwall): change to using temp id's
     #panel{ id=Name
         , body=[ 
-            #listitem{
-                    %% TODO(jwall): change to an element module
-                    body=[Name, " " 
-                        , #link{text="Edit ", 
-                                postback={show, {backlog, Name}}
-                        }
-                    ]
-                    , actions=#event{type=click,
-                                   postback={show, {stories, Name}}
-                    } 
-                    
-            }
-            , #panel{id=Name ++ "_target"}
+            #listitem{ body=#backlog{backlog_name=Name} } 
         ]
     }.
 
@@ -80,10 +68,4 @@ event({show, {stories, "Default"}}) ->
     wf:update(story_list, story("Story One"));
 event({show, {stories, "Mine"}}) ->
     wf:update(story_list, story("Story Two"));
-
-%% showing backlog info
-event({show, {backlog, Name}}) ->
-    wf:update(Name ++ "_target", #backlog_el{backlog_id=Name, desc="A description"});
-event({remove, {backlog, Name}}) ->
-    wf:update(Name ++ "_target", "");
 event(_) -> ok.
