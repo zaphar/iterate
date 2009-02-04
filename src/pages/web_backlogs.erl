@@ -1,56 +1,69 @@
 -module (web_backlogs).
 -include_lib ("nitrogen/include/wf.inc").
+-include("../elements.hrl").
 -compile(export_all).
 
+%%TODO(jwall): move the following into the main index page
 main() -> 
 	#template { file="./wwwroot/template.html"}.
 
 title() ->
-	"web_backlogs".
+	"Backlogs".
 
 body() ->
     #panel{ id=main, body=[
 	    #rounded_panel{ id=sidebar, body=[
                       #label{text="iterate backlogs."},
-                      #sortblock{id=iterate_backlogs,
-                                 items=[backlog_list()]
-                                }
-                   ]
-        },
-        story_list()
+                      #panel{id=iterate_backlogs,
+                                 body=[backlog_list()]
+                                }]
+        }, #rounded_panel{ id=workspace, body=[story_list()] }
     ]}.
 
 backlog_list() ->
-    #panel{ id=backlog_list, body=[
-                backlog("default"),
-                backlog("Mine")
+    #list{ id=backlog_list, numbered=ol, body=[
+                backlog("Default")
+                , backlog("Mine")
             ]
     }.
 
 backlog(Name) when is_list(Name) ->
-    #sortitem{ id=Name,
-        body=[Name],
-        actions=#event{type=click, postback={show, {stories, Name}}}
+    #panel{ id=Name
+        , body=[ 
+            #listitem{
+                    body=[Name, " " 
+                        , #link{text="Edit ", postback={show, {backlog, Name}}}
+                    ],
+                    actions=#event{type=click,
+                               postback={show, {stories, Name}}
+                    } 
+                    
+            }
+            , #panel{id=Name ++ "_target"}
+        ]
     }.
 
 story_list() ->
-    #sortblock{ id=story_list, items=[
-               "click a backlog to see stories" 
-            ]
-          }.
+    #list{ id=story_list, body=[
+        "click a backlog to see stories" 
+    ]}.
 
 story(Name) ->
-    #sortitem{ tag=Name,
+    #listitem{ id=Name,
         body=[Name]
     }.
-    
-drop_event(_, _) ->
-    ok.
 
-event({show, {stories, "default"}}) ->
-    io:format("handling event ~n", []),
+%% TODO(jwall): move events into a different module?
+
+%% showing stories
+event({show, {stories, "Default"}}) ->
     wf:update(story_list, story("Story One"));
 event({show, {stories, "Mine"}}) ->
-    io:format("handling event ~n", []),
     wf:update(story_list, story("Story Two"));
+
+%% showing backlog info
+event({show, {backlog, Name}}) ->
+    wf:update(Name ++ "_target", #backlog_el{backlog_id=Name, desc="A description"});
+event({remove, {backlog, Name}}) ->
+    wf:update(Name ++ "_target", "");
 event(_) -> ok.
