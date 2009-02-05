@@ -5,8 +5,8 @@
 -include("elements.hrl").
 
 render(ControlId, Record) ->
-    %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId        = wf:temp_id()
+    , ButtonId       = wf:temp_id()
     , Name           = Record#story_edit.story_name
     , Desc           = Record#story_edit.desc
     , StoryPoints    = Record#story_edit.sp
@@ -15,6 +15,11 @@ render(ControlId, Record) ->
                         #inplace_textbox{text=Name}, #br{}
                         , #inplace_textbox{text=Desc}, #br{}
                         , #inplace_textbox{text=StoryPoints}, #br{}
+                        , #button{id=ButtonId, text="close"
+                            , actions=#event{type=click
+                                             , delegate=element_story
+                                             , postback={remove, {story, Name}}}
+                        }
                     ]
     }
     , element_panel:render(ControlId, Panel).
