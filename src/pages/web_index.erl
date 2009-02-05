@@ -33,7 +33,7 @@ story_panel() ->
 
 %% TODO(jwall): change to an element module
 backlog_list() ->
-    #list{ id=backlog_list, numbered=ol, body=[
+    #list{ id=backlog_list, body=[
                 backlog("Default")
                 , backlog("Mine")
             ]
@@ -42,9 +42,7 @@ backlog_list() ->
 backlog(Name) when is_list(Name) ->
     %% TODO(jwall): change to using temp id's
     #panel{ id=Name
-        , body=[
-            #listitem{ body=#backlog{backlog_name=Name} }
-        ]
+        , body=#listitem{ body=#backlog{backlog_name=Name} }
     }.
 
 %% TODO(jwall): change to an element module
