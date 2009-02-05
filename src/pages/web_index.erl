@@ -11,6 +11,12 @@ title() ->
 	"Iterate<i>!</i>".
 
 body() ->
+    #panel{ id=main, body=[
+        #hr{}
+        , body(contents)
+    ]}.
+
+body(contents) ->
     #singlerow{ id=main, cells=[
 	    #tablecell{ body=[backlog_panel()] },
         #tablecell{ body=[story_panel()] }
@@ -64,6 +70,7 @@ event({show, {stories, "Default"}}) ->
 event({show, {stories, "Mine"}}) ->
     wf:update(story_list, [story("bind wrappers for the elements")
                            , story("storage layer for backlogs and data")
+                           , story("add and delete stories")
                            , story("drag drop stories to backlogs")
                            , story("backlog filter and search")
                           ]);

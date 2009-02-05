@@ -14,3 +14,5 @@
 -record(task_edit,    {?ELEMENT_BASE(element_task_edit),    ?ITER_ELEMENT_BASE,
     task_name}).
 
+
+-record(my_inplace_textbox, {?CONTROL_BASE(element_my_inplace_textbox), text="", html_encode=true, start_mode=view, validators=[], delegate=?MODULE}).
