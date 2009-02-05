@@ -11,8 +11,10 @@ render(ControlId, Record) ->
     Button = #button{ id=ButtonId, text="close"},
     Panel = #panel{ id=Name,
         body=[
-           #inplace_textbox{ text=Record#backlog_edit.backlog_id }, #br{}
-           , #inplace_textbox{ text=Record#backlog_edit.desc }, #br{}
+           #my_inplace_textbox{ delegate=?MODULE
+                , text=Record#backlog_edit.backlog_id }, #br{}
+           , #my_inplace_textbox{ delegate=?MODULE
+                , text=Record#backlog_edit.desc }, #br{}
            , Button
         ]
     },
@@ -22,3 +24,8 @@ render(ControlId, Record) ->
         }
     ),
     element_panel:render(ControlId, Panel).
+
+%% TODO(jwall): bind this to do actual work
+inplace_textbox_event(_Tag, Value) ->
+    Value.
+
