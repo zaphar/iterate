@@ -12,8 +12,10 @@ render(ControlId, Record) ->
                     body=[
                         Name
                         , " "
-                        , #link{text="edit",
-                            postback={show, {story, Name}}
+                        , #link{text="edit"
+                            , actions=#event{ type=click, delegate=?MODULE
+                                            , postback={show, {story, Name}}
+                            }
                         }
                         , #panel{id=Name ++ "_target"}
                     ]
@@ -23,7 +25,7 @@ render(ControlId, Record) ->
 %% showing backlog info
 event({show, {story, Name}}) ->
     wf:update(Name ++ "_target",
-        #story_edit{story_name=Name, desc="A description", sp=3});
+        #story_edit{story_name=Name, desc="A description", sp="3"});
 event({remove, {story, Name}}) ->
     wf:update(Name ++ "_target", "");
 event(_) -> ok.

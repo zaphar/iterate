@@ -11,12 +11,15 @@ render(ControlId, Record) ->
     Panel = #panel{ id=PanelId,
                     body=[
                         #panel{ body=Name
-                                , actions=#event{type=click,
-                                       postback={show, {stories, Name}}
+                                , actions=#event{type=click
+                                       , delegate=web_index
+                                       , postback={show, {stories, Name}}
                                 }
                         }, " "
-                        , #link{text="edit",
-                                postback={show, {backlog, Name}}
+                        , #link{text="edit"
+                                , actions=#event{type=click, delegate=?MODULE
+                                    , postback={show, {backlog, Name}}
+                                }
                         }
                         , #panel{id=Name ++ "_target"}
                     ]
