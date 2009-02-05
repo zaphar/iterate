@@ -64,5 +64,9 @@ story(Name) ->
 event({show, {stories, "Default"}}) ->
     wf:update(story_list, story("Story One"));
 event({show, {stories, "Mine"}}) ->
-    wf:update(story_list, story("Story Two"));
+    wf:update(story_list, [story("close button for stories")
+                           , story("storage layer for backlogs and data")
+                           , story("drag drop stories to backlogs")
+                           , story("backlog filter and search")
+                          ]);
 event(_) -> ok.
