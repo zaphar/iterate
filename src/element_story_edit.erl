@@ -12,9 +12,9 @@ render(ControlId, Record) ->
     , StoryPoints    = Record#story_edit.sp
     , Panel = #panel{ id=PanelId
                     , body=[
-                        Name, #br{}
-                        , Desc, #br{}
-                        , StoryPoints, #br{}
+                        #inplace_textbox{text=Name}, #br{}
+                        , #inplace_textbox{text=Desc}, #br{}
+                        , #inplace_textbox{text=StoryPoints}, #br{}
                     ]
     }
     , element_panel:render(ControlId, Panel).

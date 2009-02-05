@@ -8,7 +8,7 @@ main() ->
 	#template { file="./wwwroot/template.html"}.
 
 title() ->
-	"Backlogs".
+	"Iterate<i>!</i>".
 
 body() ->
     #singlerow{ id=main, cells=[
@@ -16,18 +16,16 @@ body() ->
         #tablecell{ body=[story_panel()] }
     ]}.
 
-%% TODO(jwall): change to an element module
 backlog_panel() ->
     #rounded_panel{id=sidebar,
                    body=[
-                        #label{text="iterate backlogs."},
+                        #label{text="backlogs."},
                         #panel{id=iterate_backlogs,
                                body=[backlog_list()]
                         }
                    ]
     }.
 
-%% TODO(jwall): change to an element module
 story_panel() ->
     #rounded_panel{ id=workspace,
                     body=[story_list()]
@@ -55,7 +53,6 @@ story_list() ->
         "click a backlog to see stories"
     ]}.
 
-%% TODO(jwall): change to an element module
 story(Name) ->
     #listitem{ id=Name,
         body=#story{story_name=Name}
