@@ -23,5 +23,13 @@ stories([]) ->
     [];
 stories([H|T]) ->
     [ #listitem{ body=#story{story_name=H} } | stories(T) ].
-    
+
+story(Name) ->
+    #listitem{ id=Name,
+        body=#story{story_name=Name}
+    }.
+
+%% showing stories
+event({show, {stories, Name}}) ->
+    wf:update(story_list, [story(SName) || SName <- iterate_db:stories(Name)]);
 event(_) -> ok.

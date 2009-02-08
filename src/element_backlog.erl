@@ -11,7 +11,7 @@ render(ControlId, Record) ->
     Panel = #panel{ id=PanelId,
                     body=[
                         #panel{ actions=#event{type=click
-                                       , delegate=web_index
+                                       , delegate=element_story_panel
                                        , postback={show, {stories, Name}}
                                 }
                                 , body=[Name, " "

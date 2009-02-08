@@ -28,13 +28,6 @@ backlog_panel() ->
 story_panel() ->
     #story_panel{ data=["click a backlog to see stories"] }.
 
-story(Name) ->
-    #listitem{ id=Name,
-        body=#story{story_name=Name}
-    }.
-
-%% TODO(jwall): move events into a different module perhaps element modules?
-%% showing stories
-event({show, {stories, Name}}) ->
-    wf:update(story_list, [story(SName) || SName <- iterate_db:stories(Name)]);
-event(_) -> ok.
+event(_) -> 
+    %%TODO(jwall): log unhandled events here
+    ok.
