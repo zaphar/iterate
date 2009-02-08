@@ -23,39 +23,10 @@ body(contents) ->
     ]}.
 
 backlog_panel() ->
-    #rounded_panel{id=sidebar,
-                   body=[
-                        #label{text="backlogs."},
-                        #panel{id=iterate_backlogs,
-                               body=[backlog_list()]
-                        }
-                   ]
-    }.
+    #backlog_panel{data=iterate_db:backlogs()}.
 
 story_panel() ->
-    #rounded_panel{ id=workspace,
-                    body=[story_list()]
-    }.
-
-%% TODO(jwall): change to an element module
-backlog_list() ->
-    #list{ id=backlog_list, body=[
-                backlog("Default")
-                , backlog("Mine")
-            ]
-    }.
-
-backlog(Name) when is_list(Name) ->
-    %% TODO(jwall): change to using temp id's
-    #panel{ id=Name
-        , body=#listitem{ body=#backlog{backlog_name=Name} }
-    }.
-
-%% TODO(jwall): change to an element module
-story_list() ->
-    #list{ id=story_list, body=[
-        "click a backlog to see stories"
-    ]}.
+    #story_panel{ data=["click a backlog to see stories"] }.
 
 story(Name) ->
     #listitem{ id=Name,
@@ -63,15 +34,7 @@ story(Name) ->
     }.
 
 %% TODO(jwall): move events into a different module perhaps element modules?
-
 %% showing stories
-event({show, {stories, "Default"}}) ->
-    wf:update(story_list, story("Story One"));
-event({show, {stories, "Mine"}}) ->
-    wf:update(story_list, [story("bind wrappers for the elements")
-                           , story("storage layer for backlogs and data")
-                           , story("add and delete stories")
-                           , story("drag drop stories to backlogs")
-                           , story("backlog filter and search")
-                          ]);
+event({show, {stories, Name}}) ->
+    wf:update(story_list, [story(SName) || SName <- iterate_db:stories(Name)]);
 event(_) -> ok.

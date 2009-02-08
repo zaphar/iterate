@@ -41,7 +41,11 @@ render(ControlId, Record) ->
     }
     , element_panel:render(ControlId, Panel).
 
-map_entry(Id, Attr) ->
+map_entry(Id, Attr) when is_atom(Id) ->
+    map_entry(atom_to_list(Id), Attr);
+map_entry(Id, Attr) when is_atom(Attr) ->
+    map_entry(Id, atom_to_list(Attr));
+map_entry(Id, Attr) when is_list(Id), is_list(Attr) ->
     list_to_atom(Id ++ "@" ++ Attr).
 
 %% TODO(jwall): bind this to do actual work

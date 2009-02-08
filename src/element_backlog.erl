@@ -10,16 +10,16 @@ render(ControlId, Record) ->
     Name    = Record#backlog.backlog_name,
     Panel = #panel{ id=PanelId,
                     body=[
-                        #panel{ body=Name
-                                , actions=#event{type=click
+                        #panel{ actions=#event{type=click
                                        , delegate=web_index
                                        , postback={show, {stories, Name}}
                                 }
-                        }, " "
-                        , #link{text="edit"
-                                , actions=#event{type=click, delegate=?MODULE
-                                    , postback={show, {backlog, Name}}
-                                }
+                                , body=[Name, " "
+                                , #link{text="edit"
+                                        , actions=#event{type=click, delegate=?MODULE
+                                            , postback={show, {backlog, Name}}
+                                        }
+                                }]
                         }
                         , #panel{id=Name ++ "_target"}
                     ]
