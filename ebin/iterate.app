@@ -1,5 +1,20 @@
 {application, iterate, [
 	{description,  "Iterate! project management"},
+	{id, "iterate"},
+	{vsn, "0.01.0"},
+	{modules, [iterate_app,
+		element_backlog,
+		element_backlog_edit,
+		element_backlog_panel,
+		element_my_inplace_textbox,
+		element_story,
+		element_story_edit,
+		element_story_panel,
+		iterate_db,
+		web_index
+	 ]},
+	{applications, []},
+	{registered, [iterate]},
 	{mod, {iterate_app, []}},
 	{env, [
 		{platform, mochiweb}, %% {inets|yaws|mochiweb}
