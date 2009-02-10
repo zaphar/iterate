@@ -8,4 +8,4 @@ erl \
 	-pa ./ebin -pa ./include \
 	-s make all \
 	-s reloader \
-	-eval "application:start(iterate)"
+	-boot iterate

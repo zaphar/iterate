@@ -14,7 +14,12 @@
 		web_index
 	 ]},
 	{applications, []},
-	{registered, [iterate]},
+	{registered, [
+		iterate,
+		wf_session_sup,
+		wf_session_server,
+		quickstart_sup 
+	]},
 	{mod, {iterate_app, []}},
 	{env, [
 		{platform, mochiweb}, %% {inets|yaws|mochiweb}
