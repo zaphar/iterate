@@ -4,9 +4,11 @@
 -import(etap_can, [loaded_ok/2, can_ok/2, can_ok/3]).
 
 -include("../src/iterate_records.hrl").
+-include_lib("etap/include/etap.hrl").
 
 start() ->
-    etap:plan(22)
+    %etap:plan(22)
+    calc_plan
     , module_test()
     , backlogs_test()
     , stories_test()
@@ -16,6 +18,7 @@ start() ->
     , mk_backlog_test()
 .
 
+-plan(8).
 module_test() ->
     loaded_ok(iterate_db, "iterate_db module loaded ok")
     , can_ok(iterate_db, backlogs, 0)
@@ -28,13 +31,16 @@ module_test() ->
     , can_ok(iterate_db, backlog, 1)
 .
 
+-plan(1).
 backlogs_test() ->
     etap:is(iterate_db:backlogs(), ["Default", "Mine"], "got the backlogs").
 
+-plan(2).
 stories_test() ->
     etap:is(iterate_db:stories("Default"), ["Story One"], "got the story")
     , etap:is(iterate_db:stories("foo"), [], "got no stories").
 
+-plan(2).
 start_up_shutdown_test() ->
     iterate_db:start()
     , etap:is(mnesia:system_info(is_running), yes, "the database is running")
@@ -42,12 +48,14 @@ start_up_shutdown_test() ->
     , etap:is(mnesia:system_info(is_running), no, "the database is not running")
 .
 
+-plan(1).
 info_test() ->
     mnesia:stop()
     , etap:is(iterate_db:info(is_running), no
         , "we can ask the database if it's running or not")
 .
 
+-plan(3).
 create_table_test() ->
     iterate_db:setup()
     , etap:is(iterate_db:info(is_running), yes, "the database is running")
@@ -68,6 +76,7 @@ create_table_test(Table) ->
         , io_lib:format("we have a ~s table", [Table]))
 .
 
+-plan(4).
 mk_backlog_test() ->
     Result = iterate_db:backlog({new, 
         #backlogs{backlog_name="Default", desc="a desc not a desk"}})
