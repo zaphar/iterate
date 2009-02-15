@@ -2,7 +2,7 @@
 
 -export([start/0, stop/0, setup/0, bootstrap/0, info/0, info/1]).
 -export([backlogs/0, stories/1]).
--export([backlog/1]).
+-export([backlog/1, story/1]).
 
 -include("iterate_records.hrl").
 -include_lib("stdlib/include/qlc.hrl").
@@ -77,6 +77,44 @@ backlog({qry, Name}) ->
     end
 .
 
+story({new, Record}) when is_record(Record, stories) ->
+    Trans = fun() ->
+        case Record#stories.backlog of
+            undefined ->
+                throw({error, needs_backlog});
+            Name ->
+                case backlog({qry, Name}) of
+                    [] ->
+                        throw({error, no_such_backlog});
+                    {error, Msg} ->
+                        throw({error, Msg});
+                     _ ->
+                        mnesia:write(Record)
+                end
+        end
+    end
+    , mnesia:transaction(Trans);
+story({qry, all}) ->
+    Trans = fun() -> mnesia:match_object(#stories{_='_'}) end,
+    case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        _ ->
+            {error, "whoah what was that?"}
+    end;
+story({qry, B}) ->
+    Trans = fun() -> mnesia:match_object(#stories{backlog=B, _='_'}) end,
+    case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        _ ->
+            throw({error, "whoah what was that?"})
+    end
+.
 
 stories("Default") ->
     ["add and delete stories"

@@ -11,12 +11,13 @@
 start() ->
     calc_plan
     , module_test()
-    , stories_test()
     , start_up_shutdown_test()
     , info_test()
     , create_table_test()
     , mk_backlog_test()
     , backlogs_test()
+    , stories_test()
+    , make_story_test()
 .
 
 -plan(8).
@@ -30,12 +31,8 @@ module_test() ->
     , can_ok(iterate_db, stop, 0)
     , can_ok(iterate_db, setup, 0)
     , can_ok(iterate_db, backlog, 1)
+    , can_ok(iterate_db, story, 1)
 .
-
--plan(2).
-stories_test() ->
-    etap:is(iterate_db:stories("Default"), ["Story One"], "got the story")
-    , etap:is(iterate_db:stories("foo"), [], "got no stories").
 
 -plan(2).
 start_up_shutdown_test() ->
@@ -82,10 +79,50 @@ mk_backlog_test() ->
     , etap:is(Record, ?DEFAULTB, "the record has our description")
     , [Record1 | _T] = iterate_db:backlog({qry, all})
     , etap:is(Record, Record1, "backlog qry for all has Record in it")
-    , Result = iterate_db:backlog({new, ?MINEB})
+    , iterate_db:backlog({new, ?MINEB})
 .
 
--plan(1).
+-plan(2).
 backlogs_test() ->
-    etap:is(iterate_db:backlogs(), [?DEFAULTB, ?MINEB], "got the backlogs").
+    F = fun(Backlog) ->
+        fun(Any) ->
+            case Any of
+                Backlog ->
+                    true;
+                _ ->
+                    false
+            end
+        end
+    end
+    , etap:any(F(?DEFAULTB), iterate_db:backlogs(), "got ?DEFAULTB in the backlogs")
+    , etap:any(F(?MINEB), iterate_db:backlogs(), "got ?MINEB in the backlogs")
+.
+
+make_story_test() ->
+    Result = iterate_db:story({new, 
+        #stories{backlog="Default", story_name=foo, sp=3
+                 , desc="bar"}})
+    , etap:is(Result, {atomic, ok}, "the story got added")
+    , etap:diag(io_lib:format("~p", [Result]))
+    , F = fun() -> iterate_db:story({new,
+        #stories{story_name=foo, sp=3, desc="bar"}})
+    end
+    , etap:diag(io_lib:format("~p", [F()]))
+    , etap:is(F(),  {aborted, {throw, {error, needs_backlog}}}, 
+        "story with no backlog fails")
+    , F1 = fun() -> iterate_db:story({new,
+        #stories{backlog=bar, story_name=foo, sp=3, desc="bar"}})
+    end
+    , etap:diag(io_lib:format("~p", [F1()]))
+    , etap:is(F1(),  {aborted, {throw, {error, no_such_backlog}}}, 
+        "story with non existent backlog fails")
+.
+
+-plan(2).
+stories_test() ->
+    etap:skip(fun() -> 
+            etap:is(iterate_db:stories("Default"), ["Story One"], "got the story")
+            , etap:is(iterate_db:stories("foo"), [], "got no stories")
+        end, "not implemented yet")
+    .
 
