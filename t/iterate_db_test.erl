@@ -7,7 +7,6 @@
 -include_lib("etap/include/etap.hrl").
 
 start() ->
-    %etap:plan(22)
     calc_plan
     , module_test()
     , backlogs_test()
