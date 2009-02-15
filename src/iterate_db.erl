@@ -89,6 +89,7 @@ story({new, Record}) when is_record(Record, stories) ->
                     {error, Msg} ->
                         throw({error, Msg});
                      _ ->
+                        %% handle the already exists case?
                         mnesia:write(Record)
                 end
         end

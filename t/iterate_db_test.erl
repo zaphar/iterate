@@ -99,16 +99,17 @@ backlogs_test() ->
 .
 
 make_story_test() ->
-    Result = iterate_db:story({new, 
+    F = fun() -> iterate_db:story({new, 
         #stories{backlog="Default", story_name=foo, sp=3
                  , desc="bar"}})
-    , etap:is(Result, {atomic, ok}, "the story got added")
-    , etap:diag(io_lib:format("~p", [Result]))
-    , F = fun() -> iterate_db:story({new,
-        #stories{story_name=foo, sp=3, desc="bar"}})
     end
     , etap:diag(io_lib:format("~p", [F()]))
-    , etap:is(F(),  {aborted, {throw, {error, needs_backlog}}}, 
+    , etap:is(F(), {atomic, ok}, "the story got added")
+    , F2 = fun() -> iterate_db:story({new,
+        #stories{story_name=foo, sp=3, desc="bar"}})
+    end
+    , etap:diag(io_lib:format("~p", [F2()]))
+    , etap:is(F2(),  {aborted, {throw, {error, needs_backlog}}}, 
         "story with no backlog fails")
     , F1 = fun() -> iterate_db:story({new,
         #stories{backlog=bar, story_name=foo, sp=3, desc="bar"}})
