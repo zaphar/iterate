@@ -3,6 +3,7 @@
 
 -include_lib("nitrogen/include/wf.inc").
 -include("elements.hrl").
+-include("iterate_records.hrl").
 
 render(ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
@@ -22,8 +23,7 @@ render(ControlId, Record) ->
 backlogs([]) ->
     [];
 backlogs([H|T]) ->
-    [ #listitem{ body=#backlog{backlog_name=H} } | backlogs(T) ].
-    
+    [ #listitem{ body=#backlog{backlog_name=H#backlogs.backlog_name} } | backlogs(T) ].
 
 %% showing backlog info
 event({show, {backlog, Name}}) ->

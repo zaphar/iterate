@@ -1,11 +1,14 @@
 -module(iterate_db).
 
--export([start/0, stop/0, setup/0, info/0, info/1]).
+-export([start/0, stop/0, setup/0, bootstrap/0, info/0, info/1]).
 -export([backlogs/0, stories/1]).
 -export([backlog/1]).
 
--include("../iterate_records.hrl").
+-include("iterate_records.hrl").
 -include_lib("stdlib/include/qlc.hrl").
+
+-define(DEFAULTB, #backlogs{backlog_name="Default", desc="Default backlog"} ).
+-define(IDEAPOOL, #backlogs{backlog_name="Idea_Pool", desc="Keep track of ideas and brainstorm"} ).
 
 start() ->
     mnesia:start()
@@ -21,6 +24,12 @@ setup() ->
     , start()
     , mk_table(backlogs, record_info(fields, backlogs))
     , mk_table(stories, record_info(fields, stories))
+    , bootstrap()
+.
+
+bootstrap() ->
+   backlog({new, ?DEFAULTB})
+  , backlog({new, ?IDEAPOOL})
 .
 
 mk_table(Name, Info) ->
@@ -40,7 +49,7 @@ info(Ask) when is_atom(Ask) ->
 .
 
 backlogs() ->
-    ["Default", "Mine"]
+    backlog({qry, all})
 .
 
 backlog({new, Record}) when is_record(Record, backlogs) ->
@@ -68,14 +77,15 @@ backlog({qry, Name}) ->
     end
 .
 
+
 stories("Default") ->
+    ["add and delete stories"
+     , "add and delete backlogs"
+     , "storage layer for backlogs and data"
+     , "drag drop stories to backlogs"
+     , "backlog filter and search"];
+stories("Idea_Pool") ->
     ["Story One"];
-stories("Mine") ->
-     ["add and delete stories"
-      , "add and delete backlogs"
-      , "storage layer for backlogs and data"
-      , "drag drop stories to backlogs"
-      , "backlog filter and search"];
 stories(B) when is_list(B) ->
     []
 .

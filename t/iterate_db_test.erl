@@ -5,16 +5,18 @@
 
 -include("../src/iterate_records.hrl").
 -include_lib("etap/include/etap.hrl").
+-define(DEFAULTB, #backlogs{backlog_name="Default", desc="Default backlog"} ).
+-define(MINEB, #backlogs{backlog_name="Mine", desc="Development Backlog"} ).
 
 start() ->
     calc_plan
     , module_test()
-    , backlogs_test()
     , stories_test()
     , start_up_shutdown_test()
     , info_test()
     , create_table_test()
     , mk_backlog_test()
+    , backlogs_test()
 .
 
 -plan(8).
@@ -29,10 +31,6 @@ module_test() ->
     , can_ok(iterate_db, setup, 0)
     , can_ok(iterate_db, backlog, 1)
 .
-
--plan(1).
-backlogs_test() ->
-    etap:is(iterate_db:backlogs(), ["Default", "Mine"], "got the backlogs").
 
 -plan(2).
 stories_test() ->
@@ -77,14 +75,17 @@ create_table_test(Table) ->
 
 -plan(4).
 mk_backlog_test() ->
-    Result = iterate_db:backlog({new, 
-        #backlogs{backlog_name="Default", desc="a desc not a desk"}})
+    Result = iterate_db:backlog({new, ?DEFAULTB})
     , etap:is({atomic, ok}, Result, "yep we made the record")
     , [Record | RecordList] = iterate_db:backlog({qry, "Default"})
     , etap:ok(is_record(Record, backlogs), "we got back a backlogs record")
-    , etap:is(Record#backlogs.desc, "a desc not a desk"
-        , "the record has our description")
+    , etap:is(Record, ?DEFAULTB, "the record has our description")
     , [Record1 | _T] = iterate_db:backlog({qry, all})
     , etap:is(Record, Record1, "backlog qry for all has Record in it")
+    , Result = iterate_db:backlog({new, ?MINEB})
 .
+
+-plan(1).
+backlogs_test() ->
+    etap:is(iterate_db:backlogs(), [?DEFAULTB, ?MINEB], "got the backlogs").
 
