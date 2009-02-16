@@ -52,7 +52,12 @@ backlogs() ->
     backlog({qry, all})
 .
 
+%% TODO(jwall): enforce error when new should be update?
 backlog({new, Record}) when is_record(Record, backlogs) ->
+    backlog({store, Record});
+backlog({update, Record}) when is_record(Record, backlogs) ->
+    backlog({store, Record});
+backlog({store, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->
         mnesia:write(Record)
     end
