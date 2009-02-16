@@ -10,3 +10,6 @@
 -define(UPDATENAME(Name, Id), {backlog, {update, {backlog_name, Name}, {id, Id}}}).
 -define(UPDATEDESC(Name), {backlog, {update, {backlog_desc, Name}}}).
 
+%% story editing event tags
+-define(UPDATESP(Id), {update, sp, Id}).
+-define(UPDATE_S_DESC(Id), {update, desc, Id}).

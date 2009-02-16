@@ -146,8 +146,16 @@ story({qry, all}) ->
         _ ->
             {error, "whoah what was that?"}
     end;
-story({qry, B}) ->
-    Trans = fun() -> mnesia:match_object(#stories{backlog=B, _='_'}) end,
+story({qry, {story, Name}}) ->
+    Trans = fun() -> mnesia:read({stories, Name}) end,
+    case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg}
+    end;
+story({qry, {backlog, Name}}) ->
+    Trans = fun() -> mnesia:match_object(#stories{backlog=Name, _='_'}) end,
     case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
             RecordList;
@@ -159,6 +167,6 @@ story({qry, B}) ->
 .
 
 stories(B) ->
-    story({qry, B})
+    story({qry, {backlog, B}})
 .
 
