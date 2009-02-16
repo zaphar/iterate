@@ -6,7 +6,6 @@
 -include("iterate_records.hrl").
 
 render(ControlId, Record) ->
-    %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId = "backlog_panel"
     , Data    = case Record#backlog_panel.data of
         undefined ->
@@ -28,6 +27,9 @@ backlogs([H|T]) ->
     , [ #listitem{ body=#backlog{backlog_name=Name} } | backlogs(T) ].
 
 %% showing backlog info
+event({render, panel}) ->
+    Data = iterate_db:backlog({qry, all}),
+    wf:update("backlog_panel", body(Data));
 event({show, {backlog, Name}}) ->
     wf:update(Name ++ "_target",
         #backlog_edit{backlog_id=Name, desc="A description"});

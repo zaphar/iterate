@@ -5,7 +5,7 @@
 
 %% elements for the building blocks of the widgets
 -record(backlog_edit, {?ELEMENT_BASE(element_backlog_edit), ?ITER_ELEMENT_BASE,
-    backlog_id, desc}).
+    backlog_id, desc, el_id}).
 -record(backlog,      {?ELEMENT_BASE(element_backlog),      ?ITER_ELEMENT_BASE,
     backlog_name}).
 -record(story_edit,   {?ELEMENT_BASE(element_story_edit),   ?ITER_ELEMENT_BASE,

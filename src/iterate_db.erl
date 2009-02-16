@@ -58,8 +58,13 @@ backlog({new, Record}) when is_record(Record, backlogs) ->
 %% TODO(jwall): should this be smarter?
 backlog({update, Record}) when is_record(Record, backlogs) ->
     backlog({store, Record});
+%% TODO(jwall): need to update all stories for this backlog also
 backlog({mutate, Record, RecordMutation}) when is_record(Record, backlogs) ->
     backlog({delete, Record}),
+    Stories = story({qry, Record#backlogs.backlog_name}),
+    lists:foreach(fun(Story) -> 
+        story({update, Story#stories{backlog=Record#backlogs.backlog_name}})
+    end, Stories),
     backlog({new, RecordMutation});
 backlog({store, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->

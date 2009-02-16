@@ -1,6 +1,6 @@
 -module (web_index).
 -include_lib ("nitrogen/include/wf.inc").
--include("../elements.hrl").
+-include("elements.hrl").
 -compile(export_all).
 
 %%TODO(jwall): move the following into the main index page
