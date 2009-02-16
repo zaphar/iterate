@@ -13,3 +13,7 @@
 %% story editing event tags
 -define(UPDATESP(Id), {update, sp, Id}).
 -define(UPDATE_S_DESC(Id), {update, desc, Id}).
+
+%% backlog_panel event tags
+-define(CREATE_B(Id, PanelId), {create, {new, backlog}, Id, PanelId}).
+-define(B_PANEL_CREATE, {create, backlog}).

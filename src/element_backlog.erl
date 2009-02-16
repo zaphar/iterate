@@ -32,16 +32,12 @@ body(Name, PanelId) ->
 event(?UPDATE_B_EL(Name, Id)) ->
     io:format("updating backlog widget ~s for: ~s~n", [Id, Name])
     , case iterate_db:backlog({qry, Name}) of
-        %%{error, Msg} ->
-            %% what do I do for this one?
         [_ | []] ->
             wf:update(Id, body(Name, Id))
     end;
 event(?SHOW_B_EL(Name, Id)) ->
     io:format("showing edit widget for: ~s~n", [Name])
     , case iterate_db:backlog({qry, Name}) of
-        %%{error, Msg} ->
-            %% what do I do for this one?
         [B | []] ->
             wf:update(Name ++ "_target",
                 #backlog_edit{ backlog_id=Name, el_id=Id, desc=B#backlogs.desc })

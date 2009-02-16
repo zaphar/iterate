@@ -20,10 +20,17 @@ render(ControlId, Record) ->
                   , postback=?REMOVE_B_EL(Id, ElId)
                 }
     }
+    , Desc = case Record#backlog_edit.desc of
+        List when is_list(List) ->
+            List;
+        _                       ->
+            "Description goes here"
+    end
+    , io:format("the description is: ~s~n", [Desc])
     , Panel = #panel{ id=Name,
         body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
-                delegate=?MODULE, text=Record#backlog_edit.desc }, #br{}
+                delegate=?MODULE, text=Desc }, #br{}
            , Button
         ]
     }
