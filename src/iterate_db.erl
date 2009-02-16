@@ -53,18 +53,22 @@ backlogs() ->
 .
 
 %% TODO(jwall): enforce error when new should be update?
-backlog({delete, Record}) when is_record(Record, backlogs) ->
-    Trans = fun() ->
-        mnesia:delete({backlogs, Record#backlogs.backlog_name})
-    end
-    , mnesia:transaction(Trans);
 backlog({new, Record}) when is_record(Record, backlogs) ->
     backlog({store, Record});
+%% TODO(jwall): should this be smarter?
 backlog({update, Record}) when is_record(Record, backlogs) ->
     backlog({store, Record});
+backlog({mutate, Record, RecordMutation}) when is_record(Record, backlogs) ->
+    backlog({delete, Record}),
+    backlog({new, RecordMutation});
 backlog({store, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->
         mnesia:write(Record)
+    end
+    , mnesia:transaction(Trans);
+backlog({delete, Record}) when is_record(Record, backlogs) ->
+    Trans = fun() ->
+        mnesia:delete({backlogs, Record#backlogs.backlog_name})
     end
     , mnesia:transaction(Trans);
 backlog({qry, all}) ->

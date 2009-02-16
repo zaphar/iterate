@@ -30,7 +30,6 @@ render(ControlId, Record) ->
     ),
     element_panel:render(ControlId, Panel).
 
-%% TODO(jwall): bind this to do actual work
 inplace_textbox_event(?UPDATENAME(Name), Value) ->
     io:format("updating name for ~s", [Name]),
     case iterate_db:backlog({qry, Name}) of
@@ -38,7 +37,9 @@ inplace_textbox_event(?UPDATENAME(Name), Value) ->
             %% what do I do for this one?
         [B | []] ->
             B1 = B#backlogs{backlog_name=Value},
-            iterate_db:backlog({update, B1})
+            %% TODO(jwall): handle failures
+            iterate_db:backlog({mutate, B, B1})
+            , wf:update(Name ++ "_name", Value)
     end,
     Value;
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->

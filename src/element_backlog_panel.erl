@@ -7,23 +7,25 @@
 
 render(ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
-    PanelId = wf:temp_id()
+    PanelId = "backlog_panel"
     , Data    = case Record#backlog_panel.data of
         undefined ->
             [];
         D when is_list(D) ->
             D
     end
-    , Panel = #rounded_panel{ id=PanelId,
-        body=#list{ body=backlogs(Data) }
-    }
+    , Panel = #rounded_panel{ id=PanelId, body=body(Data) }
     , element_rounded_panel:render(ControlId, Panel).
+
+body(Data) ->
+    #list{ body=backlogs(Data) }.
 
 %% generate our backlog list
 backlogs([]) ->
     [];
 backlogs([H|T]) ->
-    [ #listitem{ body=#backlog{backlog_name=H#backlogs.backlog_name} } | backlogs(T) ].
+    Name = H#backlogs.backlog_name
+    , [ #listitem{ body=#backlog{backlog_name=Name} } | backlogs(T) ].
 
 %% showing backlog info
 event({show, {backlog, Name}}) ->

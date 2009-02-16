@@ -15,8 +15,8 @@ render(ControlId, Record) ->
                                        , delegate=element_story_panel
                                        , postback={show, {stories, Name}}
                                 }
-                                , body=[Name, " "
-                                , #link{text="edit"
+                                , body=[#label{ id=Name ++ "_name", text=Name}
+                                , " " , #link{text="edit"
                                         , actions=#event{type=click, delegate=?MODULE
                                             , postback={show, {backlog, Name}}
                                         }
@@ -28,6 +28,7 @@ render(ControlId, Record) ->
     element_panel:render(ControlId, Panel).
 
 %% showing backlog info
+%% TODO(jwall): need to hide edit button for this
 event({show, {backlog, Name}}) ->
     case iterate_db:backlog({qry, Name}) of
         %%{error, Msg} ->
@@ -36,6 +37,7 @@ event({show, {backlog, Name}}) ->
             wf:update(Name ++ "_target",
                 #backlog_edit{ backlog_id=Name, desc=B#backlogs.desc })
     end;
+%% TODO(jwall): need to show edit button again
 event({remove, {backlog, Name}}) ->
     wf:update(Name ++ "_target", "");
 event(_) -> ok.
