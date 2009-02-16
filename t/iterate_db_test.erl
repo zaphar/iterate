@@ -20,7 +20,7 @@ start() ->
     , make_story_test()
 .
 
--plan(8).
+-plan(10).
 module_test() ->
     loaded_ok(iterate_db, "iterate_db module loaded ok")
     , can_ok(iterate_db, backlogs, 0)
@@ -98,6 +98,7 @@ backlogs_test() ->
     , etap:any(F(?MINEB), iterate_db:backlogs(), "got ?MINEB in the backlogs")
 .
 
+-plan(3).
 make_story_test() ->
     F = fun() -> iterate_db:story({new, 
         #stories{backlog="Default", story_name=foo, sp=3

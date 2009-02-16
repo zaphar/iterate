@@ -3,6 +3,7 @@
 
 -include_lib("nitrogen/include/wf.inc").
 -include("elements.hrl").
+-include("iterate_records.hrl").
 
 render(ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
@@ -28,8 +29,13 @@ render(ControlId, Record) ->
 
 %% showing backlog info
 event({show, {backlog, Name}}) ->
-    wf:update(Name ++ "_target",
-        #backlog_edit{backlog_id=Name, desc="A description"});
+    case iterate_db:backlog({qry, Name}) of
+        %%{error, Msg} ->
+            %% what do I do for this one?
+        [B | []] ->
+            wf:update(Name ++ "_target",
+                #backlog_edit{ backlog_id=Name, desc=B#backlogs.desc })
+    end;
 event({remove, {backlog, Name}}) ->
     wf:update(Name ++ "_target", "");
 event(_) -> ok.
