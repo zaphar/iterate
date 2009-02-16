@@ -9,14 +9,7 @@
 render(ControlId, Record) ->
     PanelId          = wf:temp_id()
     , Name           = Record#story_edit.story_name
-    , Story = case iterate_db:story({qry, {story, Name}}) of
-        {error, Msg} ->
-            throw(Msg);
-        [Result | []] ->
-            Result;
-        _ ->
-            throw("whoah what was that?")
-    end
+    , Story = get_story(Name)
     , Desc           = case Story#stories.desc of
         undefined ->
             "Fill in Description Here";
@@ -51,21 +44,30 @@ map_entry(Id, Attr) when is_list(Id), is_list(Attr) ->
 %% TODO(jwall): bind this to do actual work
 inplace_textbox_event(?UPDATESP(Name), Value) ->
     io:format("updating story points for ~s~n", [Name]),    
-    Story = case iterate_db:story({qry, {story, Name}}) of
-        {error, Msg} ->
-            throw(Msg);
-        [Result | []] ->
-            Result;
-        _ ->
-            throw("whoah what was that?")
-    end,
+    Story = get_story(Name),
     Updated = Story#stories{sp=Value},
     io:format("Original ~p~n", [Story]),    
     io:format("updated: ~p~n", [Updated]),    
     Resulting = iterate_db:story({update, Updated}),
     io:format("Result: ~p~n", [Resulting]),    
     Value;
-inplace_textbox_event(_Tag, _Value) ->
-    ok
+inplace_textbox_event(?UPDATE_S_DESC(Name), Value) ->
+    Story = get_story(Name)
+    , Updated = Story#stories{desc=Value}
+    , iterate_db:story({update, Updated})
+    , Value;
+inplace_textbox_event(_Tag, Value) ->
+    Value
+.
+
+get_story(Name) ->
+    case iterate_db:story({qry, {story, Name}}) of
+        {error, Msg} ->
+            throw(Msg);
+        [Result | []] ->
+            Result;
+        _ ->
+            throw("whoah what was that?")
+    end
 .
 
