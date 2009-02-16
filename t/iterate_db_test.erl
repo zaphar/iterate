@@ -15,7 +15,7 @@ start() ->
     , info_test()
     , create_table_test()
     , mk_backlog_test()
-    , backlogs_test()
+    , backlog_delete_test()
     , stories_test()
     , make_story_test()
 .
@@ -80,6 +80,7 @@ mk_backlog_test() ->
     , [Record1 | _T] = iterate_db:backlog({qry, all})
     , etap:is(Record, Record1, "backlog qry for all has Record in it")
     , iterate_db:backlog({new, ?MINEB})
+    , backlogs_test()
 .
 
 -plan(2).
@@ -96,6 +97,15 @@ backlogs_test() ->
     end
     , etap:any(F(?DEFAULTB), iterate_db:backlogs(), "got ?DEFAULTB in the backlogs")
     , etap:any(F(?MINEB), iterate_db:backlogs(), "got ?MINEB in the backlogs")
+.
+
+-plan(2).
+backlog_delete_test() ->
+    B = #backlogs{backlog_name=foo, desc=bar}
+    , Result = iterate_db:backlog({new, B})
+    , etap:is({atomic, ok}, Result, "made our foo backlog")
+    , DeleteResult = iterate_db:backlog({delete, B})
+    , etap:is({atomic, ok}, DeleteResult, "it says we deleted our backlog")
 .
 
 -plan(3).

@@ -53,6 +53,11 @@ backlogs() ->
 .
 
 %% TODO(jwall): enforce error when new should be update?
+backlog({delete, Record}) when is_record(Record, backlogs) ->
+    Trans = fun() ->
+        mnesia:delete({backlogs, Record#backlogs.backlog_name})
+    end
+    , mnesia:transaction(Trans);
 backlog({new, Record}) when is_record(Record, backlogs) ->
     backlog({store, Record});
 backlog({update, Record}) when is_record(Record, backlogs) ->
@@ -82,7 +87,16 @@ backlog({qry, Name}) ->
     end
 .
 
+story({delete, Record}) when is_record(Record, stories) ->
+    Trans = fun() ->
+        mnesia:delete({stories, Record#stories.story_name})
+    end
+    , mnesia:transaction(Trans);
 story({new, Record}) when is_record(Record, stories) ->
+    story({store, Record});
+story({update, Record}) when is_record(Record, stories) ->
+    story({store, Record});
+story({store, Record}) when is_record(Record, stories) ->
     Trans = fun() ->
         case Record#stories.backlog of
             undefined ->
