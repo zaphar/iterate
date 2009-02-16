@@ -3,6 +3,7 @@
 
 -include_lib("nitrogen/include/wf.inc").
 -include("elements.hrl").
+-include("iterate_records.hrl").
 
 render(ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
@@ -24,9 +25,10 @@ stories([]) ->
 stories([H|T]) ->
     [ #listitem{ body=#story{story_name=H} } | stories(T) ].
 
-story(Name) ->
-    #listitem{ id=Name,
-        body=#story{story_name=Name}
+story(Record) ->
+    Name = Record#stories.story_name
+    , #listitem{ id=Name,
+        body=#story{story_name=Name }
     }.
 
 %% showing stories

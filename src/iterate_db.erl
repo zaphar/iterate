@@ -8,7 +8,7 @@
 -include_lib("stdlib/include/qlc.hrl").
 
 -define(DEFAULTB, #backlogs{backlog_name="Default", desc="Default backlog"} ).
--define(IDEAPOOL, #backlogs{backlog_name="Idea_Pool", desc="Keep track of ideas and brainstorm"} ).
+-define(IDEAPOOL, #backlogs{backlog_name="Idea Pool", desc="Keep track of ideas and brainstorm"} ).
 
 start() ->
     mnesia:start()
@@ -30,6 +30,19 @@ setup() ->
 bootstrap() ->
    backlog({new, ?DEFAULTB})
   , backlog({new, ?IDEAPOOL})
+  , F = fun(B) ->
+       fun(N) -> 
+           story({new, #stories{backlog=B, story_name=N, sp=3}})
+       end
+  end
+  , lists:foreach(F("Default"), ["add and delete stories"
+                               , "add and delete backlogs"
+                               , "storage layer for backlogs and data"
+                               , "drag drop stories to backlogs"
+                               , "backlog filter and search"
+                               ]
+  )
+  , lists:foreach(F("Idea Pool"), ["Story One"])
 .
 
 mk_table(Name, Info) ->
@@ -145,14 +158,7 @@ story({qry, B}) ->
     end
 .
 
-stories("Default") ->
-    ["add and delete stories"
-     , "add and delete backlogs"
-     , "storage layer for backlogs and data"
-     , "drag drop stories to backlogs"
-     , "backlog filter and search"];
-stories("Idea_Pool") ->
-    ["Story One"];
-stories(B) when is_list(B) ->
-    []
+stories(B) ->
+    story({qry, B})
 .
+

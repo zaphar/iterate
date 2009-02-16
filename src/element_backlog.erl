@@ -16,7 +16,7 @@ render(ControlId, Record) ->
 body(Name, PanelId) ->
     [#panel{ actions=#event{type=click
                    , delegate=element_story_panel
-                   , postback=?SHOW_B_EL(Name, PanelId)
+                   , postback={show, {stories, Name}}
             }
             , body=[#label{ id=Name ++ "_name", text=Name}
             , " " , #link{text="edit"
