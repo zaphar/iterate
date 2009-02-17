@@ -86,6 +86,8 @@ backlog({store, Record}) when is_record(Record, backlogs) ->
     , mnesia:transaction(Trans);
 backlog({delete, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->
+        %% TODO(jwall): need to move all associated stories to default
+        %% TODO(jwall): need to enforce non-delete of Default and Idea Pool
         mnesia:delete({backlogs, Record#backlogs.backlog_name})
     end
     , mnesia:transaction(Trans);

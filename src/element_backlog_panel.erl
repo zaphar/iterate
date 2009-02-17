@@ -14,23 +14,21 @@ render(ControlId, Record) ->
         D when is_list(D) ->
             D
     end
-    , Panel = #rounded_panel{ body=[#list{ id=PanelId, body=backlogs(Data) },
-        #link{ text="create", 
-           actions=#event{ 
-               type=click, delegate=?MODULE, 
-               postback=?B_PANEL_CREATE
-           }}]
-    }
+    , Panel = #rounded_panel{ id=PanelId, body=backlogs(Data)}
     , element_rounded_panel:render(ControlId, Panel)
 .
 
 %% generate our backlog list
 backlogs([]) ->
-    [];
+    [#link{ text="create", 
+           actions=#event{ 
+               type=click, delegate=?MODULE, 
+               postback=?B_PANEL_CREATE
+           }}];
 backlogs([H|T]) ->
     Name = H#backlogs.backlog_name
     , io:format("adding backlog: ~p~n", [H])
-    , [ #listitem{ body=#backlog{backlog_name=Name} } | backlogs(T) ]
+    , [ #backlog{backlog_name=Name} | backlogs(T) ]
 .
 
 %% showing backlog info
