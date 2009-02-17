@@ -26,7 +26,7 @@ backlog_panel() ->
     #backlog_panel{data=iterate_db:backlogs()}.
 
 story_panel() ->
-    #story_panel{ data=["click a backlog to see stories"] }.
+    #story_panel{ data=[] }.
 
 event(_) -> 
     %%TODO(jwall): log unhandled events here

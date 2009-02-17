@@ -16,7 +16,12 @@ render(ControlId, Record) ->
         D ->
             D
     end
-    , StoryPoints    = Story#stories.sp
+    , StoryPoints    = case Story#stories.sp of
+        undefined ->
+            3;
+        N         ->
+            N
+    end
     , Panel = #panel{ id=PanelId
                     , body=[
                         "Description: ", #my_inplace_textbox{

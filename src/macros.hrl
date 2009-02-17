@@ -1,5 +1,6 @@
 
 -define(BPANELID, "backlog_panel").
+-define(SPANELID, "story_panel").
 
 %% backlog element event tags
 -define(UPDATE_B_EL(Name, ElId), {update, {backlog, Name, ElId}}).
@@ -18,3 +19,11 @@
 %% backlog_panel event tags
 -define(CREATE_B(Id, PanelId), {create, {new, backlog}, Id, PanelId}).
 -define(B_PANEL_CREATE, {create, backlog}).
+
+%% story_panel event tags
+-define(CREATE_S(Id, PanelId, Backlog), {create, {new, story},
+    {backlog, Backlog}, Id, PanelId}).
+-define(S_PANEL_CREATE(B), {create, story, B}).
+
+-define(SHOW_STORIES(Name), {show, {stories, Name}}).
+

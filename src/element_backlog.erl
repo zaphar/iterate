@@ -16,7 +16,7 @@ render(ControlId, Record) ->
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
-                   , postback={show, {stories, Name}}
+                   , postback=?SHOW_STORIES(Name)
             }
             , body=[#label{ id=Name ++ "_name", text=Name}
                 , " " , #link{text="edit"
@@ -49,7 +49,6 @@ event(?SHOW_B_EL(Name, Id)) ->
                 #backlog_edit{ backlog_id=Name, el_id=Id, desc=B#backlogs.desc })
     end;
 event(?DELETE_B_EL(Name, Id)) ->
-    %% delete the backlog
     io:format("looking up: ~p~n", [Name])
     , Records = iterate_db:backlog({qry, Name})
     , io:format("found: ~p~n", [Records])
@@ -59,7 +58,7 @@ event(?DELETE_B_EL(Name, Id)) ->
     , Result = iterate_db:backlog({delete, Record})
     , io:format("Result: ~p~n", [Result])
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
-    ;
+    , event(?REMOVE_B_EL(Name, Id));
 event(?REMOVE_B_EL(Name, _Id)) ->
     wf:update(Name ++ "_target", "");
 event(Event) -> 
