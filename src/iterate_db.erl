@@ -4,6 +4,7 @@
 -export([backlogs/0, stories/1]).
 -export([backlog/1, story/1]).
 
+-include("macros.hrl").
 -include("iterate_records.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
@@ -148,7 +149,7 @@ story({qry, all}) ->
         _ ->
             {error, "whoah what was that?"}
     end;
-story({qry, {story, Name}}) ->
+story(?Q_STORY(Name)) ->
     Trans = fun() -> mnesia:read({stories, Name}) end,
     case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
