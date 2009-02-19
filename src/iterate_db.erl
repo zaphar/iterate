@@ -1,6 +1,7 @@
 -module(iterate_db).
 
--export([start/0, stop/0, setup/0, bootstrap/0, info/0, info/1]).
+-export([start/0, stop/0, setup/0]).
+-export([bootstrap/0, info/0, info/1]).
 -export([backlogs/0, stories/1]).
 -export([backlog/1, story/1]).
 
@@ -28,6 +29,7 @@ setup() ->
     , bootstrap()
 .
 
+
 bootstrap() ->
    backlog({new, ?DEFAULTB})
   , backlog({new, ?IDEAPOOL})
@@ -36,14 +38,24 @@ bootstrap() ->
            story({new, #stories{backlog=B, story_name=N, sp=3}})
        end
   end
-  , lists:foreach(F("Default"), ["add and delete stories"
-                               , "add and delete backlogs"
+  , lists:foreach(F("Default"), ["backlog filter and search"
                                , "storage layer for backlogs and data"
+                               , "heavy duty refactoring of the similar actions"
+                               , "story completion"
+                               , "story order"
+                               , "story time tracking"
                                , "drag drop stories to backlogs"
                                , "backlog filter and search"
                                ]
   )
-  , lists:foreach(F("Idea Pool"), ["Story One"])
+  , lists:foreach(F("Idea Pool"), ["01 - Reporting edit delete"
+                                  , "02 - color code stories edit delete"
+                                  , "03 - backlog types (iteration/staging) edit delete"
+                                  , "04 - comet updates of the stories and backlogs edit delete"
+                                  , "05 -do something edit delete"
+                                  , "06 - tasks for stories edit delete"
+                                  ]
+  )
 .
 
 mk_table(Name, Info) ->
