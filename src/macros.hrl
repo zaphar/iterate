@@ -1,5 +1,4 @@
 
--define(BPANELID, "backlog_panel").
 -define(SPANELID, "story_list").
 
 %% backlog element event tags
@@ -14,7 +13,7 @@
 
 %% backlog_panel event tags
 -define(CREATE_B(Id, PanelId), {create, {new, backlog}, Id, PanelId}).
--define(B_PANEL_CREATE, {create, backlog}).
+-define(B_PANEL_CREATE(Id), {create, backlog, Id}).
 
 %% story_panel event tags
 -define(CREATE_S(Id, PanelId, Backlog), {create, {new, story},
@@ -33,4 +32,8 @@
 
 %% query macros
 -define(Q_STORY(Name), {qry, {story, Name}}).
+
+%% misc shared event tags
+-define(REFRESH(Id), {refresh, Id}).
+-define(REFRESH_TYPE(Id, Type), {refresh, Id, Type}).
 

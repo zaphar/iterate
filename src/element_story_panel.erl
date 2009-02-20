@@ -30,7 +30,13 @@ stories([], Name) ->
         actions=#event{
             type=click, delegate=?MODULE,
             postback=?S_PANEL_CREATE(Name)
-        }}]; 
+        }}, " ",
+     #link{ text="refresh",
+        actions=#event{
+            type=click, delegate=?MODULE,
+            postback=?SHOW_STORIES(Name)
+        }}
+    ]; 
 stories([H|T], Name) ->
     [ #story{story_name=H, backlog=Name} | stories(T, Name) ]
 .

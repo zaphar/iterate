@@ -121,6 +121,18 @@ backlog({qry, Name}) ->
             RecordList;
         {abort, Msg} ->
             {error, Msg}
+    end;
+backlog({search, {id, Value}}) ->
+    Trans = fun() -> 
+        QH = qlc:q([B || B <- 
+            mnesia:table(backlogs), string:str(B#backlogs.backlog_name, Value) /= 0]),
+        qlc:eval(QH)
+    end,
+    case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg}
     end
 .
 

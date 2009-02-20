@@ -7,7 +7,7 @@
 -record(backlog_edit, {?ELEMENT_BASE(element_backlog_edit), ?ITER_ELEMENT_BASE,
     backlog_id, desc, el_id}).
 -record(backlog,      {?ELEMENT_BASE(element_backlog),      ?ITER_ELEMENT_BASE,
-    backlog_name}).
+    backlog_name, container}).
 -record(story_edit,   {?ELEMENT_BASE(element_story_edit),   ?ITER_ELEMENT_BASE,
     story_name, desc, sp}).
 -record(story,        {?ELEMENT_BASE(element_story),        ?ITER_ELEMENT_BASE,

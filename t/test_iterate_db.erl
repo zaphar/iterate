@@ -1,4 +1,4 @@
--module(iterate_db_test).
+-module(test_iterate_db).
 -compile(export_all).
 
 -import(etap_can, [loaded_ok/2, can_ok/2, can_ok/3]).
@@ -74,7 +74,7 @@ create_table_test(Table) ->
 mk_backlog_test() ->
     Result = iterate_db:backlog({new, ?DEFAULTB})
     , etap:is({atomic, ok}, Result, "yep we made the record")
-    , [Record | RecordList] = iterate_db:backlog({qry, "Default"})
+    , [Record | _RecordList] = iterate_db:backlog({qry, "Default"})
     , etap:ok(is_record(Record, backlogs), "we got back a backlogs record")
     , etap:is(Record, ?DEFAULTB, "the record has our description")
     , [Record1 | _T] = iterate_db:backlog({qry, all})

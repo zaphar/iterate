@@ -8,27 +8,39 @@
 
 render(ControlId, Record) ->
     PanelId = "backlog_panel"
+    , io:format("the control id is ~p~n", [ControlId])
     , Data    = case Record#backlog_panel.data of
         undefined ->
             [];
         D when is_list(D) ->
             D
     end
-    , Panel = #rounded_panel{ id=PanelId, body=backlogs(Data)}
+    , SearchId = wf:temp_id()
+    , SearchEvent = #event{type=change, delegate=?MODULE,
+        postback={search, SearchId, ControlId}}
+    , Panel = #rounded_panel{ body=[
+        #textbox{id=SearchId, text="Search Backlogs", actions=SearchEvent},
+        #panel{id=PanelId, body=backlogs(Data, ControlId)}]}
     , element_rounded_panel:render(ControlId, Panel)
 .
 
 %% generate our backlog list
-backlogs([]) ->
+backlogs([], Id) ->
     [#link{ text="create", 
            actions=#event{ 
                type=click, delegate=?MODULE, 
-               postback=?B_PANEL_CREATE
-           }}];
-backlogs([H|T]) ->
+               postback=?B_PANEL_CREATE(Id)
+           }}, " ",
+     #link{ text="refresh", 
+           actions=#event{ 
+               type=click, delegate=?MODULE, 
+               postback=?REFRESH(Id)
+           }}
+    ];
+backlogs([H|T], Id) ->
     Name = H#backlogs.backlog_name
     , io:format("adding backlog: ~p~n", [H])
-    , [ #backlog{backlog_name=Name} | backlogs(T) ]
+    , [ #backlog{backlog_name=Name, container=Id} | backlogs(T, Id) ]
 .
 
 %% showing backlog info
@@ -37,7 +49,7 @@ event({show, {backlog, Name}}) ->
         #backlog_edit{backlog_id=Name, desc="A description"});
 event({remove, {backlog, Name}}) ->
     wf:update(Name ++ "_target", "");
-event(?B_PANEL_CREATE) ->
+event(?B_PANEL_CREATE(_Id)) ->
     %% we need a create backlog widget
     TB_Id = wf:temp_id(),
     PanelId = wf:temp_id(),
@@ -59,13 +71,22 @@ event(?CREATE_B(Id, PanelId)) ->
             wf:flash(io_lib:format("~p", [Msg]));
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Backlog ~p Created", [Value])),
-            wf:insert_top(?BPANELID, #backlog{backlog_name=Value}); 
+            wf:insert_top("backlog_panel", #backlog{backlog_name=Value}); 
         _ ->
             throw({error, unknown})
     end,
     ok;
+event(?REFRESH(Id)) ->
+    wf:update(Id, #backlog_panel{data=iterate_db:backlogs()});
+event({search, Id, PanelId}) ->
+    [Value] = wf:q(Id),
+    io:format("~p searching for: ~p~n", [?MODULE, Value]),
+    Results = iterate_db:backlog({search, {id, Value}}),
+    io:format("~p found: ~p~n", [?MODULE, Results]),
+    wf:update(PanelId, #backlog_panel{data=Results}),
+    ok;
 event(Event) ->
-    io:format("recieved event: ~p~n", [Event]),
+    io:format("~p recieved event: ~p~n", [?MODULE, Event]),
     ok
 .
 
