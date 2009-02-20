@@ -6,12 +6,13 @@
 -include("macros.hrl").
 -include("iterate_records.hrl").
 
-render(ControlId, Record) ->
+render(_ControlId, Record) ->
     Name    = Record#backlog.backlog_name,
     PanelId = wf:temp_id(),
-    Panel = #panel{ body=body(Name, PanelId) },
+    Panel = #delegated_droppable{ tag={Name, {delegate, ?MODULE}},
+        body=body(Name, PanelId) },
     io:format("the panel id for ~s is ~s~n", [Name, PanelId]),
-    element_panel:render(ControlId, Panel).
+    element_delegated_droppable:render(PanelId, Panel).
 
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
@@ -63,5 +64,17 @@ event(?REMOVE_B_EL(Name, _Id)) ->
     wf:update(Name ++ "_target", "");
 event(Event) -> 
     io:format("received event: ~p~n", [Event])
+.
+
+%% move a story to a backlog
+drop_event(Story, Backlog) ->
+    io:format("received event: ~p -> ~p~n", [Story, Backlog])
+    , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
+    , io:format("found story: ~p ~n", [StoryRecord])
+    , OldBacklog = StoryRecord#stories.backlog
+    , io:format("changed story to: ~p ~n", [StoryRecord#stories{backlog=Backlog}])
+    , iterate_db:story({update, StoryRecord#stories{backlog=Backlog}})
+    , element_story_panel:event(?SHOW_STORIES(OldBacklog))
+    , ok
 .
 

@@ -31,7 +31,7 @@ backlogs([], Id) ->
                type=click, delegate=?MODULE, 
                postback=?B_PANEL_CREATE(Id)
            }}, " ",
-     #link{ text="refresh", 
+     #link{ text="view all", 
            actions=#event{ 
                type=click, delegate=?MODULE, 
                postback=?REFRESH(Id)

@@ -9,7 +9,7 @@ render(ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId = wf:temp_id(),
     Name    = Record#story.story_name,
-    Panel = #panel{ body=#panel{ id=PanelId,
+    Panel = #draggable{ tag=Name, body=#panel{ id=PanelId,
                     body=[
                         Name
                         , " "
@@ -28,7 +28,7 @@ render(ControlId, Record) ->
                         , #panel{id=Name ++ "_target"}
                     ]
     }},
-    element_panel:render(ControlId, Panel).
+    element_draggable:render(ControlId, Panel).
 
 event(?SHOW_S_EL(Name)) ->
     wf:update(Name ++ "_target",
