@@ -26,6 +26,7 @@ setup() ->
     , start()
     , mk_table(backlogs, record_info(fields, backlogs))
     , mk_table(stories, record_info(fields, stories))
+    , mk_table(time_log, record_info(fields, time_log))
     , bootstrap()
 .
 
@@ -38,22 +39,16 @@ bootstrap() ->
            story({new, #stories{backlog=B, story_name=N, sp=3}})
        end
   end
-  , lists:foreach(F("Default"), ["backlog filter and search"
-                               , "storage layer for backlogs and data"
-                               , "heavy duty refactoring of the similar actions"
-                               , "story completion"
+  , lists:foreach(F("Default"), ["story completion"
                                , "story order"
                                , "story time tracking"
-                               , "drag drop stories to backlogs"
-                               , "backlog filter and search"
                                ]
   )
-  , lists:foreach(F("Idea Pool"), ["01 - Reporting edit delete"
-                                  , "02 - color code stories edit delete"
-                                  , "03 - backlog types (iteration/staging) edit delete"
-                                  , "04 - comet updates of the stories and backlogs edit delete"
-                                  , "05 -do something edit delete"
-                                  , "06 - tasks for stories edit delete"
+  , lists:foreach(F("Idea Pool"), ["01 - Reporting"
+                                  , "02 - color code stories"
+                                  , "03 - backlog types (iteration/staging)"
+                                  , "04 - comet updates of the stories and backlogs"
+                                  , "06 - tasks for stories"
                                   ]
   )
 .
@@ -195,5 +190,26 @@ story({qry, {backlog, Name}}) ->
 
 stories(B) ->
     story({qry, {backlog, B}})
+.
+
+log_time({qry, Story}) ->
+    Trans = fun() -> mnesia:read({time_log, Story}) end
+    , case mnesia:transaction(Trans) of
+        {atomic, [Log]} ->
+            Log;
+        {atomic, []} ->
+            #time_log{story=Story};
+        {abort, Msg} ->
+            {error, Msg};
+        _ ->
+            throw({error, "whoah what was that?"})
+    end;
+log_time({Story, Amount}) ->
+    TS = erlang:universaltime()
+    , Trans = fun() ->
+        Log = log_time({qry, Story})
+        , TLog = Log#time_log.t_series
+        , mnesia:write(Log#time_log{t_series=[{Amount, TS} | TLog]})
+    end
 .
 

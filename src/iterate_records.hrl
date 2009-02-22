@@ -6,4 +6,4 @@
                        ]
                  }
 ).
-
+-record(time_log, {story, t_series=[]}).
