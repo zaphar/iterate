@@ -184,8 +184,8 @@ story({qry, {backlog, Name}}) ->
             RecordList;
         {abort, Msg} ->
             {error, Msg};
-        _ ->
-            throw({error, "whoah what was that?"})
+        E ->
+            throw({error, E})
     end
 .
 
@@ -202,8 +202,8 @@ log_time({qry, Story}) ->
             #time_log{story=Story};
         {abort, Msg} ->
             {error, Msg};
-        _ ->
-            throw({error, "whoah what was that?"})
+        E ->
+            throw({error, E})
     end;
 log_time({Story, Amount}) ->
     TS = erlang:universaltime()

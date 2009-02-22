@@ -6,10 +6,14 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
+-define(UPDATE_T_LOG(Name), {update, {story, Name, time_log}}).
+
 render(ControlId, Record) ->
     PanelId          = wf:temp_id()
     , Name           = Record#story_edit.story_name
     , Story = get_story(Name)
+    , TimeLog = iterate_db:log_time({qry, Name})
+    , TimeSpent = lists:foldl(fun({T, _TS}, T2) -> T + T2 end, 0, TimeLog#time_log.t_series) 
     , Desc           = case Story#stories.desc of
         undefined ->
             "Fill in Description Here";
@@ -30,6 +34,13 @@ render(ControlId, Record) ->
                         , "Story Points: ", #my_inplace_textbox{
                             delegate=?MODULE
                                 , tag=?UPDATESP(Name), text=StoryPoints}
+                        , lists:flatten(
+                            io_lib:format("Time Spent: ~.10B Hours ", [TimeSpent]))
+                        , #br{}
+                        , #link{text="Enter Time",
+                                actions=#event{ delegate=?MODULE,
+                                    postback=?UPDATE_T_LOG(Name)}}
+                        , #br{}
                         , #button{text="complete"
                             , actions=#event{type=click
                                              , delegate=?MODULE
@@ -70,11 +81,32 @@ inplace_textbox_event(_Tag, Value) ->
     Value
 .
 
+-define(NEWTIME(Name, Id, PanelId), {newtime, Name, Id, PanelId}).
+
 event({complete, {story, Name}}) ->
     Story = get_story(Name)
     , Completed = story_util:complete(Story)
     , iterate_db:story({update, Completed})
-    , element_story_panel:event(?SHOW_STORIES(Story#stories.backlog))
+    , element_story_panel:event(?SHOW_STORIES(Story#stories.backlog));
+event(?UPDATE_T_LOG(Name)) ->
+    Id = wf:temp_id()
+    , PanelId = wf:temp_id()
+    , Msg = io_lib:format("Enter hours for ~p", [Name])
+    , wf:flash(#panel{id=PanelId
+        , body=[Msg
+                , #textbox{ id=Id, actions=#event{type=change, delegate=?MODULE,
+                    postback=?NEWTIME(Name, Id, PanelId)}}
+          ]
+    });
+event(?NEWTIME(Name, Id, PanelId)) ->
+    [ValueString] = wf:q(Id)
+    , Value = list_to_integer(ValueString)
+    , iterate_db:log_time({Name, Value})
+    , wf:update(PanelId, 
+        io_lib:format("Updated time for ~p to ~p", [Name, Value]))
+    , element_story:event(?SHOW_S_EL(Name));
+event(Event) ->
+    io:format("~p recieved unknown event ~p~n", [?MODULE, Event])
 .
 
 get_story(Name) ->
