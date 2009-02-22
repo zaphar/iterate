@@ -5,36 +5,39 @@
 -include("macros.hrl").
 -include("elements.hrl").
 
-render(ControlId, Record) ->
+render(_ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId = wf:temp_id()
+    , DraggableId = wf:temp_id()
     , Name    = Record#story.story_name
     , [Story] = iterate_db:story(?Q_STORY(Name))
     , Percent = story_util:completion(Story)
-    , Panel = #draggable{ tag=Name, body=#panel{ id=PanelId
-                    , body=[
-                        Name
-                        , " "
-                        , #link{text="edit"
-                            , actions=#event{ type=click, delegate=?MODULE
-                                            , postback=?SHOW_S_EL(Name)
-                            }
-                        }, " "
-                        , #link{text="delete"
-                            , actions=#event{ 
-                                type=click
-                                , delegate=?MODULE
-                                , postback=?DELETE_S_EL(Name, PanelId)
-                            }
-                        }, #br{}
-                        , #panel{ class=io_lib:format("background: blue; width: ~.10B%;", [Percent]) }                        %% this needs to be better formatted I think.
-                        , #my_inplace_textbox{delegate=?MODULE,
-                            text=io_lib:format("~.10B%", [Percent]),
-                            tag={complete, {story, Name}} }
-                        , #panel{id=Name ++ "_target"}
-                    ]
+    , Panel = #draggable{ id=DraggableId
+                    , style="border-bottom: solid black 3px; padding: 3px;"
+                    , tag=Name
+                    , body=#panel{ id=PanelId
+                        , body=[
+                            Name
+                            , " "
+                            , #link{text="edit"
+                                , actions=#event{ type=click, delegate=?MODULE
+                                                , postback=?SHOW_S_EL(Name)
+                                }
+                            }, " "
+                            , #link{text="delete"
+                                , actions=#event{ 
+                                    type=click
+                                    , delegate=?MODULE
+                                    , postback=?DELETE_S_EL(Name, PanelId)
+                                }
+                            }, #br{}
+                            , #my_inplace_textbox{delegate=?MODULE,
+                                text=io_lib:format("~.10B%", [Percent]),
+                                tag={complete, {story, Name}} }
+                            , #panel{id=Name ++ "_target"}
+                        ]
     }}
-    , element_draggable:render(ControlId, Panel).
+    , element_draggable:render(DraggableId, Panel).
 
 event(?SHOW_S_EL(Name)) ->
     wf:update(Name ++ "_target",

@@ -7,12 +7,14 @@
 -include("iterate_records.hrl").
 
 render(_ControlId, Record) ->
-    Name    = Record#backlog.backlog_name,
-    PanelId = wf:temp_id(),
-    Panel = #delegated_droppable{ tag={Name, {delegate, ?MODULE}},
-        body=body(Name, PanelId) },
-    io:format("the panel id for ~s is ~s~n", [Name, PanelId]),
-    element_delegated_droppable:render(PanelId, Panel).
+    Name    = Record#backlog.backlog_name
+    , PanelId = wf:temp_id()
+    , Panel = #delegated_droppable{ id=PanelId
+        , style="border-bottom: solid black 3px; padding-bottom: 3px;"
+        , tag={Name, {delegate, ?MODULE}}
+        , body=body(Name, PanelId) }
+    , io:format("the panel id for ~s is ~s~n", [Name, PanelId])
+    , element_delegated_droppable:render(PanelId, Panel).
 
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
