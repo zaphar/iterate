@@ -29,7 +29,12 @@ render(ControlId, Record) ->
                                 , tag=?UPDATE_S_DESC(Name), text=Desc}, #br{}
                         , "Story Points: ", #my_inplace_textbox{
                             delegate=?MODULE
-                                , tag=?UPDATESP(Name), text=StoryPoints}, #br{}
+                                , tag=?UPDATESP(Name), text=StoryPoints}
+                        , #button{text="complete"
+                            , actions=#event{type=click
+                                             , delegate=?MODULE
+                                             , postback={complete, {story, Name}}}
+                        }
                         , #button{text="close"
                             , actions=#event{type=click
                                              , delegate=element_story
@@ -63,6 +68,13 @@ inplace_textbox_event(?UPDATE_S_DESC(Name), Value) ->
     , Value;
 inplace_textbox_event(_Tag, Value) ->
     Value
+.
+
+event({complete, {story, Name}}) ->
+    Story = get_story(Name)
+    , Completed = story_util:complete(Story)
+    , iterate_db:story({update, Completed})
+    , element_story_panel:event(?SHOW_STORIES(Story#stories.backlog))
 .
 
 get_story(Name) ->

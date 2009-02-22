@@ -4,6 +4,7 @@
 -export([bootstrap/0, info/0, info/1]).
 -export([backlogs/0, stories/1]).
 -export([backlog/1, story/1]).
+-export([log_time/1]).
 
 -include("macros.hrl").
 -include("iterate_records.hrl").
@@ -211,5 +212,6 @@ log_time({Story, Amount}) ->
         , TLog = Log#time_log.t_series
         , mnesia:write(Log#time_log{t_series=[{Amount, TS} | TLog]})
     end
+    , mnesia:transaction(Trans)
 .
 
