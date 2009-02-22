@@ -2,7 +2,7 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
--include("macros.hrl").
+-include("events.hrl").
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
@@ -77,7 +77,7 @@ event(?CREATE_S(Id, PanelId, Backlog)) ->
     end,
     ok;
 event(Event) -> 
-    io:format("recieved event: ~p~n", [Event]),
+    io:format("recieved unknown event: ~p~n", [Event]),
     ok
 .
 

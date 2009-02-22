@@ -2,7 +2,7 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
--include("macros.hrl").
+-include("events.hrl").
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
@@ -44,10 +44,10 @@ backlogs([H|T], Id) ->
 .
 
 %% showing backlog info
-event({show, {backlog, Name}}) ->
+event(?B_EDIT_SHOW(Name)) ->
     wf:update(Name ++ "_target",
         #backlog_edit{backlog_id=Name, desc="A description"});
-event({remove, {backlog, Name}}) ->
+event(?B_EDIT_REMOVE(Name)) ->
     wf:update(Name ++ "_target", "");
 event(?B_PANEL_CREATE(_Id)) ->
     %% we need a create backlog widget
@@ -78,7 +78,7 @@ event(?CREATE_B(Id, PanelId)) ->
     ok;
 event(?REFRESH(Id)) ->
     wf:update(Id, #backlog_panel{data=iterate_db:backlogs()});
-event({search, Id, PanelId}) ->
+event(?B_PANEL_SEARCH(Id, PanelId)) ->
     [Value] = wf:q(Id),
     io:format("~p searching for: ~p~n", [?MODULE, Value]),
     Results = iterate_db:backlog({search, {id, Value}}),

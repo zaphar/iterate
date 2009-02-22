@@ -3,10 +3,11 @@
 
 -include_lib("nitrogen/include/wf.inc").
 -include("elements.hrl").
--include("macros.hrl").
+-include("events.hrl").
 -include("iterate_records.hrl").
 
-render(ControlId, Record) ->
+%% TODO(jwall): make it so the control id can be used
+render(_ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
     Id       = Record#backlog_edit.backlog_id
     , ElId     = Record#backlog_edit.el_id
@@ -27,14 +28,14 @@ render(ControlId, Record) ->
             "Description goes here"
     end
     , io:format("the description is: ~s~n", [Desc])
-    , Panel = #panel{ id=Name,
-        body=[
+    , Panel = #panel{ id=Name
+        , body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
                 delegate=?MODULE, text=Desc }, #br{}
            , Button
         ]
     }
-    , element_panel:render(ControlId, Panel)
+    , element_panel:render(Name, Panel)
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->

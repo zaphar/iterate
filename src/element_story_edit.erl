@@ -2,11 +2,9 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
--include("macros.hrl").
+-include("events.hrl").
 -include("elements.hrl").
 -include("iterate_records.hrl").
-
--define(UPDATE_T_LOG(Name), {update, {story, Name, time_log}}).
 
 render(ControlId, Record) ->
     PanelId          = wf:temp_id()
@@ -44,12 +42,12 @@ render(ControlId, Record) ->
                         , #button{text="complete"
                             , actions=#event{type=click
                                              , delegate=?MODULE
-                                             , postback={complete, {story, Name}}}
+                                             , postback=?COMPLETE_S(Name)}
                         }
                         , #button{text="close"
                             , actions=#event{type=click
                                              , delegate=element_story
-                                             , postback={remove, {story, Name}}}
+                                             , postback=?REMOVE_S_EL(Name)}
                         }
                     ]
     }
@@ -81,9 +79,7 @@ inplace_textbox_event(_Tag, Value) ->
     Value
 .
 
--define(NEWTIME(Name, Id, PanelId), {newtime, Name, Id, PanelId}).
-
-event({complete, {story, Name}}) ->
+event(?COMPLETE_S(Name)) ->
     Story = get_story(Name)
     , Completed = story_util:complete(Story)
     , iterate_db:story({update, Completed})

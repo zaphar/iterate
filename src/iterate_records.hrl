@@ -7,3 +7,7 @@
                  }
 ).
 -record(time_log, {story, t_series=[]}).
+
+%% query macros
+-define(Q_STORY(Name), {qry, {story, Name}}).
+

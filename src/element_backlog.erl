@@ -3,7 +3,7 @@
 
 -include_lib("nitrogen/include/wf.inc").
 -include("elements.hrl").
--include("macros.hrl").
+-include("events.hrl").
 -include("iterate_records.hrl").
 
 render(_ControlId, Record) ->

@@ -2,8 +2,9 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
--include("macros.hrl").
+-include("events.hrl").
 -include("elements.hrl").
+-include("iterate_records.hrl").
 
 render(_ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
@@ -33,7 +34,7 @@ render(_ControlId, Record) ->
                             }, #br{}
                             , #my_inplace_textbox{delegate=?MODULE,
                                 text=io_lib:format("~.10B%", [Percent]),
-                                tag={complete, {story, Name}} }
+                                tag=?COMPLETE_S(Name) }
                             , #panel{id=Name ++ "_target"}
                         ]
     }}
@@ -51,11 +52,11 @@ event(?DELETE_S_EL(Name, Id)) ->
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
     , event(?REMOVE_S_EL(Name))
     , ok;
-event(_) -> 
-    ok
+event(Event) -> 
+    io:format("~p received ~p event~n", [?MODULE, Event])
 .
 
-inplace_textbox_event({complete, {story, Name}}, Value) ->
+inplace_textbox_event(?COMPLETE_S(Name), Value) ->
     Percent = list_to_integer(
         case lists:last(Value) of
             $% ->

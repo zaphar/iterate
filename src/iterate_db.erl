@@ -6,7 +6,6 @@
 -export([backlog/1, story/1]).
 -export([log_time/1]).
 
--include("macros.hrl").
 -include("iterate_records.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
