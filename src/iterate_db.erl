@@ -39,14 +39,14 @@ bootstrap() ->
            story({new, #stories{backlog=B, story_name=N, sp=3}})
        end
   end
-  , lists:foreach(F("Default"), ["story completion"
-                               , "story order"
-                               , "story time tracking"
-                               ]
+  , lists:foreach(F("Default"), ["00 - Historical event logging"
+                                , "03 - backlog types (iteration/staging)"
+                                , "story order"
+                                , "story time tracking"
+                                ]
   )
   , lists:foreach(F("Idea Pool"), ["01 - Reporting"
                                   , "02 - color code stories"
-                                  , "03 - backlog types (iteration/staging)"
                                   , "04 - comet updates of the stories and backlogs"
                                   , "06 - tasks for stories"
                                   ]
