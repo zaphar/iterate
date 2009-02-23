@@ -8,6 +8,9 @@ main() ->
 	#template { file="./wwwroot/template.html"}.
 
 title() ->
+	"Iterate!".
+
+display_title() ->
 	"Iterate<i>!</i>".
 
 body() ->
