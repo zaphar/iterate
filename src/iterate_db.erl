@@ -96,7 +96,14 @@ backlog({delete, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->
         %% TODO(jwall): need to move all associated stories to default
         %% TODO(jwall): need to enforce non-delete of Default and Idea Pool
-        mnesia:delete({backlogs, Record#backlogs.backlog_name})
+        case Record#backlogs.backlog_name of
+            ?DEFAULTB ->
+                throw({error, {not_allowed, "Default backlog is permanent"}});
+            ?IDEAPOOL ->
+                throw({error, {not_allowed, "Idea Pool Backlog is permanent"}});
+            Name      ->
+                mnesia:delete({backlogs, Name})
+        end
     end
     , mnesia:transaction(Trans);
 backlog({qry, all}) ->
