@@ -49,7 +49,15 @@ event(?DELETE_S_EL(Name, Id)) ->
     Records = iterate_db:story(?Q_STORY(Name))
     , [Record | []] = Records
     , _Result = iterate_db:story({delete, Record})
-    , wf:wire(Id, #hide{ effect=slide, speed=500 })
+    , Actions = #event{type='timer', delay=1
+        , actions=[
+            #hide{ effect=slide, speed=500}
+            , #event{ type='timer', delay=501
+                , delegate=element_story_panel
+                , postback=?SHOW_STORIES(Record#stories.backlog)}
+        ]
+    }
+    , wf:wire(Id, Actions)
     , event(?REMOVE_S_EL(Name))
     , ok;
 event(Event) -> 
