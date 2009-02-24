@@ -34,6 +34,7 @@
 -define(UPDATE_S_DESC(Id), {update, desc, Id}).
 -define(UPDATE_T_LOG(Name), {update, {story, Name, time_log}}).
 -define(NEWTIME(Name, Id, PanelId), {newtime, Name, Id, PanelId}).
+-define(TAGCHANGE(For), {update, {tag, For}}).
 
 %% misc shared event tags
 -define(REFRESH(Id), {refresh, Id}).

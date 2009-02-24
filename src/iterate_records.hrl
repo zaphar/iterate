@@ -7,7 +7,7 @@
                  }
 ).
 -record(time_log, {story, t_series=[]}).
--record(tags, {type, for, value}).
+-record(tags, {value, type, for}).
 
 %% CRUD macros
 -define(Q_STORY(Name), {qry, {story, Name}}).
@@ -17,6 +17,7 @@
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).
+-define(TVALUE(T), T#tags.value).
 
 %% tagging macros
 -define(TAG(Type,For,Value), #tags{type=Type, for=For, value=Value}).

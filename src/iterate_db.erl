@@ -127,7 +127,8 @@ backlog(?Q_BACKLOG(Name)) ->
 backlog({search, {id, Value}}) ->
     Trans = fun() -> 
         QH = qlc:q([B || B <- 
-            mnesia:table(backlogs), string:str(?BNAME(B), Value) /= 0]),
+            mnesia:table(backlogs), string:str(string:to_lower(?BNAME(B)), 
+                string:to_lower(Value)) /= 0]),
         qlc:eval(QH)
     end,
     case mnesia:transaction(Trans) of

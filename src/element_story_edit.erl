@@ -7,21 +7,22 @@
 -include("iterate_records.hrl").
 
 render(ControlId, Record) ->
-    PanelId          = wf:temp_id()
-    , Name           = Record#story_edit.story_name
+    PanelId = wf:temp_id()
+    , Name = Record#story_edit.story_name
     , Story = get_story(Name)
     , TimeLog = iterate_db:log_time({qry, Name})
+    , TagString = string:join(get_tags(Name), ",")
     , TimeSpent = lists:foldl(fun({T, _TS}, T2) -> T + T2 end, 0, TimeLog#time_log.t_series) 
-    , Desc           = case Story#stories.desc of
+    , Desc = case Story#stories.desc of
         undefined ->
             "Fill in Description Here";
         D ->
             D
     end
-    , StoryPoints    = case Story#stories.sp of
+    , StoryPoints = case Story#stories.sp of
         undefined ->
             3;
-        N         ->
+        N ->
             N
     end
     , Panel = #panel{ id=PanelId
@@ -32,6 +33,9 @@ render(ControlId, Record) ->
                         , "Story Points: ", #my_inplace_textbox{
                             delegate=?MODULE
                                 , tag=?UPDATESP(Name), text=StoryPoints}
+                        , "Tags: ", #my_inplace_textbox{
+                            delegate=?MODULE
+                                , tag=?TAGCHANGE(Name), text=TagString}
                         , lists:flatten(
                             io_lib:format("Time Spent: ~.10B Hours ", [TimeSpent]))
                         , #br{}
@@ -75,8 +79,14 @@ inplace_textbox_event(?UPDATE_S_DESC(Name), Value) ->
     , Updated = Story#stories{desc=Value}
     , iterate_db:story({update, Updated})
     , Value;
-inplace_textbox_event(_Tag, Value) ->
-    Value
+inplace_textbox_event(?TAGCHANGE(For), Value) ->
+    TagList = string:tokens(Value, ",")
+    , io:format("~p recieved tags:  [~p] for ~p~n", [?MODULE, TagList, For])
+    , [iterate_db:tags(?NEWTAG(story, For, T)) || T <- TagList]
+    , Value;
+inplace_textbox_event(Tag, Value) ->
+    event({inplace_event, Tag})
+    , Value
 .
 
 event(?COMPLETE_S(Name)) ->
@@ -113,6 +123,16 @@ get_story(Name) ->
             Result;
         _ ->
             throw("whoah what was that?")
+    end
+.
+
+get_tags(Name) ->
+    {atomic, TagList} = iterate_db:tags(?Q_TAGS(story, Name))
+    , case TagList of
+        [] ->
+            [?TVALUE(T) || T <- [?STAG(Name, "tag")] ];
+        List ->
+            [?TVALUE(T) || T <- List]
     end
 .
 
