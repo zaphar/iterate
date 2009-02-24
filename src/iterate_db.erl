@@ -4,6 +4,7 @@
 -export([bootstrap/0, info/0, info/1]).
 -export([backlogs/0, stories/1]).
 -export([backlog/1, story/1]).
+-export([tags/1]).
 -export([log_time/1]).
 
 -include("iterate_records.hrl").
@@ -27,9 +28,8 @@ setup() ->
     , mk_table(backlogs, record_info(fields, backlogs))
     , mk_table(stories, record_info(fields, stories))
     , mk_table(time_log, record_info(fields, time_log))
-    , bootstrap()
+    , mk_table(tags, record_info(fields, tags))
 .
-
 
 bootstrap() ->
    backlog({new, ?DEFAULTB})
@@ -113,10 +113,10 @@ backlog({qry, all}) ->
             RecordList;
         {abort, Msg} ->
             {error, Msg};
-        _ ->
-            {error, "whoah what was that?"}
+        Error ->
+            throw({error, Error})
     end;
-backlog({qry, Name}) ->
+backlog(?Q_BACKLOG(Name)) ->
     Trans = fun() -> mnesia:read({backlogs, Name}) end,
     case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
@@ -127,7 +127,7 @@ backlog({qry, Name}) ->
 backlog({search, {id, Value}}) ->
     Trans = fun() -> 
         QH = qlc:q([B || B <- 
-            mnesia:table(backlogs), string:str(B#backlogs.backlog_name, Value) /= 0]),
+            mnesia:table(backlogs), string:str(?BNAME(B), Value) /= 0]),
         qlc:eval(QH)
     end,
     case mnesia:transaction(Trans) of
@@ -197,6 +197,35 @@ story({qry, {backlog, Name}}) ->
 
 stories(B) ->
     story({qry, {backlog, B}})
+.
+
+tags(?NEWTAG(story, For, Value)) ->
+    Trans = fun() ->
+        %% look for story before adding tag
+        case story(?Q_STORY(For)) of
+            [_Story] ->
+                mnesia:write(?STAG(For, Value));
+            [] ->
+                throw({error, no_such_story})
+        end
+    end
+    , mnesia:transaction(Trans);
+tags(?NEWTAG(backlog, For, Value)) ->
+    Trans = fun() ->
+        %% look for backlog before adding tag
+        case backlog(?Q_BACKLOG(For)) of
+            [_Backlog] ->
+                mnesia:write(?BTAG(For, Value));
+            [] ->
+                throw({error, no_such_backlog})
+        end
+    end
+    , mnesia:transaction(Trans);
+tags(?Q_TAGS(Type, For)) ->
+    Trans = fun() ->
+        mnesia:match_object(?TAG(Type, For,'_'))
+     end
+    , mnesia:transaction(Trans)
 .
 
 log_time({qry, Story}) ->

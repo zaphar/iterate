@@ -18,6 +18,7 @@ start() ->
     , backlog_delete_test()
     , stories_test()
     , make_story_test()
+    , tags_test()
 .
 
 -plan(10).
@@ -49,12 +50,13 @@ info_test() ->
         , "we can ask the database if it's running or not")
 .
 
--plan(3).
+-plan(4).
 create_table_test() ->
     iterate_db:setup()
     , etap:is(iterate_db:info(is_running), yes, "the database is running")
     , create_table_test(backlogs)
     , create_table_test(stories)
+    , create_table_test(tags)
 .
 
 create_table_test(Table) ->
@@ -133,8 +135,22 @@ make_story_test() ->
 -plan(2).
 stories_test() ->
     etap:skip(fun() -> 
-            etap:is(iterate_db:stories("Default"), ["Story One"], "got the story")
+            etap:is(iterate_db:stories("Default"), ["Story One"],
+                "got the story")
             , etap:is(iterate_db:stories("foo"), [], "got no stories")
         end, "not implemented yet")
-    .
+.
+
+-plan(3).
+tags_test() ->
+    etap:is(iterate_db:tags(?NEWTAG(story, foobar, bar)),
+        {aborted, {throw, {error, no_such_story}}},
+        "tag for a nonexistent story throw error")
+    , iterate_db:story({new, #stories{story_name=foo, backlog="Default"}})
+    , etap:is(iterate_db:tags(?NEWTAG(story, foo, bar)),
+        {atomic, ok},
+        "tag for an existing story works")
+    , {atomic, [Tag]} = iterate_db:tags(?Q_TAGS(story, foo))
+    , etap:is(Tag, ?STAG(foo, bar), "the tag matches")
+.
 
