@@ -10,15 +10,26 @@ render(_ControlId, Record) ->
     %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId = wf:temp_id()
     , DraggableId = wf:temp_id()
+    , OrderElId = wf:temp_id()
     , Name    = Record#story.story_name
     , [Story] = iterate_db:story(?Q_STORY(Name))
+    , Order = story_util:order(Story)
     , Percent = story_util:completion(Story)
     , Panel = #draggable{ id=DraggableId
                     , style="border-bottom: solid black 3px; padding: 3px;"
                     , tag=Name
                     , body=#panel{ id=PanelId
                         , body=[
-                            Name
+                            #textbox{ id=OrderElId
+                                , actions=#event{
+                                    type=change
+                                    , delegate=?MODULE
+                                    , postback=?ORDEDIT(Name, OrderElId)
+                                }
+                                , style="width: 20px;"
+                                , text=lists:flatten(
+                                    io_lib:format("~.10B", [Order]))}
+                            , " - ", Name
                             , " "
                             , #link{text="edit"
                                 , actions=#event{ type=click, delegate=?MODULE
@@ -60,6 +71,20 @@ event(?DELETE_S_EL(Name, Id)) ->
     , wf:wire(Id, Actions)
     , event(?REMOVE_S_EL(Name))
     , ok;
+event(?ORDEDIT(Name, Id)) ->
+    Value = case wf:q(Id) of
+        [] ->
+            0;
+        [Found] ->
+            Found
+    end
+    , io:format("updating order of ~p to ~p", [Name, Value])
+    , Story = get_story(Name)
+    , Updated = story_util:set_order(Story, Value)
+    , iterate_db:story({update, Updated})
+    , io:format("changing order ~p to ~p", [story_util:order(Story),
+        story_util:order(Updated)])
+    , Value;
 event(Event) -> 
     io:format("~p received ~p event~n", [?MODULE, Event])
 .
@@ -80,3 +105,7 @@ inplace_textbox_event(?COMPLETE_S(Name), Value) ->
     , ReturnValue
 .
 
+get_story(Name) ->
+    [Story] = iterate_db:story(?Q_STORY(Name))
+    , Story
+.

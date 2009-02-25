@@ -187,8 +187,10 @@ story(?Q_STORY(Name)) ->
 story({qry, {backlog, Name}}) ->
     Trans = fun() -> mnesia:match_object(#stories{backlog=Name, _='_'}) end,
     case mnesia:transaction(Trans) of
+        {atomic, []} ->
+            [];
         {atomic, RecordList} ->
-            RecordList;
+            story_util:sort(ord, RecordList);
         {abort, Msg} ->
             {error, Msg};
         E ->

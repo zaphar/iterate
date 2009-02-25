@@ -44,6 +44,8 @@ order(Story) when is_record(Story, stories) ->
     end
 .
 
+set_order(Story, Num) when is_list(Num) ->
+    set_order(Story, list_to_integer(Num));
 set_order(Story, Num) when is_record(Story, stories) ->
     Meta = Story#stories.meta
     , Meta2 = lists:keystore(ord, 1, Meta, 

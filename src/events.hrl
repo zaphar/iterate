@@ -28,6 +28,7 @@
 -define(REMOVE_S_EL(Name), {remove, {story, Name}}).
 -define(DELETE_S_EL(Name, ElId), {delete, {story, Name, ElId}}).
 -define(COMPLETE_S(Name), {complete, {story, Name}}).
+-define(ORDEDIT(Name, Id), {update, order, {story, Name, Id}}).
 
 %% story editing event tags
 -define(UPDATESP(Id), {update, sp, Id}).
