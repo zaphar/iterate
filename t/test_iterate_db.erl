@@ -19,6 +19,7 @@ start() ->
     , stories_test()
     , make_story_test()
     , tags_test()
+    , iteration_test()
 .
 
 -plan(10).
@@ -33,6 +34,8 @@ module_test() ->
     , can_ok(iterate_db, setup, 0)
     , can_ok(iterate_db, backlog, 1)
     , can_ok(iterate_db, story, 1)
+    , can_ok(iterate_db, iterations, 0)
+    , can_ok(iterate_db, iteration, 1)
 .
 
 -plan(2).
@@ -152,5 +155,19 @@ tags_test() ->
         "tag for an existing story works")
     , {atomic, [Tag]} = iterate_db:tags(?Q_TAGS(story, foo))
     , etap:is(Tag, ?STAG(foo, bar), "the tag matches")
+.
+
+-plan(3).
+iteration_test() ->
+    Name = "my iteration"
+    , Desc = "test iteration"
+    , etap:is(iterate_db:iteration(?NEWITER(Name, Desc)),
+        {atomic, ok}, "got success for creating an iteration")
+    , etap:is(iterate_db:iteration(?Q_ITERATION("my iteration")),
+        [#iterations{iteration_name=Name, desc=Desc}],
+        "got our iteration back out")
+    , etap:is(iterate_db:iteration(?Q_ALL),
+        [#iterations{iteration_name=Name, desc=Desc}],
+        "got all iterations back out")
 .
 

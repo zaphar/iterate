@@ -6,6 +6,7 @@
 -export([backlog/1, story/1]).
 -export([tags/1]).
 -export([log_time/1]).
+-export([iterations/0, iteration/1]).
 
 -include("iterate_records.hrl").
 -include_lib("stdlib/include/qlc.hrl").
@@ -29,6 +30,7 @@ setup() ->
     , mk_table(stories, record_info(fields, stories))
     , mk_table(time_log, record_info(fields, time_log))
     , mk_table(tags, record_info(fields, tags))
+    , mk_table(iterations, record_info(fields, iterations))
 .
 
 bootstrap() ->
@@ -136,6 +138,41 @@ backlog({search, {id, Value}}) ->
             RecordList;
         {abort, Msg} ->
             {error, Msg}
+    end
+.
+
+iterations() ->
+    iteration(?Q_ALL)
+.
+
+iteration(?Q_ALL) ->
+    Trans = fun() ->
+        mnesia:match_object(#iterations{_='_'})
+    end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        Error ->
+            throw({error, Error})
+    end;
+iteration(?NEWITER(Name, Desc)) ->
+    Trans = fun() ->
+        mnesia:write(#iterations{iteration_name=Name, desc=Desc})
+    end
+    , mnesia:transaction(Trans);
+iteration(?Q_ITERATION(Name)) ->
+    Trans = fun() ->
+        mnesia:read({iterations, Name})
+    end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        Msg ->
+            throw({error, Msg})
     end
 .
 
