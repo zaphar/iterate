@@ -10,6 +10,8 @@ start() ->
     , test_completion()
     , test_complete()
     , test_order()
+    , test_sort_by_order_asc()
+    , test_sort_by_order_desc()
     , etap:end_tests()
 .
 
@@ -41,3 +43,35 @@ test_order() ->
     , Story2 = story_util:set_order(Story, 30)
     , etap:is(story_util:order(Story2), 30, "successfully set order")
 .
+
+-plan(2).
+test_sort_by_order_desc() ->
+    List = make_ord_list([6,3,9,1])
+    , [SortedAscFirst | _]  = story_util:sort({ord, desc}, List)
+    , etap:is(story_util:order(SortedAscFirst), 9,
+        "the last shall be first for desc")
+    , [SortedAscLast | _]   = lists:reverse(story_util:sort({ord, desc}, List))
+    , etap:is(story_util:order(SortedAscLast), 1,
+        "the first shall be last for desc sort")
+.
+
+-plan(2).
+test_sort_by_order_asc() ->
+    List = make_ord_list([6,3,9,1])
+    , [SortedAscFirst | _]  = story_util:sort({ord, asc}, List)
+    , etap:is(story_util:order(SortedAscFirst), 1,
+        "the first shall be first for asc sort")
+    , [SortedAscLast | _]   = lists:reverse(story_util:sort({ord, asc}, List))
+    , etap:is(story_util:order(SortedAscLast), 9,
+        "the last shall be last for asc sort")
+.
+
+make_ord_story(N) -> #stories{meta=[{ord, N}]} .
+
+make_ord_list([]) ->
+    [];
+make_ord_list(L) ->
+    [N | T] = L
+    , [make_ord_story(N) | make_ord_list(T)]
+.
+

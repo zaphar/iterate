@@ -4,6 +4,7 @@
 
 -export([completion/1, complete/1, set_percent/2]).
 -export([order/1, set_order/2]).
+-export([sort/2]).
 
 completion(Story) when is_record(Story, stories) ->
     Meta = Story#stories.meta,
@@ -48,5 +49,17 @@ set_order(Story, Num) when is_record(Story, stories) ->
     , Meta2 = lists:keystore(ord, 1, Meta, 
         {ord, Num})
     , Story#stories{meta=Meta2}
+.
+
+sort(ord, StoryList) ->
+    sort({ord, asc}, StoryList);
+sort({ord, desc}, StoryList) ->
+    lists:sort(fun(S1, S2) ->
+            order(S1) > order(S2)
+        end, StoryList);
+sort({ord, asc}, StoryList) ->
+    lists:sort(fun(S1, S2) ->
+            order(S2) > order(S1)
+        end, StoryList)
 .
 
