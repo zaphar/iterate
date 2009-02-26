@@ -22,7 +22,7 @@ start() ->
     , iteration_test()
 .
 
--plan(10).
+-plan(12).
 module_test() ->
     loaded_ok(iterate_db, "iterate_db module loaded ok")
     , can_ok(iterate_db, backlogs, 0)
@@ -137,11 +137,12 @@ make_story_test() ->
 
 -plan(2).
 stories_test() ->
-    etap:skip(fun() -> 
-            etap:is(iterate_db:stories("Default"), ["Story One"],
+    Story = #stories{story_name="Story One",
+        backlog="Default"}
+    , iterate_db:story({new, Story})
+    , etap:is(iterate_db:stories("Default"), [Story],
                 "got the story")
-            , etap:is(iterate_db:stories("foo"), [], "got no stories")
-        end, "not implemented yet")
+    , etap:is(iterate_db:stories("foo"), [], "got no stories")
 .
 
 -plan(3).
@@ -157,7 +158,7 @@ tags_test() ->
     , etap:is(Tag, ?STAG(foo, bar), "the tag matches")
 .
 
--plan(3).
+-plan(4).
 iteration_test() ->
     Name = "my iteration"
     , Desc = "test iteration"
@@ -169,5 +170,9 @@ iteration_test() ->
     , etap:is(iterate_db:iteration(?Q_ALL),
         [#iterations{iteration_name=Name, desc=Desc}],
         "got all iterations back out")
+    , iterate_db:iteration(?DELITER(Name))
+    , etap:is(iterate_db:iteration(?Q_ITERATION("my iteration")),
+        [],
+        "iteration successfully deleted")
 .
 

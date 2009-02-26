@@ -14,13 +14,14 @@
 ).
 
 %% CRUD macros
+-define(Q_ALL, {qry, all}).
 -define(Q_STORY(Name), {qry, {story, Name}}).
 -define(Q_BACKLOG(Name), {qry, Name}).
 -define(Q_ITERATION(Name), {qry, Name}).
 -define(Q_TAGS(Type, For), {qry, Type, For}).
 -define(NEWTAG(Type, For, Value), {new, {Type, For, Value}}).
 -define(NEWITER(Name, Desc), {new, {iteration, Name, Desc}}).
--define(Q_ALL, {qry, all}).
+-define(DELITER(Name), {delete, {iteration, Name}}).
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).

@@ -162,6 +162,11 @@ iteration(?NEWITER(Name, Desc)) ->
         mnesia:write(#iterations{iteration_name=Name, desc=Desc})
     end
     , mnesia:transaction(Trans);
+iteration(?DELITER(Name)) ->
+    Trans = fun() ->
+        mnesia:delete({iterations, Name})
+    end
+    , mnesia:transaction(Trans);
 iteration(?Q_ITERATION(Name)) ->
     Trans = fun() ->
         mnesia:read({iterations, Name})
