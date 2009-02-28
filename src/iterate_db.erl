@@ -145,18 +145,6 @@ iterations() ->
     iteration(?Q_ALL)
 .
 
-iteration(?Q_ALL) ->
-    Trans = fun() ->
-        mnesia:match_object(#iterations{_='_'})
-    end
-    , case mnesia:transaction(Trans) of
-        {atomic, RecordList} ->
-            RecordList;
-        {abort, Msg} ->
-            {error, Msg};
-        Error ->
-            throw({error, Error})
-    end;
 iteration(?NEWITER(Name, Desc)) ->
     iteration(?STOREITER(#iterations{iteration_name=Name, desc=Desc}));
 iteration(?UPDATEITER(Iter)) ->
@@ -171,6 +159,18 @@ iteration(?DELITER(Name)) ->
         mnesia:delete({iterations, Name})
     end
     , mnesia:transaction(Trans);
+iteration(?Q_ALL) ->
+    Trans = fun() ->
+        mnesia:match_object(#iterations{_='_'})
+    end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        Error ->
+            throw({error, Error})
+    end;
 iteration(?Q_ITERATION(Name)) ->
     Trans = fun() ->
         mnesia:read({iterations, Name})
@@ -275,6 +275,7 @@ tags(?Q_TAGS(Type, For)) ->
         mnesia:match_object(?TAG(Type, For,'_'))
      end
     , mnesia:transaction(Trans)
+%% TODO(jwall): search by tag value within a type
 .
 
 log_time({qry, Story}) ->

@@ -6,6 +6,8 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
+%% TODO(jwall): these panels are getting general enough I think a 
+%5              refactor is in order.
 render(ControlId, Record) ->
     PanelId = "backlog_panel"
     , io:format("the control id is ~p~n", [ControlId])
@@ -43,6 +45,8 @@ backlogs([H|T], Id) ->
     , [ #backlog{backlog_name=Name, container=Id} | backlogs(T, Id) ]
 .
 
+%% TODO(jwall): abstract these callbacks
+%5              out to a general panel callback module?
 %% showing backlog info
 event(?B_EDIT_SHOW(Name)) ->
     wf:update(Name ++ "_target",
