@@ -22,6 +22,8 @@
 -define(NEWTAG(Type, For, Value), {new, {Type, For, Value}}).
 -define(NEWITER(Name, Desc), {new, {iteration, Name, Desc}}).
 -define(DELITER(Name), {delete, {iteration, Name}}).
+-define(UPDATEITER(Iter), {update, {iteration, Iter}}).
+-define(STOREITER(Iter), {store, {iteration, Iter}}).
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).

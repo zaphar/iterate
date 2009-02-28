@@ -19,7 +19,7 @@ start() ->
     , stories_test()
     , make_story_test()
     , tags_test()
-    , iteration_test()
+    , iteration_create_test()
 .
 
 -plan(12).
@@ -159,7 +159,7 @@ tags_test() ->
 .
 
 -plan(4).
-iteration_test() ->
+iteration_create_test() ->
     Name = "my iteration"
     , Desc = "test iteration"
     , etap:is(iterate_db:iteration(?NEWITER(Name, Desc)),

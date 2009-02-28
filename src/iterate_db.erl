@@ -158,8 +158,12 @@ iteration(?Q_ALL) ->
             throw({error, Error})
     end;
 iteration(?NEWITER(Name, Desc)) ->
+    iteration(?STOREITER(#iterations{iteration_name=Name, desc=Desc}));
+iteration(?UPDATEITER(Iter)) ->
+    iteration(?STOREITER(Iter));
+iteration(?STOREITER(Iter)) when is_record(Iter, iterations) ->
     Trans = fun() ->
-        mnesia:write(#iterations{iteration_name=Name, desc=Desc})
+        mnesia:write(Iter)
     end
     , mnesia:transaction(Trans);
 iteration(?DELITER(Name)) ->
