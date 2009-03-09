@@ -83,12 +83,15 @@ backlog({update, Record}) when is_record(Record, backlogs) ->
     backlog({store, Record});
 %% TODO(jwall): need to update all stories for this backlog also
 backlog({mutate, Record, RecordMutation}) when is_record(Record, backlogs) ->
-    backlog({delete, Record}),
-    Stories = story({qry, Record#backlogs.backlog_name}),
-    lists:foreach(fun(Story) -> 
-        story({update, Story#stories{backlog=Record#backlogs.backlog_name}})
-    end, Stories),
-    backlog({new, RecordMutation});
+    Trans = fun() -> backlog({delete, Record})
+        , Stories = story({qry, Record#backlogs.backlog_name})
+        , lists:foreach(fun(Story) -> 
+                story({update, Story#stories{
+                    backlog=RecordMutation#backlogs.backlog_name}})
+            end, Stories),
+        backlog({new, RecordMutation})
+    end
+    , mnesia:transaction(Trans);
 backlog({store, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->
         mnesia:write(Record)
@@ -96,8 +99,6 @@ backlog({store, Record}) when is_record(Record, backlogs) ->
     , mnesia:transaction(Trans);
 backlog({delete, Record}) when is_record(Record, backlogs) ->
     Trans = fun() ->
-        %% TODO(jwall): need to move all associated stories to default
-        %% TODO(jwall): need to enforce non-delete of Default and Idea Pool
         case Record#backlogs.backlog_name of
             ?DEFAULTB ->
                 throw({error, {not_allowed, "Default backlog is permanent"}});
@@ -106,6 +107,11 @@ backlog({delete, Record}) when is_record(Record, backlogs) ->
             Name      ->
                 mnesia:delete({backlogs, Name})
         end
+        , Stories = story(?Q_STORY(Record#backlogs.backlog_name))
+        , lists:foreach(fun(Story) -> 
+                story({update, Story#stories{
+                    backlog=?DEFAULTB}})
+            end, Stories)
     end
     , mnesia:transaction(Trans);
 backlog({qry, all}) ->
@@ -278,7 +284,7 @@ tags(?Q_TAGS(Type, For)) ->
 %% TODO(jwall): search by tag value within a type
 .
 
-log_time({qry, Story}) ->
+log_time(?Q_STORY_TIME(Story)) ->
     Trans = fun() -> mnesia:read({time_log, Story}) end
     , case mnesia:transaction(Trans) of
         {atomic, [Log]} ->
@@ -290,7 +296,7 @@ log_time({qry, Story}) ->
         E ->
             throw({error, E})
     end;
-log_time({Story, Amount}) ->
+log_time(?UPDATETIME(Story, Amount)) ->
     TS = erlang:universaltime()
     , Trans = fun() ->
         Log = log_time({qry, Story})

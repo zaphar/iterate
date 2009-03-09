@@ -6,9 +6,7 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-%% TODO(jwall): make it so the control id can be used
 render(_ControlId, Record) ->
-    %% TODO(jwall): change to temp ids wf:temp_id()
     Id       = Record#backlog_edit.backlog_id
     , ElId     = Record#backlog_edit.el_id
     , Name     = Id ++ "_BacklogEditBox"

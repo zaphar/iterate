@@ -37,7 +37,6 @@ body(Name, PanelId) ->
     , #panel{id=Name ++ "_target"}].
 
 %% showing backlog info
-%% TODO(jwall): need to hide edit button for this?
 event(?UPDATE_B_EL(Name, Id)) ->
     io:format("updating backlog widget ~s for: ~s~n", [Id, Name])
     , case iterate_db:backlog({qry, Name}) of

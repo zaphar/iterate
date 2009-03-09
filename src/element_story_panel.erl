@@ -7,7 +7,6 @@
 -include("iterate_records.hrl").
 
 render(ControlId, Record) ->
-    %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId = wf:temp_id()
     , Data    = case Record#story_panel.data of
         undefined ->

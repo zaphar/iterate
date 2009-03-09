@@ -10,7 +10,7 @@ render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , Name = Record#story_edit.story_name
     , Story = get_story(Name)
-    , TimeLog = iterate_db:log_time({qry, Name})
+    , TimeLog = iterate_db:log_time(?Q_STORY_TIME(Name))
     , TagString = string:join(get_tags(Name), ",")
     , TimeSpent = lists:foldl(fun({T, _TS}, T2) -> T + T2 end, 0, TimeLog#time_log.t_series) 
     , Desc = case Story#stories.desc of
@@ -64,7 +64,6 @@ map_entry(Id, Attr) when is_atom(Attr) ->
 map_entry(Id, Attr) when is_list(Id), is_list(Attr) ->
     list_to_atom(Id ++ "@" ++ Attr).
 
-%% TODO(jwall): bind this to do actual work
 inplace_textbox_event(?UPDATESP(Name), Value) ->
     io:format("updating story points for ~s~n", [Name]),    
     Story = get_story(Name),
@@ -107,7 +106,7 @@ event(?UPDATE_T_LOG(Name)) ->
 event(?NEWTIME(Name, Id, PanelId)) ->
     [ValueString] = wf:q(Id)
     , Value = list_to_integer(ValueString)
-    , iterate_db:log_time({Name, Value})
+    , iterate_db:log_time(?UPDATETIME(Name, Value))
     , wf:update(PanelId, 
         io_lib:format("Updated time for ~p to ~p", [Name, Value]))
     , element_story:event(?SHOW_S_EL(Name));
@@ -116,7 +115,7 @@ event(Event) ->
 .
 
 get_story(Name) ->
-    case iterate_db:story({qry, {story, Name}}) of
+    case iterate_db:story(?Q_STORY(Name)) of
         {error, Msg} ->
             throw(Msg);
         [Result | []] ->

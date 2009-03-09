@@ -24,6 +24,8 @@
 -define(DELITER(Name), {delete, {iteration, Name}}).
 -define(UPDATEITER(Iter), {update, {iteration, Iter}}).
 -define(STOREITER(Iter), {store, {iteration, Iter}}).
+-define(Q_STORY_TIME(Story), {qry, Story}).
+-define(UPDATETIME(Story, Amount), {update, {log_time, {Story, Amount}}}).
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).

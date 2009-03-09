@@ -7,7 +7,6 @@
 -include("iterate_records.hrl").
 
 render(_ControlId, Record) ->
-    %% TODO(jwall): change to temp ids wf:temp_id()
     PanelId = wf:temp_id()
     , DraggableId = wf:temp_id()
     , OrderElId = wf:temp_id()

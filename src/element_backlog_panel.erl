@@ -21,7 +21,7 @@ render(ControlId, Record) ->
     , SearchEvent = #event{type=change, delegate=?MODULE,
         postback={search, SearchId, ControlId}}
     , Panel = #rounded_panel{ body=[
-        #textbox{id=SearchId, text="Search Backlogs", actions=SearchEvent},
+        #textbox{id=SearchId, text="Filter Backlogs", actions=SearchEvent},
         #panel{id=PanelId, body=backlogs(Data, ControlId)}]}
     , element_rounded_panel:render(ControlId, Panel)
 .
