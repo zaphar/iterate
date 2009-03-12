@@ -12,6 +12,8 @@
     backlog_id, desc, el_id}).
 -record(backlog,      {?ELEMENT_BASE(element_backlog),      ?ITER_ELEMENT_BASE,
     backlog_name, container}).
+-record(iteration,      {?ELEMENT_BASE(element_iteration),  ?ITER_ELEMENT_BASE,
+    iteration_name, container}).
 -record(story_edit,   {?ELEMENT_BASE(element_story_edit),   ?ITER_ELEMENT_BASE,
     story_name, desc, sp}).
 -record(story,        {?ELEMENT_BASE(element_story),        ?ITER_ELEMENT_BASE,
@@ -23,5 +25,6 @@
 
 %% elements for the high level widgets
 -record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined}).
+-record(iteration_panel, {?ELEMENT_BASE(element_iteration_panel), data=undefined}).
 -record(story_panel, {?ELEMENT_BASE(element_story_panel), data=undefined}).
 

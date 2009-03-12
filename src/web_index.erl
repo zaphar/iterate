@@ -5,32 +5,46 @@
 
 %%TODO(jwall): move the following into the main index page
 main() ->
-	#template { file="./wwwroot/template.html"}.
+	#template { file="./wwwroot/template.html"}
+.
 
 title() ->
-	"Iterate!".
+	"Iterate!"
+.
 
 display_title() ->
-	"Iterate<i>!</i>".
+	"Iterate<i>!</i>"
+.
 
 body() ->
     #panel{ id=main, body=[
         #hr{}
         , body(contents)
-    ]}.
+    ]}
+.
 
 body(contents) ->
     #singlerow{ id=main, cells=[
-	    #tablecell{ body=[backlog_panel()] },
-        #tablecell{ body=[story_panel()] }
-    ]}.
+	    #tablecell{ body=[iteration_panel()
+            , backlog_panel()] }
+        , #tablecell{ body=[story_panel()] }
+    ]}
+.
 
 backlog_panel() ->
-    #backlog_panel{data=iterate_db:backlogs()}.
+    #backlog_panel{data=iterate_db:backlogs()}
+.
+
+iteration_panel() ->
+    #iteration_panel{data=iterate_db:iterations()}
+.
 
 story_panel() ->
-    #story_panel{ data=[] }.
+    #story_panel{ data=[] }
+.
 
-event(_) -> 
-    %%TODO(jwall): log unhandled events here
-    ok.
+event(Event) -> 
+    io:format("~p recieved event: ~p~n", [?MODULE, Event]),
+    ok
+.
+
