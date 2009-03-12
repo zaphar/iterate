@@ -44,6 +44,10 @@ stories([H|T], Name) ->
 event(?SHOW_STORIES(Name)) ->
     StoryList = [ S#stories.story_name || S <- iterate_db:stories(Name) ],
     wf:update(story_list, stories(StoryList, Name) );
+event(?SHOW_ITERATION_STORIES(Name)) ->
+    %% TODO(jwall): db method to lookup stories for an iteration
+    StoryList = [ S#stories.story_name || S <- iterate_db:stories(Name) ],
+    wf:update(story_list, stories(StoryList, Name) );
 event(?S_PANEL_CREATE(undefined)) ->
     wf:flash("can't create stories without a backlog");
 event(?S_PANEL_CREATE(Backlog)) ->

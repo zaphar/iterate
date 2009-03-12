@@ -237,7 +237,7 @@ story(?Q_STORY(Name)) ->
         {abort, Msg} ->
             {error, Msg}
     end;
-story({qry, {backlog, Name}}) ->
+story(?Q_BACKLOG_STORY(Name)) ->
     Trans = fun() -> mnesia:match_object(#stories{backlog=Name, _='_'}) end,
     case mnesia:transaction(Trans) of
         {atomic, []} ->
@@ -248,11 +248,30 @@ story({qry, {backlog, Name}}) ->
             {error, Msg};
         E ->
             throw({error, E})
+    end;
+story(?Q_ITERATION_STORY(Name)) ->
+    Trans = fun() ->
+        case iteration(?Q_ITERATION(Name)) of
+            [] ->
+                throw({error, no_such_iteration});
+            [Iter] ->
+                iteration_util:stories(Iter);
+            Msg ->
+                throw({error, Msg})
+        end
+    end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        Msg ->
+            throw({error, Msg})
     end
 .
 
 stories(B) ->
-    story({qry, {backlog, B}})
+    story(?Q_BACKLOG_STORY(B))
 .
 
 tags(?NEWTAG(story, For, Value)) ->

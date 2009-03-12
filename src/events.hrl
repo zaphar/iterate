@@ -21,7 +21,8 @@
 -define(CREATE_S(Id, PanelId, Backlog), {create, {new, story},
     {backlog, Backlog}, Id, PanelId}).
 -define(S_PANEL_CREATE(B), {create, story, B}).
--define(SHOW_STORIES(Name), {show, {stories, Name}}).
+-define(SHOW_STORIES(Name), {show, {stories, {backlog, Name}}}).
+-define(SHOW_ITERATION_STORIES(Name), {show, {stories, {iteration, Name}}}).
 
 %% story element event tags
 -define(SHOW_S_EL(Name), {show, {story, Name}}).

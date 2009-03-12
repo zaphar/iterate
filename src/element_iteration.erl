@@ -19,6 +19,7 @@ render(_ControlId, Record) ->
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
+                   %% TODO(jwall): new event?
                    , postback=?SHOW_STORIES(Name)
             }
             , body=[#label{ id=Name ++ "_name", text=Name}
@@ -66,12 +67,12 @@ event(Event) ->
 %% move a story to a backlog
 drop_event(Story, Backlog) ->
     io:format("received event: ~p -> ~p~n", [Story, Backlog])
-    , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
-    , io:format("found story: ~p ~n", [StoryRecord])
-    , OldBacklog = StoryRecord#stories.backlog
-    , io:format("changed story to: ~p ~n", [StoryRecord#stories{backlog=Backlog}])
-    , iterate_db:story({update, StoryRecord#stories{backlog=Backlog}})
-    , element_story_panel:event(?SHOW_STORIES(OldBacklog))
-    , ok
+    %%, [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
+    %%, io:format("found story: ~p ~n", [StoryRecord])
+    %%, OldBacklog = StoryRecord#stories.backlog
+    %%, io:format("changed story to: ~p ~n", [StoryRecord#stories{backlog=Backlog}])
+    %%, iterate_db:story({update, StoryRecord#stories{backlog=Backlog}})
+    %%, element_story_panel:event(?SHOW_STORIES(OldBacklog))
+    %%, ok
 .
 
