@@ -152,6 +152,7 @@ iterations() ->
 .
 
 iteration(?NEWITER(Name, Desc)) ->
+    %% TODO(jwall) respect users
     iteration(?STOREITER(#iterations{iteration_name=Name, desc=Desc}));
 iteration(?UPDATEITER(Iter)) ->
     iteration(?STOREITER(Iter));

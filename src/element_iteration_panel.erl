@@ -38,6 +38,17 @@ iterations([H|T]) ->
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
+event(?STARTITER) ->
+    io:format("starting an iteration~n", [])
+    , PanelId = wf:temp_id()
+    , TextBoxId = wf:temp_id()
+    , ButtonId = wf:temp_id()
+    , Panel = #panel{ id=PanelId, body=[ "Enter an Iteration Name: "
+        , #textbox{ id=TextBoxId
+            , next=ButtonId
+            , postback=?STARTITERTNAME(TextBoxId, PanelId)}
+        , #button{id=ButtonId, text="Ok"}] }
+    , wf:flash(Panel);
 event(Event) ->
     io:format("~p recieved event: ~p~n", [?MODULE, Event]),
     ok
