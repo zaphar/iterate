@@ -19,7 +19,12 @@ render(_ControlId, Record) ->
             D
     end
     , Panel = #rounded_panel{ id=PanelId, body=[
-        #panel{id=ButtonsId, body=["Iterations"]}
+        #panel{id=ButtonsId, body=["Iterations"
+            , #br{}
+            , #link{ text="Start Iteration"
+                    , actions=#event{type=click
+                        , delegate=?MODULE
+                        , postback=?STARTITER}}]}
         , #panel{id=ContentId, body=iterations(Data)}]}
     , element_rounded_panel:render(PanelId, Panel)
 .

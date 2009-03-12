@@ -40,4 +40,4 @@
 %% misc shared event tags
 -define(REFRESH(Id), {refresh, Id}).
 -define(REFRESH_TYPE(Id, Type), {refresh, Id, Type}).
-
+-define(STARTITER, {start, iteration}).
