@@ -48,7 +48,7 @@ event(?SHOW_B_EL(Name, Id)) ->
     , case iterate_db:iteration(?Q_ITERATION(Name)) of
         [B | []] ->
             wf:update(Name ++ "_target",
-                #backlog_edit{ backlog_id=Name, el_id=Id, desc=B#backlogs.desc })
+                #iteration_edit{ iteration_id=Name, el_id=Id, desc=B#iterations.desc })
     end;
 event(?DELETE_B_EL(Name, Id)) ->
     wf:flash(io_lib:format("hiding element: ~p~n", [Id]))
