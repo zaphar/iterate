@@ -19,8 +19,19 @@ start(Iter) when is_record(Iter, iterations) ->
     , Iter#iterations{meta=Meta2}
 .
 
+started(Iter) when is_record(Iter, iterations) ->
+    Meta = Iter#iterations.meta
+    , case lists:keysearch(started, 1, Meta) of
+        {value, {started, true}} ->
+            true;
+        _ ->
+            false
+    end
+.
+
 stop(Iter) when is_record(Iter, iterations) ->
     Meta = Iter#iterations.meta
     , Meta2 = lists:keystore(started, 1, Meta, {started, false})
     , Iter#iterations{meta=Meta2}
 .
+

@@ -36,7 +36,7 @@ backlog_panel() ->
 .
 
 iteration_panel() ->
-    #iteration_panel{data=iterate_db:iterations()}
+    #iteration_panel{data=iterate_db:iterations(started)}
 .
 
 story_panel() ->

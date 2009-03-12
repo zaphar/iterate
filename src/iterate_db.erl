@@ -6,7 +6,7 @@
 -export([backlog/1, story/1]).
 -export([tags/1]).
 -export([log_time/1]).
--export([iterations/0, iteration/1]).
+-export([iterations/0, iterations/1, iteration/1]).
 
 -include("iterate_records.hrl").
 -include_lib("stdlib/include/qlc.hrl").
@@ -151,9 +151,24 @@ iterations() ->
     iteration(?Q_ALL)
 .
 
+iterations(started) ->
+    Trans = fun() ->
+        QH = qlc:q([I || I <-
+            mnesia:table(iterations), iteration_util:started(I) ])
+        , qlc:eval(QH)
+    end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg}
+    end
+.
+
 iteration(?NEWITER(Name, Desc)) ->
     %% TODO(jwall) respect users
-    iteration(?STOREITER(#iterations{iteration_name=Name, desc=Desc}));
+    Iter = iteration_util:start(#iterations{iteration_name=Name, desc=Desc}) 
+    , iteration(?STOREITER(Iter));
 iteration(?UPDATEITER(Iter)) ->
     iteration(?STOREITER(Iter));
 iteration(?STOREITER(Iter)) when is_record(Iter, iterations) ->

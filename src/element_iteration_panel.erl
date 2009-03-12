@@ -32,7 +32,8 @@ render(_ControlId, Record) ->
 
 %% generate our backlog list
 iterations() ->
-    iterations(iterate_db:iterations())
+    %% TODO(jwall): need to get only started iterations
+    iterations(iterate_db:iterations(started))
 .
 
 iterations([]) ->
