@@ -21,15 +21,20 @@ render(_ControlId, Record) ->
     , Panel = #rounded_panel{ id=PanelId, body=[
         #panel{id=ButtonsId, body=["Iterations"
             , #br{}
-            , #link{ text="Start Iteration"
-                    , actions=#event{type=click
+            , #link{text="Start Iteration"
+                    , actions=#event{
+                        type=click
                         , delegate=?MODULE
-                        , postback=?STARTITER}}]}
+                        , postback=?STARTITER(ContentId)}}]}
         , #panel{id=ContentId, body=iterations(Data)}]}
     , element_rounded_panel:render(PanelId, Panel)
 .
 
 %% generate our backlog list
+iterations() ->
+    iterations(iterate_db:iterations())
+.
+
 iterations([]) ->
     [];
 iterations([H|T]) ->
@@ -38,7 +43,9 @@ iterations([H|T]) ->
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
-event(?STARTITER) ->
+event(?REFRESH(Id)) ->
+    wf:update(Id, iterations());
+event(?STARTITER(IterPanelId)) ->
     io:format("starting an iteration~n", [])
     , PanelId = wf:temp_id()
     , TextBoxId = wf:temp_id()
@@ -46,9 +53,17 @@ event(?STARTITER) ->
     , Panel = #panel{ id=PanelId, body=[ "Enter an Iteration Name: "
         , #textbox{ id=TextBoxId
             , next=ButtonId
-            , postback=?STARTITERTNAME(TextBoxId, PanelId)}
+            , actions=#event{ type=change
+                , delegate=?MODULE
+                , postback=?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)}}
         , #button{id=ButtonId, text="Ok"}] }
     , wf:flash(Panel);
+event(?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)) ->
+    [Value] = wf:q(TextBoxId)
+    , Desc = "fill in description here"
+    , iterate_db:iteration(?NEWITER(Value, Desc))
+    , wf:update(PanelId, "created iteration: " ++ Value)
+    , event(?REFRESH(IterPanelId));
 event(Event) ->
     io:format("~p recieved event: ~p~n", [?MODULE, Event]),
     ok

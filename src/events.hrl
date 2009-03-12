@@ -40,6 +40,7 @@
 %% misc shared event tags
 -define(REFRESH(Id), {refresh, Id}).
 -define(REFRESH_TYPE(Id, Type), {refresh, Id, Type}).
--define(STARTITER, {start, iteration}).
--define(STARTITERTNAME(TBID, PanelId), {start, iteration, TBID, PanelId}).
+-define(STARTITER(PanelId), {start, iteration, {panel, PanelId}}).
+-define(STARTITERTNAME(TBId, PanelId, IterPanelId),
+    {start, iteration, TBId, PanelId, IterPanelId}).
 
