@@ -14,28 +14,30 @@ render(_ControlId, Record) ->
         , tag={Name, {delegate, ?MODULE}}
         , body=body(Name, PanelId) }
     , io:format("the panel id for ~s is ~s~n", [Name, PanelId])
-    , element_delegated_droppable:render(PanelId, Panel).
+    , element_delegated_droppable:render(PanelId, Panel)
+.
 
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
                    %% TODO(jwall): new event?
-                   , postback=?SHOW_STORIES(Name)
-            }
-            , body=[#label{ id=Name ++ "_name", text=Name}
-                , " " , #link{text="edit"
-                        , actions=#event{type=click, delegate=?MODULE
-                            , postback=?SHOW_B_EL(Name, PanelId)
-                        }
-                }
-                , " " , #link{text="delete"
-                        , actions=#event{type=click, delegate=?MODULE
-                            , postback=?DELETE_B_EL(Name, PanelId)
-                        }
-                }
-            ]
+                   , postback=?SHOW_ITERATION_STORIES(Name)
+             }
+             , body=[#label{ id=Name ++ "_name", text=Name}
+                 , " " , #link{text="edit"
+                         , actions=#event{type=click, delegate=?MODULE
+                             , postback=?SHOW_B_EL(Name, PanelId)
+                         }
+                 }
+                 , " " , #link{text="delete"
+                         , actions=#event{type=click, delegate=?MODULE
+                             , postback=?DELETE_B_EL(Name, PanelId)
+                         }
+                 }
+             ]
     }
-    , #panel{id=Name ++ "_target"}].
+    , #panel{id=Name ++ "_target"}]
+.
 
 %% showing iteration info
 event(?UPDATE_B_EL(Name, Id)) ->
@@ -49,7 +51,8 @@ event(?SHOW_B_EL(Name, Id)) ->
     , case iterate_db:iteration(?Q_ITERATION(Name)) of
         [B | []] ->
             wf:update(Name ++ "_target",
-                #iteration_edit{ iteration_id=Name, el_id=Id, desc=B#iterations.desc })
+                #iteration_edit{ iteration_id=Name, el_id=Id, 
+                    desc=B#iterations.desc })
     end;
 event(?DELETE_B_EL(Name, Id)) ->
     wf:flash(io_lib:format("hiding element: ~p~n", [Id]))
@@ -65,14 +68,14 @@ event(Event) ->
 .
 
 %% move a story to a backlog
-drop_event(Story, Backlog) ->
-    io:format("received event: ~p -> ~p~n", [Story, Backlog])
-    %%, [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
-    %%, io:format("found story: ~p ~n", [StoryRecord])
-    %%, OldBacklog = StoryRecord#stories.backlog
-    %%, io:format("changed story to: ~p ~n", [StoryRecord#stories{backlog=Backlog}])
-    %%, iterate_db:story({update, StoryRecord#stories{backlog=Backlog}})
-    %%, element_story_panel:event(?SHOW_STORIES(OldBacklog))
-    %%, ok
+drop_event(Story, Iteration) ->
+    io:format("received event: ~p -> ~p~n", [Story, Iteration])
+    , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
+    , io:format("found story: ~p ~n", [StoryRecord])
+    , NewStory = story_util:set_iteration(StoryRecord, Iteration)
+    , io:format("changed story to: ~p ~n", [NewStory])
+    , iterate_db:story(?Q_UPDATE_STORY(NewStory))
+    , wf:flash(
+        io_lib:format("Took on Story: ~p in Iteration: ~p", [Story, Iteration]))
 .
 

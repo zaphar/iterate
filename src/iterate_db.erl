@@ -269,8 +269,11 @@ story(?Q_ITERATION_STORY(Name)) ->
         case iteration(?Q_ITERATION(Name)) of
             [] ->
                 throw({error, no_such_iteration});
-            [Iter] ->
-                iteration_util:stories(Iter);
+            [_Iter] ->
+                QH = qlc:q([S || S <-
+                    mnesia:table(stories)
+                    , story_util:iteration(S) == Name])
+                , qlc:eval(QH);
             Msg ->
                 throw({error, Msg})
         end

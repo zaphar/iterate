@@ -16,6 +16,7 @@
 %% CRUD macros
 -define(Q_ALL, {qry, all}).
 -define(Q_STORY(Name), {qry, {story, Name}}).
+-define(Q_UPDATE_STORY(Story), {update, Story}).
 -define(Q_BACKLOG_STORY(Name), {qry, {backlog, Name}}).
 -define(Q_ITERATION_STORY(Name), {qry, {iteration, Name}}).
 -define(Q_BACKLOG(Name), {qry, Name}).

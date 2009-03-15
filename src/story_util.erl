@@ -5,15 +5,11 @@
 -export([completion/1, complete/1, set_percent/2]).
 -export([order/1, set_order/2]).
 -export([sort/2]).
+-export([iteration/1, set_iteration/2]).
+-export([set_backlog/2]).
 
 completion(Story) when is_record(Story, stories) ->
-    Meta = Story#stories.meta,
-    case lists:keysearch(percent_complete, 1, Meta) of
-        {value, {percent_complete, Percent}} ->
-            Percent;
-        false ->
-            0
-    end
+    get_meta(Story#stories.meta, percent_complete)
 .
 
 complete(Story) when is_record(Story, stories) ->
@@ -35,22 +31,27 @@ set_percent(Story, Num) when is_record(Story, stories) ->
 .
 
 order(Story) when is_record(Story, stories) ->
-    Meta = Story#stories.meta,
-    case lists:keysearch(ord, 1, Meta) of
-        {value, {ord, Order}} ->
-            Order;
-        false ->
-            0
-    end
+    get_meta(Story#stories.meta, ord)
+.
+
+iteration(Story) when is_record(Story, stories) ->
+    get_meta(Story#stories.meta, iteration)
+.
+
+set_iteration(Story, Name) when is_record(Story, stories) ->
+    Story#stories{meta=update_meta(Story#stories.meta, iteration, Name)
+        , backlog=undefined}
+.
+
+set_backlog(Story, Name) when is_record(Story, stories) ->
+   NewStory = set_iteration(Story, 0)
+   , NewStory#stories{backlog=Name} 
 .
 
 set_order(Story, Num) when is_list(Num) ->
     set_order(Story, list_to_integer(Num));
 set_order(Story, Num) when is_record(Story, stories) ->
-    Meta = Story#stories.meta
-    , Meta2 = lists:keystore(ord, 1, Meta, 
-        {ord, Num})
-    , Story#stories{meta=Meta2}
+    Story#stories{meta=update_meta(Story#stories.meta, ord, Num)}
 .
 
 sort(ord, StoryList) ->
@@ -63,5 +64,19 @@ sort({ord, asc}, StoryList) ->
     lists:sort(fun(S1, S2) ->
             order(S2) > order(S1)
         end, StoryList)
+.
+
+get_meta(Meta, Key) ->
+    case lists:keysearch(Key, 1, Meta) of
+        {value, {Key, Value}} ->
+            Value;
+        false ->
+            0
+    end
+.
+
+update_meta(Meta, Key, Value) ->
+    lists:keystore(Key, 1, Meta, 
+        {Key, Value})
 .
 

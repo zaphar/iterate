@@ -73,8 +73,9 @@ drop_event(Story, Backlog) ->
     , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
     , io:format("found story: ~p ~n", [StoryRecord])
     , OldBacklog = StoryRecord#stories.backlog
-    , io:format("changed story to: ~p ~n", [StoryRecord#stories{backlog=Backlog}])
-    , iterate_db:story({update, StoryRecord#stories{backlog=Backlog}})
+    , NewStory = story_util:set_backlog(StoryRecord, Backlog)
+    , io:format("changed story to: ~p ~n", [NewStory])
+    , iterate_db:story({update, NewStory})
     , element_story_panel:event(?SHOW_STORIES(OldBacklog))
     , ok
 .
