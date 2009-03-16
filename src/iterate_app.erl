@@ -34,4 +34,6 @@ route(Path) -> nitrogen:route(Path).
 %% of a page. Alternatively, you can use the wf:redirect* functions to 
 %% issue a client-side redirect to a new page.
 
-request(Module) -> nitrogen:request(Module).
+request(Module) -> 
+    nitrogen:request(Module).
+

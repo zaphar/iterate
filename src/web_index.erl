@@ -1,9 +1,9 @@
 -module (web_index).
 -include_lib ("nitrogen/include/wf.inc").
 -include("elements.hrl").
+-include("events.hrl").
 -compile(export_all).
 
-%%TODO(jwall): move the following into the main index page
 main() ->
 	#template { file="./wwwroot/template.html"}
 .
@@ -14,6 +14,21 @@ title() ->
 
 display_title() ->
 	"Iterate<i>!</i>"
+.
+
+login() ->
+    #panel{ id=login, body=login_contents() }
+.
+
+login_contents() ->
+    User = case wf:user() of
+        undefined ->
+            "enter an identity";
+        Name ->
+            Name
+    end
+    , ["Identity: "
+       , #inplace_textbox{ text=User, tag=?IDENTIFY }]
 .
 
 body() ->
@@ -46,5 +61,14 @@ story_panel() ->
 event(Event) -> 
     io:format("~p recieved event: ~p~n", [?MODULE, Event]),
     ok
+.
+
+inplace_textbox_event(?IDENTIFY, Value) ->
+   login_update(Value) 
+.
+
+login_update(Value) ->
+    io:format("now working as: ~p~n", [Value])
+    , wf:user(Value)
 .
 

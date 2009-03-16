@@ -45,3 +45,5 @@
 -define(STARTITERTNAME(TBId, PanelId, IterPanelId),
     {start, iteration, TBId, PanelId, IterPanelId}).
 
+-define(IDENTIFY, identify).
+
