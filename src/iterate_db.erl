@@ -7,8 +7,10 @@
 -export([tags/1]).
 -export([log_time/1]).
 -export([iterations/0, iterations/1, iteration/1]).
+-export([new_stat/2, new_stat/3]).
 
 -include("iterate_records.hrl").
+-include("stats.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
 -define(DEFAULTB, #backlogs{backlog_name="Default", desc="Default backlog"} ).
@@ -31,6 +33,7 @@ setup() ->
     , mk_table(time_log, record_info(fields, time_log))
     , mk_table(tags, record_info(fields, tags))
     , mk_table(iterations, record_info(fields, iterations))
+    , mk_table(stats, record_info(fields, iterations))
 .
 
 bootstrap() ->
@@ -98,7 +101,8 @@ backlog({store, Record}) when is_record(Record, backlogs) ->
     end
     , mnesia:transaction(Trans);
 backlog({delete, Record}) when is_record(Record, backlogs) ->
-    Trans = fun() ->
+    iterate_stats:record(backlog, ?DELETE_STAT(Record#backlogs.backlog_name))
+    , Trans = fun() ->
         case Record#backlogs.backlog_name of
             ?DEFAULTB ->
                 throw({error, {not_allowed, "Default backlog is permanent"}});
@@ -177,7 +181,8 @@ iteration(?STOREITER(Iter)) when is_record(Iter, iterations) ->
     end
     , mnesia:transaction(Trans);
 iteration(?DELITER(Name)) ->
-    Trans = fun() ->
+    iterate_stats:record(iteration, ?DELETE_STAT(Name))
+    , Trans = fun() ->
         mnesia:delete({iterations, Name})
     end
     , mnesia:transaction(Trans);
@@ -208,7 +213,8 @@ iteration(?Q_ITERATION(Name)) ->
 .
 
 story({delete, Record}) when is_record(Record, stories) ->
-    Trans = fun() ->
+    iterate_stats:record(story, ?DELETE_STAT(Record#stories.story_name))
+    , Trans = fun() ->
         mnesia:delete({stories, Record#stories.story_name})
     end
     , mnesia:transaction(Trans);
@@ -234,7 +240,7 @@ story({store, Record}) when is_record(Record, stories) ->
         end
     end
     , mnesia:transaction(Trans);
-story({qry, all}) ->
+story(?Q_ALL) ->
     Trans = fun() -> mnesia:match_object(#stories{_='_'}) end,
     case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
@@ -339,7 +345,18 @@ log_time(?UPDATETIME(Story, Amount)) ->
     , Trans = fun() ->
         Log = log_time({qry, Story})
         , TLog = Log#time_log.t_series
-        , mnesia:write(Log#time_log{t_series=[{Amount, TS} | TLog]})
+        , mnesia:write(Log#time_log{t_series=[{Amount, TS, wf:user()} | TLog]})
+    end
+    , mnesia:transaction(Trans)
+.
+
+new_stat(Type, Entry) ->
+    new_stat(Type, Entry, wf:user())
+.
+
+new_stat(For, Entry, User) ->
+    Trans = fun() ->
+        mnesia:write(#stats{for=For, user=User, entry=Entry})
     end
     , mnesia:transaction(Trans)
 .

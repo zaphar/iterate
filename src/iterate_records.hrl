@@ -1,4 +1,3 @@
-
 -record(backlogs, {backlog_name, desc}).
 -record(stories, {story_name, desc="", sp=0, backlog=undefined, 
                   meta=[{ord, 0}
@@ -12,6 +11,7 @@
                      meta=[{started, false}
                      ]}
 ).
+-record(stats, {for, user=undefined, entry}).
 
 %% CRUD macros
 -define(Q_ALL, {qry, all}).
