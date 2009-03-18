@@ -2,8 +2,10 @@
 -export ([start/2, stop/1, route/1, request/1]).
 -behavior(application).
 
-start(_, _) -> nitrogen:start().
-stop(_) -> nitrogen:stop().
+%%start(_, _) -> nitrogen:start().
+start(_, _) -> iterate_sup:start().
+%%stop(_) -> nitrogen:stop().
+stop(_) -> iterate_sup:stop().
 
 %% route/1 lets you define new URL routes to your web pages, 
 %% or completely create a new routing scheme.
