@@ -2,6 +2,7 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
+-include("stats.hrl").
 -include("elements.hrl").
 -include("events.hrl").
 -include("iterate_records.hrl").
@@ -20,7 +21,6 @@ render(_ControlId, Record) ->
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
-                   %% TODO(jwall): new event?
                    , postback=?SHOW_ITERATION_STORIES(Name)
              }
              , body=[#label{ id=Name ++ "_name", text=Name}
@@ -56,6 +56,7 @@ event(?SHOW_B_EL(Name, Id)) ->
     end;
 event(?DELETE_B_EL(Name, Id)) ->
     wf:flash(io_lib:format("hiding element: ~p~n", [Id]))
+    , iterate_stats:record(iteration, ?DELETE_STAT(Name))
     , io:format("hiding element: ~p~n", [Id])
     , Result = iterate_db:iteration(?DELITER(Name))
     , io:format("Result: ~p~n", [Result])
@@ -71,6 +72,8 @@ event(Event) ->
 drop_event(Story, Iteration) ->
     io:format("received event: ~p -> ~p~n", [Story, Iteration])
     , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
+    , iterate_stats:record(story
+        , ?MOVE_STAT(Story, Iteration, StoryRecord#stories.backlog))
     , io:format("found story: ~p ~n", [StoryRecord])
     , NewStory = story_util:set_iteration(StoryRecord, Iteration)
     , io:format("changed story to: ~p ~n", [NewStory])

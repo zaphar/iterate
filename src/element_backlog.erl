@@ -2,6 +2,7 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
+-include("stats.hrl").
 -include("elements.hrl").
 -include("events.hrl").
 -include("iterate_records.hrl").
@@ -52,6 +53,7 @@ event(?SHOW_B_EL(Name, Id)) ->
     end;
 event(?DELETE_B_EL(Name, Id)) ->
     io:format("looking up: ~p~n", [Name])
+    , iterate_stats:record(backlog, ?DELETE_STAT(Name))
     , Records = iterate_db:backlog({qry, Name})
     , io:format("found: ~p~n", [Records])
     , wf:flash(io_lib:format("hiding element: ~p~n", [Id]))
@@ -71,8 +73,10 @@ event(Event) ->
 drop_event(Story, Backlog) ->
     io:format("received event: ~p -> ~p~n", [Story, Backlog])
     , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
-    , io:format("found story: ~p ~n", [StoryRecord])
     , OldBacklog = StoryRecord#stories.backlog
+    %% TODO(jwall): figure out if the old location was iteration or backlog
+    , iterate_stats:record(story, ?MOVE_STAT(Story, Backlog, OldBacklog))
+    , io:format("found story: ~p ~n", [StoryRecord])
     , NewStory = story_util:set_backlog(StoryRecord, Backlog)
     , io:format("changed story to: ~p ~n", [NewStory])
     , iterate_db:story({update, NewStory})

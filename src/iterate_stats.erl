@@ -35,6 +35,7 @@ code_change(_Args1, _Args2, State) ->
     {ok, State}
 .
 
+%% return current nitrogen user or undefined
 user() ->
     try
         wf:user()

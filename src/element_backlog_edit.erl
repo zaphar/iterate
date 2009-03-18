@@ -2,6 +2,7 @@
 -compile(export_all).
 
 -include_lib("nitrogen/include/wf.inc").
+-include("stats.hrl").
 -include("elements.hrl").
 -include("events.hrl").
 -include("iterate_records.hrl").
@@ -37,8 +38,9 @@ render(_ControlId, Record) ->
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->
-    io:format("updating desc for ~s", [Name]),
-    case iterate_db:backlog({qry, Name}) of
+    io:format("updating desc for ~s", [Name])
+    , iterate_stats:record(backlog, ?UPDATE_DESC_STAT(Name))
+    , case iterate_db:backlog({qry, Name}) of
         %%{error, Msg} ->
             %% what do I do for this one?
         [B | []] ->

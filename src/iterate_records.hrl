@@ -11,7 +11,7 @@
                      meta=[{started, false}
                      ]}
 ).
--record(stats, {for, user=undefined, entry}).
+-record(stats, {for, user=undefined, entry, ts}).
 
 %% CRUD macros
 -define(Q_ALL, {qry, all}).

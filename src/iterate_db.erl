@@ -355,8 +355,9 @@ new_stat(Type, Entry) ->
 .
 
 new_stat(For, Entry, User) ->
-    Trans = fun() ->
-        mnesia:write(#stats{for=For, user=User, entry=Entry})
+    TS = erlang:universaltime()
+    , Trans = fun() ->
+        mnesia:write(#stats{for=For, user=User, entry=Entry, ts=TS})
     end
     , mnesia:transaction(Trans)
 .
