@@ -72,13 +72,15 @@ event(Event) ->
 drop_event(Story, Iteration) ->
     io:format("received event: ~p -> ~p~n", [Story, Iteration])
     , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
+    , Backlog = StoryRecord#stories.backlog
     , iterate_stats:record(story
-        , ?MOVE_STAT(Story, Iteration, StoryRecord#stories.backlog))
+        , ?MOVE_STAT(Story, Iteration, Backlog))
     , io:format("found story: ~p ~n", [StoryRecord])
     , NewStory = story_util:set_iteration(StoryRecord, Iteration)
     , io:format("changed story to: ~p ~n", [NewStory])
     , iterate_db:story(?Q_UPDATE_STORY(NewStory))
     , wf:flash(
         io_lib:format("Took on Story: ~p in Iteration: ~p", [Story, Iteration]))
+    , element_story_panel:event(?SHOW_STORIES(Backlog))
 .
 

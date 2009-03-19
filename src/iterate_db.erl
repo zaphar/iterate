@@ -220,13 +220,15 @@ story({delete, Record}) when is_record(Record, stories) ->
     , mnesia:transaction(Trans);
 story({new, Record}) when is_record(Record, stories) ->
     story({store, Record});
-story({update, Record}) when is_record(Record, stories) ->
+story(?Q_UPDATE_STORY(Record)) when is_record(Record, stories) ->
     story({store, Record});
 story({store, Record}) when is_record(Record, stories) ->
     Trans = fun() ->
         case Record#stories.backlog of
             undefined ->
-                throw({error, needs_backlog});
+            %TODO(jwall): handle this taking into account iterations?
+                mnesia:write(Record);
+                %, throw({error, needs_backlog});
             Name ->
                 case backlog({qry, Name}) of
                     [] ->
