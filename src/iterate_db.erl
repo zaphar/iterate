@@ -34,7 +34,7 @@ setup() ->
     , mk_table(time_log, record_info(fields, time_log))
     , mk_table(tags, record_info(fields, tags))
     , mk_table(iterations, record_info(fields, iterations))
-    , mk_table(stats, record_info(fields, iterations))
+    , mk_table(stats, record_info(fields, stats))
 .
 
 bootstrap() ->
@@ -370,7 +370,7 @@ new_stat(Type, Entry) ->
 .
 
 new_stat(For, Entry, User) ->
-    TS = erlang:universaltime()
+    TS = erlang:now()
     , Trans = fun() ->
         mnesia:write(#stats{for=For, user=User, entry=Entry, ts=TS})
     end

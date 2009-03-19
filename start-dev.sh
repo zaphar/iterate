@@ -8,4 +8,5 @@ erl \
 	-pa ./ebin -pa ./include \
 	-s make all \
 	-s reloader \
-	-boot iterate
+	-boot iterate \
+    -async_shell_start

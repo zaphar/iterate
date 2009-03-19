@@ -6,11 +6,13 @@
 -export([record/2]).
 
 start() ->
-    gen_event:start_link({local, stats_logger})
+    Return = gen_event:start_link({local, stats_logger})
+    , gen_event:add_handler(stats_logger, ?MODULE, [])
+    , Return
 .
 
 init(_Args) ->
-    gen_event:add_handler(stats_logger, iterate_stats, [])
+    {ok, []}
 .
 
 %% handle the stats events
