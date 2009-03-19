@@ -2,7 +2,7 @@
 -behaviour(gen_event).
 -export([start/0, init/1, handle_event/2,
     handle_call/2, handle_info/2, terminate/2,
-    code_change/3]).
+    code_change/3, user/0]).
 -export([record/2]).
 
 start() ->
@@ -15,7 +15,8 @@ init(_Args) ->
 
 %% handle the stats events
 handle_event({For, User, Entry}, State) ->
-    iterate_db:new_stat(For, Entry, User)
+    Result = iterate_db:new_stat(For, Entry, User)
+    , io:format("creating a new stat: ~p", [Result])
     , {ok, State} 
 .
 
@@ -37,11 +38,11 @@ code_change(_Args1, _Args2, State) ->
 
 %% return current nitrogen user or undefined
 user() ->
-    try
-        wf:user()
-    catch
-        _ ->
-            undefined
+    case catch wf:user() of
+        {'EXIT', _Err} ->
+            undefined;
+        User ->
+            User
     end
 .
 

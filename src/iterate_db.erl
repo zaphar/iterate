@@ -8,6 +8,7 @@
 -export([log_time/1]).
 -export([iterations/0, iterations/1, iteration/1]).
 -export([new_stat/2, new_stat/3]).
+-export([stat/1]).
 
 -include("iterate_records.hrl").
 -include("stats.hrl").
@@ -288,7 +289,7 @@ story(?Q_ITERATION_STORY(Name)) ->
     end
     , case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
-            RecordList;
+            story_util:sort(ord, RecordList);
         {abort, Msg} ->
             {error, Msg};
         Msg ->
@@ -350,6 +351,18 @@ log_time(?UPDATETIME(Story, Amount)) ->
         , mnesia:write(Log#time_log{t_series=[{Amount, TS, wf:user()} | TLog]})
     end
     , mnesia:transaction(Trans)
+.
+
+stat(?Q_ALL) ->
+    Trans = fun() -> mnesia:match_object(#stats{_='_'}) end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg};
+        Error ->
+            throw({error, Error})
+    end
 .
 
 new_stat(Type, Entry) ->
