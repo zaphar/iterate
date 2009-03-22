@@ -346,6 +346,8 @@ log_time(?UPDATETIME(Story, Amount)) ->
     , Trans = fun() ->
         Log = log_time({qry, Story})
         , TLog = Log#time_log.t_series
+        %% TODO(jwall): wf:user() crashes when called outside
+        %% of the nitrogen web environment
         , mnesia:write(Log#time_log{t_series=[{Amount, TS, wf:user()} | TLog]})
     end
     , mnesia:transaction(Trans);
