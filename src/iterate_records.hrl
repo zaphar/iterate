@@ -30,6 +30,7 @@
 -define(STOREITER(Iter), {store, {iteration, Iter}}).
 -define(Q_STORY_TIME(Story), {qry, Story}).
 -define(UPDATETIME(Story, Amount), {update, {log_time, {Story, Amount}}}).
+-define(Q_AMT(Name), {calc_amt, Name}).
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).

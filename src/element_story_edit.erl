@@ -11,9 +11,8 @@ render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , Name = Record#story_edit.story_name
     , Story = get_story(Name)
-    , TimeLog = iterate_db:log_time(?Q_STORY_TIME(Name))
     , TagString = string:join(get_tags(Name), ",")
-    , TimeSpent = lists:foldl(fun({T, _TS}, T2) -> T + T2 end, 0, TimeLog#time_log.t_series) 
+    , TimeSpent = iterate_db:log_time(?Q_AMT(Name))
     , Desc = case Story#stories.desc of
         undefined ->
             "Fill in Description Here";

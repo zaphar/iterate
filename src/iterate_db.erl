@@ -171,7 +171,6 @@ iterations(started) ->
 .
 
 iteration(?NEWITER(Name, Desc)) ->
-    %% TODO(jwall) respect users
     Iter = iteration_util:start(#iterations{iteration_name=Name, desc=Desc}) 
     , iteration(?STOREITER(Iter));
 iteration(?UPDATEITER(Iter)) ->
@@ -328,16 +327,15 @@ tags(?Q_TAGS(Type, For)) ->
         mnesia:match_object(?TAG(Type, For,'_'))
      end
     , mnesia:transaction(Trans)
-%% TODO(jwall): search by tag value within a type
 .
 
 log_time(?Q_STORY_TIME(Story)) ->
     Trans = fun() -> mnesia:read({time_log, Story}) end
     , case mnesia:transaction(Trans) of
-        {atomic, [Log]} ->
-            Log;
         {atomic, []} ->
             #time_log{story=Story};
+        {atomic, [Log]} ->
+            Log;
         {abort, Msg} ->
             {error, Msg};
         E ->
@@ -350,7 +348,10 @@ log_time(?UPDATETIME(Story, Amount)) ->
         , TLog = Log#time_log.t_series
         , mnesia:write(Log#time_log{t_series=[{Amount, TS, wf:user()} | TLog]})
     end
-    , mnesia:transaction(Trans)
+    , mnesia:transaction(Trans);
+log_time(?Q_AMT(Story)) ->
+    TimeLog = iterate_db:log_time(?Q_STORY_TIME(Story))
+    , lists:foldl(fun({T, _TS, _User}, T2) -> T + T2 end, 0, TimeLog#time_log.t_series)
 .
 
 stat(?Q_ALL) ->
