@@ -52,16 +52,10 @@ event(?SHOW_B_EL(Name, Id)) ->
                 #backlog_edit{ backlog_id=Name, el_id=Id, desc=B#backlogs.desc })
     end;
 event(?DELETE_B_EL(Name, Id)) ->
-    io:format("looking up: ~p~n", [Name])
-    , iterate_stats:record(backlog, ?DELETE_STAT(Name))
-    , Records = iterate_db:backlog({qry, Name})
-    , io:format("found: ~p~n", [Records])
-    , wf:flash(io_lib:format("hiding element: ~p~n", [Id]))
-    , io:format("hiding element: ~p~n", [Id])
-    , [Record | []] = Records
-    , Result = iterate_db:backlog({delete, Record})
-    , io:format("Result: ~p~n", [Result])
+    % TODO(jwall): do something with attempts to delete the permanent backlogs
+    io:format("hiding element: ~p~n", [Id])
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
+    , iterate_wf:delete_backlog(Name)
     , event(?REMOVE_B_EL(Name, Id));
 event(?REMOVE_B_EL(Name, _Id)) ->
     wf:update(Name ++ "_target", "");
@@ -72,14 +66,8 @@ event(Event) ->
 %% move a story to a backlog
 drop_event(Story, Backlog) ->
     io:format("received event: ~p -> ~p~n", [Story, Backlog])
-    , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
-    , OldBacklog = StoryRecord#stories.backlog
-    %% TODO(jwall): figure out if the old location was iteration or backlog
-    , iterate_stats:record(story, ?MOVE_STAT(Story, Backlog, OldBacklog))
-    , io:format("found story: ~p ~n", [StoryRecord])
-    , NewStory = story_util:set_backlog(StoryRecord, Backlog)
-    , io:format("changed story to: ~p ~n", [NewStory])
-    , iterate_db:story({update, NewStory})
+    , {old_backlog, OldBacklog} = 
+        iterate_wf:move_story_to_backlog(Story, Backlog)
     , element_story_panel:event(?SHOW_STORIES(OldBacklog))
     , ok
 .

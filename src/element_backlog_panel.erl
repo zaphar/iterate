@@ -69,7 +69,7 @@ event(?B_PANEL_CREATE(_Id)) ->
     ok;
 event(?CREATE_B(Id, PanelId)) ->
     [Value] = wf:q(Id),
-    case iterate_db:backlog({new, #backlogs{backlog_name=Value}}) of
+    case iterate_wf:create_backlog(Value) of
         {error, Msg} ->
             wf:update(PanelId, "Failed!!"),
             wf:flash(io_lib:format("~p", [Msg]));
@@ -85,8 +85,9 @@ event(?REFRESH(Id)) ->
 event(?B_PANEL_SEARCH(Id, PanelId)) ->
     [Value] = wf:q(Id),
     io:format("~p searching for: ~p~n", [?MODULE, Value]),
-    Results = iterate_db:backlog({search, {id, Value}}),
+    Results = iterate_wf:search_for_backlog(Value),
     io:format("~p found: ~p~n", [?MODULE, Results]),
+    % TODO(jwall): the filter box needs to keep the search terms
     wf:update(PanelId, #backlog_panel{data=Results}),
     ok;
 event(Event) ->

@@ -31,9 +31,11 @@
 -define(Q_STORY_TIME(Story), {qry, Story}).
 -define(UPDATETIME(Story, Amount), {update, {log_time, {Story, Amount}}}).
 -define(Q_AMT(Name), {calc_amt, Name}).
+-define(Q_SEARCH_BACKLOG(Type, Term), {search, {Type, Term}}).
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).
+-define(BDESC(B), B#backlogs.desc).
 -define(TVALUE(T), T#tags.value).
 
 %% tagging macros

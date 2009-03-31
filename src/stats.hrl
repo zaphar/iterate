@@ -1,4 +1,5 @@
 
+-define(CREATE_STAT(Name), {creating, Name}).
 -define(CHANGE_STAT(For, Type, Value), {change, For, {Type, Value}}).
 -define(COMPLETE_STAT(Item, At), {complete, Item, {loc, At}}).
 -define(MOVE_STAT(Item, To, From),

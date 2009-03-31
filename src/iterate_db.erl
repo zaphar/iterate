@@ -137,11 +137,22 @@ backlog(?Q_BACKLOG(Name)) ->
         {abort, Msg} ->
             {error, Msg}
     end;
-backlog({search, {id, Value}}) ->
+backlog(?Q_SEARCH_BACKLOG(id, Value)) ->
+    F = fun(B) ->
+        string:str(string:to_lower(?BNAME(B)), 
+            string:to_lower(Value)) /= 0
+    end,
+    backlog({do_search, F});
+backlog(?Q_SEARCH_BACKLOG(desc, Value)) ->
+    F = fun(B) ->
+        string:str(string:to_lower(?BDESC(B)), 
+            string:to_lower(Value)) /= 0
+    end,
+    backlog({do_search, F});
+backlog({do_search, F}) ->
     Trans = fun() -> 
         QH = qlc:q([B || B <- 
-            mnesia:table(backlogs), string:str(string:to_lower(?BNAME(B)), 
-                string:to_lower(Value)) /= 0]),
+            mnesia:table(backlogs), F(B)]),
         qlc:eval(QH)
     end,
     case mnesia:transaction(Trans) of
