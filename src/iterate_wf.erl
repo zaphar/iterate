@@ -36,9 +36,9 @@ delete_backlog(Name) ->
 search_for_backlog("desc:" ++ Term) ->
     iterate_db:backlog(?Q_SEARCH_BACKLOG(desc, Term));
 search_for_backlog("id:" ++ Term) ->
-    search_for_backlog(Term);
+    iterate_db:backlog(?Q_SEARCH_BACKLOG(id, Term));
 search_for_backlog(Term) ->
-    iterate_db:backlog(?Q_SEARCH_BACKLOG(id, Term))
+    iterate_db:backlog(?Q_SEARCH_BACKLOG(all, Term))
 .
 
 %get_backlogs() ->

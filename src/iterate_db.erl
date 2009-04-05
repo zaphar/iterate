@@ -119,7 +119,7 @@ backlog({delete, Record}) when is_record(Record, backlogs) ->
             end, Stories)
     end
     , mnesia:transaction(Trans);
-backlog({qry, all}) ->
+backlog(?Q_ALL) ->
     Trans = fun() -> mnesia:match_object(#backlogs{_='_'}) end,
     case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
@@ -137,22 +137,23 @@ backlog(?Q_BACKLOG(Name)) ->
         {abort, Msg} ->
             {error, Msg}
     end;
+backlog(?Q_SEARCH_BACKLOG(_Type, "")) ->
+    backlog(?Q_ALL);
 backlog(?Q_SEARCH_BACKLOG(id, Value)) ->
-    F = fun(B) ->
-        string:str(string:to_lower(?BNAME(B)), 
-            string:to_lower(Value)) /= 0
-    end,
-    backlog({do_search, F});
+    backlog({do_search, get_qh(mnesia:table(backlogs)
+        , backlog_id_filter(Value))});
 backlog(?Q_SEARCH_BACKLOG(desc, Value)) ->
-    F = fun(B) ->
-        string:str(string:to_lower(?BDESC(B)), 
-            string:to_lower(Value)) /= 0
-    end,
-    backlog({do_search, F});
-backlog({do_search, F}) ->
+    backlog({do_search, get_qh(mnesia:table(backlogs)
+        , backlog_desc_filter(Value))});
+backlog(?Q_SEARCH_BACKLOG(all, Value)) ->
+    Fid = backlog_id_filter(Value)
+    , Fdesc = backlog_desc_filter(Value)
+    , F = fun(B) ->
+        Fid(B) orelse Fdesc(B)
+    end
+    , backlog({do_search, get_qh(mnesia:table(backlogs), F)});
+backlog({do_search, QH}) ->
     Trans = fun() -> 
-        QH = qlc:q([B || B <- 
-            mnesia:table(backlogs), F(B)]),
         qlc:eval(QH)
     end,
     case mnesia:transaction(Trans) of
@@ -161,6 +162,22 @@ backlog({do_search, F}) ->
         {abort, Msg} ->
             {error, Msg}
     end
+.
+
+backlog_id_filter(Value) ->
+    fun(B) -> 
+        string:str(string:to_lower(?BNAME(B)), string:to_lower(Value)) /= 0
+    end
+.
+
+backlog_desc_filter(Value) ->
+    fun(B) ->
+        string:str(string:to_lower(?BDESC(B)), string:to_lower(Value)) /= 0
+    end
+.
+
+get_qh(Table, F) ->
+    qlc:q([B || B <- Table, F(B)])
 .
 
 iterations() ->

@@ -31,21 +31,6 @@ login_contents() ->
        , #inplace_textbox{ text=User, tag=?IDENTIFY }]
 .
 
-body() ->
-    #panel{ id=main, body=[
-        #hr{}
-        , body(contents)
-    ]}
-.
-
-body(contents) ->
-    #singlerow{ id=main, cells=[
-	    #tablecell{ body=[iteration_panel()
-            , backlog_panel()] }
-        , #tablecell{ body=[story_panel()] }
-    ]}
-.
-
 backlog_panel() ->
     #backlog_panel{data=iterate_db:backlogs()}
 .
