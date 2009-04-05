@@ -14,6 +14,12 @@
 	color: #000000;
 }
 
+/*** backlog_hover class ***/
+.drop_hover {
+    border: 2px dashed black;
+    background-color: darkgrey;
+}
+
 /*** ROUNDED PANEL ***/
 table.rounded_panel.black td { background: #000000; }
 table.rounded_panel.gray td 	{ background: #F1F1F1; }
@@ -141,3 +147,4 @@ textarea.LV_invalid_field:hover,
 textarea.LV_invalid_field:active {
     border: 1px solid #CC0000;
 }*/
+

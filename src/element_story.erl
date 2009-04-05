@@ -15,11 +15,12 @@ render(_ControlId, Record) ->
     , Order = story_util:order(Story)
     , Percent = story_util:completion(Story)
     , Panel = #draggable{ id=DraggableId
-                    , style="border-bottom: solid black 3px; padding: 3px;"
+                    , handle=grip
                     , tag=Name
                     , body=#panel{ id=PanelId
                         , body=[
-                            #textbox{ id=OrderElId
+                            #span { class=grip, text="[drag] " }
+                            , #textbox{ id=OrderElId
                                 , actions=#event{
                                     type=change
                                     , delegate=?MODULE

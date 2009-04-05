@@ -11,7 +11,7 @@ render(_ControlId, Record) ->
     Name    = Record#backlog.backlog_name
     , PanelId = wf:temp_id()
     , Panel = #delegated_droppable{ id=PanelId
-        , style="border-bottom: solid black 3px; padding-bottom: 3px;"
+        , hover_class=drop_hover
         , tag={Name, {delegate, ?MODULE}}
         , body=body(Name, PanelId) }
     , io:format("the panel id for ~s is ~s~n", [Name, PanelId])
