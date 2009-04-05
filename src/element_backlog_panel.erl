@@ -6,24 +6,30 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
+-define(SEARCHBOX, search_backlogs_box).
+
 %% TODO(jwall): these panels are getting general enough I think a 
-%5              refactor is in order.
+%%              refactor is in order.
 render(ControlId, Record) ->
     PanelId = "backlog_panel"
     , io:format("the control id is ~p~n", [ControlId])
+    , Filter = Record#backlog_panel.filter
     , Data    = case Record#backlog_panel.data of
         undefined ->
             [];
         D when is_list(D) ->
             D
     end
-    , SearchId = wf:temp_id()
+    , SearchId = ?SEARCHBOX
     , SearchEvent = #event{type=change, delegate=?MODULE,
         postback={search, SearchId, ControlId}}
+    , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
     , Panel = #rounded_panel{ body=[
         % TODO(jwall): the filter box should auto highlight 
         %              the text when clicked
-        #textbox{id=SearchId, text="Filter Backlogs", actions=SearchEvent},
+        #textbox{id=SearchId, text=Filter
+            , actions=[SearchEvent
+                , SearchFocusEvent]},
         #panel{id=PanelId, body=backlogs(Data, ControlId)}]}
     , element_rounded_panel:render(ControlId, Panel)
 .
@@ -85,13 +91,14 @@ event(?CREATE_B(Id, PanelId)) ->
 event(?REFRESH(Id)) ->
     wf:update(Id, #backlog_panel{data=iterate_db:backlogs()});
 event(?B_PANEL_SEARCH(Id, PanelId)) ->
-    [Value] = wf:q(Id),
-    io:format("~p searching for: ~p~n", [?MODULE, Value]),
-    Results = iterate_wf:search_for_backlog(Value),
-    io:format("~p found: ~p~n", [?MODULE, Results]),
+    [Value] = wf:q(Id)
+    , io:format("~p searching for: ~p~n", [?MODULE, Value])
+    , Results = iterate_wf:search_for_backlog(Value)
+    , io:format("~p found: ~p~n", [?MODULE, Results])
     % TODO(jwall): the filter box needs to keep the search terms
-    wf:update(PanelId, #backlog_panel{data=Results}),
-    ok;
+    , wf:update(PanelId, #backlog_panel{data=Results, filter=Value})
+    %%, wf:wire(?SEARCHBOX, "obj('me').focus(); obj('me').select();")
+    , ok;
 event(Event) ->
     io:format("~p recieved event: ~p~n", [?MODULE, Event]),
     ok

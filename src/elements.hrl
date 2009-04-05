@@ -26,7 +26,7 @@
     task_name}).
 
 %% elements for the high level widgets
--record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined}).
+-record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter="Filter Backlogs"}).
 -record(iteration_panel, {?ELEMENT_BASE(element_iteration_panel), data=undefined}).
 -record(story_panel, {?ELEMENT_BASE(element_story_panel), data=undefined}).
 

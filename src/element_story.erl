@@ -96,12 +96,8 @@ inplace_textbox_event(?COMPLETE_S(Name), Value) ->
             _  ->
                 Value
         end)
-    , [Original] = iterate_db:story(?Q_STORY(Name))
-    , New = story_util:set_percent(Original, Percent)
-    , iterate_db:story({update, New})
-    , ReturnValue = lists:flatten(io_lib:format("~B%", [(Percent)]))
-    , io:format("~p~n", [ReturnValue])
-    , ReturnValue
+    , iterate_wf:update_story_completion(Name, Percent)
+    , lists:flatten(io_lib:format("~B%", [(Percent)]))
 .
 
 get_story(Name) ->

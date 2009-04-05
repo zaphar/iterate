@@ -5,8 +5,10 @@
 -include("stats.hrl").
 
 -export([create_backlog/1, delete_backlog/1]).
--export([move_story_to_backlog/2, move_story_to_iteration/2]).
 -export([search_for_backlog/1]).
+
+-export([move_story_to_backlog/2, move_story_to_iteration/2]).
+-export([update_story_completion/2]).
 
 %% TODO(jwall): should these be broken into story_wf, backlog_wf and so on?
 
@@ -59,5 +61,13 @@ move_story_to_backlog(Story, Backlog) ->
 
 move_story_to_iteration(_Story, _Iteration) ->
     ok
+.
+
+update_story_completion(Name, Percent) ->
+    [Original] = iterate_db:story(?Q_STORY(Name))
+    , New = story_util:set_percent(Original, Percent)
+    , iterate_stats:record(story, 
+        ?CHANGE_STAT(Name, percent, Percent))
+    , iterate_db:story({update, New})
 .
 
