@@ -20,7 +20,7 @@
 %% story_panel event tags
 -define(CREATE_S(Id, PanelId, Backlog), {create, {new, story},
     {backlog, Backlog}, Id, PanelId}).
--define(S_PANEL_CREATE(B), {create, story, B}).
+-define(S_PANEL_CREATE(Type, For), {create, story, {Type, For}}).
 -define(SHOW_STORIES(Name), {show, {stories, {backlog, Name}}}).
 -define(SHOW_ITERATION_STORIES(Name), {show, {stories, {iteration, Name}}}).
 

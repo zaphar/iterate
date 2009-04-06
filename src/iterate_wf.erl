@@ -56,11 +56,19 @@ move_story_to_backlog(Story, Backlog) ->
     , NewStory = story_util:set_backlog(StoryRecord, Backlog)
     , io:format("changed story to: ~p ~n", [NewStory])
     , iterate_db:story({update, NewStory})
-    , {old_backlog, OldBacklog}
+    , {old_location, OldBacklog}
 .
 
-move_story_to_iteration(_Story, _Iteration) ->
-    ok
+move_story_to_iteration(Story, Iteration) ->
+    [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
+    , OldBacklog = StoryRecord#stories.backlog
+    %% TODO(jwall): figure out if the old location was iteration or backlog
+    , iterate_stats:record(story, ?MOVE_STAT(Story, Iteration, OldBacklog))
+    , io:format("found story: ~p ~n", [StoryRecord])
+    , NewStory = story_util:set_iteration(StoryRecord, Iteration)
+    , io:format("changed story to: ~p ~n", [NewStory])
+    , iterate_db:story({update, NewStory})
+    , {old_location, OldBacklog}
 .
 
 update_story_completion(Name, Percent) ->
