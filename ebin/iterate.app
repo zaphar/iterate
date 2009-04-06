@@ -1,9 +1,9 @@
 {application, iterate, [
-	{description,  "Iterate! project management"},
-	{id, "iterate"},
-	{vsn, "0.01.0"},
-	{modules, [
-		element_backlog,
+    {description,  "Iterate! project management"},
+    {id, "iterate"},
+    {vsn, "0.01.0"},
+    {modules, [
+        element_backlog,
         element_backlog_edit,
         element_backlog_panel,
         element_delegated_droppable,
@@ -18,22 +18,22 @@
         iterate_db,
         iterate_stats,
         iterate_sup,
-        iteration_util,
-	 ]},
-	{applications, []},
-	{registered, [
-		iterate,
-		iterate_stats,
+        iteration_util
+     ]},
+    {applications, []},
+    {registered, [
+        iterate,
+        iterate_stats,
         wf_session_sup,
-		wf_session_server,
-		quickstart_sup 
-	]},
-	{mod, {iterate_app, []}},
-	{env, [
-		{platform, mochiweb}, %% {inets|yaws|mochiweb}
-		{port, 8001},
-		{session_timeout, 20},
-		{sign_key, "SIGN_KEY"},
-		{www_root, "./wwwroot"}
-	]}
+        wf_session_server,
+        quickstart_sup
+    ]},
+    {mod, {iterate_app, []}},
+    {env, [
+        {platform, mochiweb}, %% {inets|yaws|mochiweb}
+        {port, 8001},
+        {session_timeout, 20},
+        {sign_key, "SIGN_KEY"},
+        {www_root, "./wwwroot"}
+    ]}
 ]}.
