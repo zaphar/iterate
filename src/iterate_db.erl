@@ -41,7 +41,7 @@ bootstrap() ->
    backlog({new, ?DEFAULTB})
   , backlog({new, ?IDEAPOOL})
   , F = fun(B) ->
-       fun(N) -> 
+       fun(N) ->
            story({new, #stories{backlog=B, story_name=N, sp=3}})
        end
   end
@@ -89,7 +89,7 @@ backlog({update, Record}) when is_record(Record, backlogs) ->
 backlog({mutate, Record, RecordMutation}) when is_record(Record, backlogs) ->
     Trans = fun() -> backlog({delete, Record})
         , Stories = story({qry, Record#backlogs.backlog_name})
-        , lists:foreach(fun(Story) -> 
+        , lists:foreach(fun(Story) ->
                 story({update, Story#stories{
                     backlog=RecordMutation#backlogs.backlog_name}})
             end, Stories),
@@ -113,7 +113,7 @@ backlog({delete, Record}) when is_record(Record, backlogs) ->
                 mnesia:delete({backlogs, Name})
         end
         , Stories = story(?Q_STORY(Record#backlogs.backlog_name))
-        , lists:foreach(fun(Story) -> 
+        , lists:foreach(fun(Story) ->
                 story({update, Story#stories{
                     backlog=?DEFAULTB}})
             end, Stories)
@@ -153,7 +153,7 @@ backlog(?Q_SEARCH_BACKLOG(all, Value)) ->
     end
     , backlog({do_search, get_qh(mnesia:table(backlogs), F)});
 backlog({do_search, QH}) ->
-    Trans = fun() -> 
+    Trans = fun() ->
         qlc:eval(QH)
     end,
     case mnesia:transaction(Trans) of
@@ -165,14 +165,30 @@ backlog({do_search, QH}) ->
 .
 
 backlog_id_filter(Value) ->
-    fun(B) -> 
-        string:str(string:to_lower(?BNAME(B)), string:to_lower(Value)) /= 0
+    fun
+        (B) ->
+            Id = case ?BNAME(B) of
+                undefined ->
+                    "";
+                N ->
+                    N
+            end
+            , string:str(string:to_lower(Id)
+                , string:to_lower(Value)) /= 0
     end
 .
 
 backlog_desc_filter(Value) ->
-    fun(B) ->
-        string:str(string:to_lower(?BDESC(B)), string:to_lower(Value)) /= 0
+    fun
+        (B) ->
+            Desc = case ?BDESC(B) of
+                undefined ->
+                    "";
+                N ->
+                    N
+            end
+            , string:str(string:to_lower(Desc)
+                , string:to_lower(Value)) /= 0
     end
 .
 
@@ -199,7 +215,7 @@ iterations(started) ->
 .
 
 iteration(?NEWITER(Name, Desc)) ->
-    Iter = iteration_util:start(#iterations{iteration_name=Name, desc=Desc}) 
+    Iter = iteration_util:start(#iterations{iteration_name=Name, desc=Desc})
     , iteration(?STOREITER(Iter));
 iteration(?UPDATEITER(Iter)) ->
     iteration(?STOREITER(Iter));
