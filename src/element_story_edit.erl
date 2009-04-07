@@ -16,12 +16,16 @@ render(ControlId, Record) ->
     , Desc = case Story#stories.desc of
         undefined ->
             "Fill in Description Here";
+        [] ->
+            "Fill in Description Here";
         D ->
             D
     end
     , StoryPoints = case Story#stories.sp of
         undefined ->
             3;
+        0 ->
+            "0";
         N ->
             N
     end

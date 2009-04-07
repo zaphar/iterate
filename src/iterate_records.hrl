@@ -1,5 +1,5 @@
 -record(backlogs, {backlog_name, desc}).
--record(stories, {story_name, desc="", sp=0, backlog=undefined, 
+-record(stories, {story_name, desc="", sp=3, backlog=undefined, 
                   meta=[{ord, 0}
                         , {percent_complete, 0}
                        ]
