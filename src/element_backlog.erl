@@ -18,10 +18,9 @@ render(_ControlId, Record) ->
     , element_delegated_droppable:render(PanelId, Panel).
 
 body(Name, PanelId) ->
-    {Type, _TypeName} = story_util:get_type(iterate_wf:get_story(Name))
-    , [#panel{ id=PanelId, actions=#event{type=click
+    [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
-                   , postback=?SHOW_STORIES(Type, Name)
+                   , postback=?SHOW_STORIES(Name)
             }
             , body=[#label{ id=Name ++ "_name", text=Name}
                 , " " , #link{text="edit"
@@ -69,8 +68,7 @@ drop_event(Story, Backlog) ->
     io:format("received event: ~p -> ~p~n", [Story, Backlog])
     , {old_backlog, OldBacklog} = 
         iterate_wf:move_story_to_backlog(Story, Backlog)
-    , {Type, _Name} = story_util:get_type(iterate_wf:get_story(Story))
-    , element_story_panel:event(?SHOW_STORIES(Type, OldBacklog))
+    , element_story_panel:event(?SHOW_STORIES(OldBacklog))
     , ok
 .
 

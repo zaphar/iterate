@@ -25,6 +25,7 @@ stories(L) ->
     stories(L, {backlog, undefined}).
 
 stories([], {Type, Name}) ->
+    %%wf:flash("showing stories for " ++ atom_to_list(Type) ++ ": " ++ Name)
     [#link{ text="create"
         , actions=#event{
             type=click, delegate=?MODULE
@@ -33,7 +34,7 @@ stories([], {Type, Name}) ->
      , #link{ text="refresh"
         , actions=#event{
             type=click, delegate=?MODULE
-            , postback=?SHOW_STORIES(Type, Name)
+            , postback=?SHOW_STORIES(Name)
         }}
     ]; 
 stories([H|T], {Type, Name}) ->
@@ -44,10 +45,14 @@ stories(L, Name) ->
 .
 
 %% showing stories
-event(?SHOW_STORIES(Type, Name)) ->
+event(?SHOW_STORIES(Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_db:story(?Q_BACKLOG_STORY(Name)) ],
-    wf:update(story_list, stories(StoryList, {Type, Name}) );
+    wf:update(story_list, stories(StoryList, {backlog, Name}) );
+event(?SHOW_ITERATION_STORIES(Name)) ->
+    StoryList = [ S#stories.story_name || S <- 
+        iterate_db:story(?Q_ITERATION_STORY(Name)) ],
+    wf:update(story_list, stories(StoryList, {iteration, Name}) );
 event(?S_PANEL_CREATE(_Type, undefined)) ->
     wf:flash("can't create stories without a backlog or iteration");
 event(?S_PANEL_CREATE(iteration, Backlog)) ->

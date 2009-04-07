@@ -6,7 +6,7 @@
 -export([order/1, set_order/2]).
 -export([sort/2]).
 -export([iteration/1, set_iteration/2]).
--export([set_backlog/2, get_type/1]).
+-export([set_backlog/2]).
 
 completion(Story) when is_record(Story, stories) ->
     get_meta(Story#stories.meta, percent_complete)
@@ -34,15 +34,6 @@ order(Story) when is_record(Story, stories) ->
     get_meta(Story#stories.meta, ord)
 .
 
-get_type(Story) when is_record(Story, stories) ->
-    case iteration(Story) of
-        0 ->
-            {backlog, backlog(Story)};
-        Name ->
-            {iteration, Name}
-    end
-.
-
 iteration(Story) when is_record(Story, stories) ->
     get_meta(Story#stories.meta, iteration)
 .
@@ -55,10 +46,6 @@ set_iteration(Story, Name) when is_record(Story, stories) ->
 set_backlog(Story, Name) when is_record(Story, stories) ->
    NewStory = set_iteration(Story, 0)
    , NewStory#stories{backlog=Name} 
-.
-
-backlog(Story) when is_record(Story, stories) ->
-    Story#stories.backlog
 .
 
 set_order(Story, Num) when is_list(Num) ->
