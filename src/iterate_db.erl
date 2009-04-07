@@ -240,6 +240,7 @@ iteration(?Q_ITERATION(Name)) ->
     end
 .
 
+%% TODO(jwall): move stats recording to workflow module
 story({delete, Record}) when is_record(Record, stories) ->
     iterate_stats:record(story, ?DELETE_STAT(Record#stories.story_name))
     , Trans = fun() ->

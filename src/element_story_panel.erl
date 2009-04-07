@@ -37,8 +37,7 @@ stories([], {Type, Name}) ->
         }}
     ]; 
 stories([H|T], {Type, Name}) ->
-    [ #story{story_name=H, backlog=Name} 
-        | stories(T, {Type, Name}) ];
+    [ #story{story_name=H} | stories(T, {Type, Name}) ];
 stories(L, Name) ->
     stories(L, {backlog, Name})
 .
@@ -97,7 +96,7 @@ event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->
             , wf:flash(io_lib:format("~p", [Msg]));
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
-            , wf:insert_top(?SPANELID, #story{story_name=Value});
+            , event(?SHOW_STORIES(iteration, Backlog));
         _ ->
             throw({error, unknown})
     end
@@ -111,7 +110,7 @@ event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
             , wf:flash(io_lib:format("~p", [Msg]));
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
-            , wf:insert_top(?SPANELID, #story{story_name=Value});
+            , event(?SHOW_STORIES(backlog, Backlog));
         _ ->
             throw({error, unknown})
     end
