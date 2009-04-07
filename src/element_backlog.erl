@@ -13,14 +13,15 @@ render(_ControlId, Record) ->
     , Panel = #delegated_droppable{ id=PanelId
         , hover_class=drop_hover
         , tag={Name, {delegate, ?MODULE}}
-        , body=body(Name, PanelId) }
+        , body=body(Name, PanelId) 
+    }
     , io:format("the panel id for ~s is ~s~n", [Name, PanelId])
     , element_delegated_droppable:render(PanelId, Panel).
 
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
-                   , postback=?SHOW_STORIES(Name)
+                   , postback=?SHOW_STORIES(backlog, Name)
             }
             , body=[#label{ id=Name ++ "_name", text=Name}
                 , " " , #link{text="edit"
@@ -35,7 +36,8 @@ body(Name, PanelId) ->
                 }
             ]
     }
-    , #panel{id=Name ++ "_target"}].
+    , #panel{id=Name ++ "_target"}]
+.
 
 %% showing backlog info
 event(?UPDATE_B_EL(Name, Id)) ->
@@ -66,9 +68,10 @@ event(Event) ->
 %% move a story to a backlog
 drop_event(Story, Backlog) ->
     io:format("received event: ~p -> ~p~n", [Story, Backlog])
-    , {old_backlog, OldBacklog} = 
+    , {_IgnoreMe, OldBacklog} = 
         iterate_wf:move_story_to_backlog(Story, Backlog)
-    , element_story_panel:event(?SHOW_STORIES(OldBacklog))
+    , {Type, _Name} = story_util:get_type(iterate_wf:get_story(Story))
+    , element_story_panel:event(?SHOW_STORIES(Type, OldBacklog))
     , ok
 .
 

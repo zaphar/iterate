@@ -21,7 +21,7 @@ render(_ControlId, Record) ->
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
                    , delegate=element_story_panel
-                   , postback=?SHOW_ITERATION_STORIES(Name)
+                   , postback=?SHOW_STORIES(iteration, Name)
              }
              , body=[#label{ id=Name ++ "_name", text=Name}
                  , " " , #link{text="edit"
@@ -81,6 +81,7 @@ drop_event(Story, Iteration) ->
     , iterate_db:story(?Q_UPDATE_STORY(NewStory))
     , wf:flash(
         io_lib:format("Took on Story: ~p in Iteration: ~p", [Story, Iteration]))
-    , element_story_panel:event(?SHOW_STORIES(Backlog))
+    , {Type, _Name} = story_util:get_type(StoryRecord)
+    , element_story_panel:event(?SHOW_STORIES(Type, Backlog))
 .
 

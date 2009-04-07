@@ -7,6 +7,7 @@
 -export([create_backlog/1, delete_backlog/1]).
 -export([search_for_backlog/1]).
 
+-export([get_story/1, get_iteration_stories/1, get_backlog_stories/1]).
 -export([move_story_to_backlog/2, move_story_to_iteration/2]).
 -export([update_story_completion/2]).
 
@@ -45,6 +46,18 @@ search_for_backlog(Term) ->
 %.
 
 %% Story APIs
+
+get_story(Name) ->
+    iterate_db:story(?Q_STORY(Name))
+.
+
+get_iteration_stories(Name) ->
+    iterate_db:story(?Q_ITERATION_STORY(Name))
+.
+
+get_backlog_stories(Name) ->
+    iterate_db:story(?Q_BACKLOG_STORY(Name))
+.
 
 %% TODO(jwall): write tests for this :-)
 move_story_to_backlog(Story, Backlog) ->
