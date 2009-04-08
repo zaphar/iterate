@@ -8,18 +8,20 @@
 
 render(_ControlId, Record) ->
     PanelId = wf:temp_id()
+    , PanelId2 = wf:temp_id()
     , DraggableId = wf:temp_id()
     , OrderElId = wf:temp_id()
     , Name    = Record#story.story_name
     , [Story] = iterate_db:story(?Q_STORY(Name))
     , Order = story_util:order(Story)
     , Percent = story_util:completion(Story)
-    , Panel = #draggable{ id=DraggableId
-                    , handle=grip
-                    , tag=Name
+    , Panel = #panel{ id=PanelId2
+                    , class=story_element
                     , body=#panel{ id=PanelId
                         , body=[
-                            #span { class=grip, text="[drag] " }
+                            #draggable{ tag=Name
+                                , id=DraggableId
+                                , body="[drag me] " }
                             , #textbox{ id=OrderElId
                                 , actions=#event{
                                     type=change
@@ -49,7 +51,7 @@ render(_ControlId, Record) ->
                             , #panel{id=Name ++ "_target"}
                         ]
     }}
-    , element_draggable:render(DraggableId, Panel).
+    , element_panel:render(PanelId2, Panel).
 
 event(?SHOW_S_EL(Name)) ->
     wf:update(Name ++ "_target",
