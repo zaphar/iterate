@@ -27,9 +27,11 @@ render(ControlId, Record) ->
     , Panel = #rounded_panel{ body=[
         #span{text="Backlogs", class=panel_title}, #br{}, #br{}
         , #textbox{id=SearchId, text=Filter
+            , style="margin-bottom: 6px;"
+            , class=input_box
             , actions=[SearchEvent
-                , SearchFocusEvent]},
-        #panel{id=PanelId, body=backlogs(Data, ControlId)}]}
+                , SearchFocusEvent]}, #br{}
+        , #panel{id=PanelId, body=backlogs(Data, ControlId)}]}
     , element_rounded_panel:render(ControlId, Panel)
 .
 
