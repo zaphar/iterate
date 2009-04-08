@@ -71,12 +71,21 @@ sort(ord, StoryList) ->
     sort({ord, asc}, StoryList);
 sort({ord, desc}, StoryList) ->
     lists:sort(fun(S1, S2) ->
-            order(S1) > order(S2)
+            order(S1) + all_or_nothing(S1) > order(S2) + all_or_nothing(S2) 
         end, StoryList);
 sort({ord, asc}, StoryList) ->
     lists:sort(fun(S1, S2) ->
-            order(S2) > order(S1)
+            order(S1) + all_or_nothing(S1) < order(S2) + all_or_nothing(S2) 
         end, StoryList)
+.
+
+all_or_nothing(Story) when is_record(Story, stories) ->
+    case completion(Story) of
+        100 ->
+            100;
+        _ ->
+            0
+    end
 .
 
 get_meta(Meta, Key) ->

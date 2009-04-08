@@ -7,6 +7,10 @@
 -export([create_backlog/1, delete_backlog/1]).
 -export([search_for_backlog/1]).
 
+-export([create_iteration/1, delete_iteration/1]).
+-export([close_iteration/1]).
+-export([search_for_iteration/1]).
+
 -export([get_story/1, get_iteration_stories/1, get_backlog_stories/1]).
 -export([move_story_to_backlog/2, move_story_to_iteration/2]).
 -export([update_story_completion/2]).
@@ -31,9 +35,6 @@ delete_backlog(Name) ->
     , ok
 .
 
-%update_backlog(Backlog) ->
-%.
-
 search_for_backlog("desc:" ++ Term) ->
     iterate_db:backlog(?Q_SEARCH_BACKLOG(desc, Term));
 search_for_backlog("id:" ++ Term) ->
@@ -41,9 +42,6 @@ search_for_backlog("id:" ++ Term) ->
 search_for_backlog(Term) ->
     iterate_db:backlog(?Q_SEARCH_BACKLOG(all, Term))
 .
-
-%get_backlogs() ->
-%.
 
 %% Story APIs
 
@@ -92,3 +90,20 @@ update_story_completion(Name, Percent) ->
     , iterate_db:story({update, New})
 .
 
+%% Iteration APIs
+
+create_iteration(_Name) ->
+    ok
+.
+
+close_iteration(_Name) ->
+    ok
+.
+
+delete_iteration(_Name) ->
+    ok
+.
+
+search_for_iteration(_Crit) ->
+    ok
+.
