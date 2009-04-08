@@ -16,7 +16,9 @@ render(ControlId, Record) ->
     end
     , Panel = #rounded_panel{ id=PanelId,
         body=[#span{text="Stories", class=panel_title}, #br{}, #br{} 
-              , #panel{id=?SPANELID, body=stories(Data) }]
+              , #panel{id=?SPANELID
+                , class=story_panel
+                , body=stories(Data) }]
     }
     , element_rounded_panel:render(ControlId, Panel)
 .

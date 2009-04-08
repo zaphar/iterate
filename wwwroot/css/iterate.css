@@ -1,3 +1,11 @@
+.story_panel {
+    max-height: 400px;
+    width: 650px;
+    overflow: auto;
+    padding: 3px;
+    border: 1px inset;
+}
+
 .panel_element {
     padding: 3px;
     margin-bottom: 6px;
