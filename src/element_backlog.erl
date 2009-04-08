@@ -71,7 +71,8 @@ drop_event(Story, Backlog) ->
     io:format("received event: ~p -> ~p~n", [Story, Backlog])
     , {_IgnoreMe, OldBacklog} = 
         iterate_wf:move_story_to_backlog(Story, Backlog)
-    , {Type, _Name} = story_util:get_type(iterate_wf:get_story(Story))
+    , [StoryRecord] = iterate_wf:get_story(Story)
+    , {Type, _Name} = story_util:get_type(StoryRecord)
     , element_story_panel:event(?SHOW_STORIES(Type, OldBacklog))
     , ok
 .
