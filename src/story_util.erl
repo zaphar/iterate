@@ -79,6 +79,7 @@ sort({ord, asc}, StoryList) ->
         end, StoryList)
 .
 
+% TODO(jwall): maybe this should weight completion heavier?
 all_or_nothing(Story) when is_record(Story, stories) ->
     case completion(Story) of
         100 ->
