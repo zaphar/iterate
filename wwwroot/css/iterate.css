@@ -1,7 +1,21 @@
-.story_element {
+.panel_element {
     padding: 3px;
     margin-bottom: 6px;
-    width: 600px;
-    border: 1px black solid;
+    border: 2px outset;
 }
 
+.complete {
+    background-color: lightgreen;
+}
+
+.story_element {
+    width: 600px;
+}
+
+.backlog_element {
+    width: 200px;
+}
+
+.panel_title {
+    font-weight: bold;
+}

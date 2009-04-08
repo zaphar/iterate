@@ -11,6 +11,7 @@ render(_ControlId, Record) ->
     Name    = Record#iteration.iteration_name
     , PanelId = wf:temp_id()
     , Panel = #delegated_droppable{ id=PanelId
+        , class="panel_element backlog_element"
         , hover_class=drop_hover
         , tag={Name, {delegate, ?MODULE}}
         , body=body(Name, PanelId) }

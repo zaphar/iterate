@@ -25,9 +25,8 @@ render(ControlId, Record) ->
         postback={search, SearchId, ControlId}}
     , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
     , Panel = #rounded_panel{ body=[
-        % TODO(jwall): the filter box should auto highlight 
-        %              the text when clicked
-        #textbox{id=SearchId, text=Filter
+        #span{text="Backlogs", class=panel_title}, #br{}, #br{}
+        , #textbox{id=SearchId, text=Filter
             , actions=[SearchEvent
                 , SearchFocusEvent]},
         #panel{id=PanelId, body=backlogs(Data, ControlId)}]}

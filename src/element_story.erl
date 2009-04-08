@@ -15,8 +15,14 @@ render(_ControlId, Record) ->
     , [Story] = iterate_db:story(?Q_STORY(Name))
     , Order = story_util:order(Story)
     , Percent = story_util:completion(Story)
+    , Class = case story_util:is_complete(Story) of
+        true ->
+            "complete panel_element story_element";
+        false ->
+            "panel_element story_element"
+    end
     , Panel = #panel{ id=PanelId2
-                    , class=story_element
+                    , class=Class
                     , body=#panel{ id=PanelId
                         , body=[
                             #draggable{ tag=Name

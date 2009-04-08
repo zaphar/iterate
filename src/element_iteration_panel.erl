@@ -19,8 +19,8 @@ render(_ControlId, Record) ->
             D
     end
     , Panel = #rounded_panel{ id=PanelId, body=[
-        #panel{id=ButtonsId, body=["Iterations"
-            , #br{}
+        #panel{id=ButtonsId, body=[
+            #span{text="Iterations", class=panel_title}, #br{}, #br{}
             , #link{text="Start Iteration"
                     , actions=#event{
                         type=click

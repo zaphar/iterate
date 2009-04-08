@@ -3,6 +3,7 @@
 -include("iterate_records.hrl").
 
 -export([completion/1, complete/1, set_percent/2]).
+-export([is_complete/1]).
 -export([order/1, set_order/2]).
 -export([sort/2]).
 -export([iteration/1, set_iteration/2]).
@@ -86,6 +87,15 @@ all_or_nothing(Story) when is_record(Story, stories) ->
             100;
         _ ->
             0
+    end
+.
+
+is_complete(Story) when is_record(Story, stories) ->
+    case completion(Story) of
+        100 ->
+            true;
+        _ ->
+            false
     end
 .
 
