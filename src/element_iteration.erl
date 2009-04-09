@@ -11,7 +11,7 @@ render(_ControlId, Record) ->
     Name    = Record#iteration.iteration_name
     , PanelId = wf:temp_id()
     , Panel = #delegated_droppable{ id=PanelId
-        , class="panel_element backlog_element"
+        , class="panel_element backlog_element" ++ selection_class(Name)
         , hover_class=drop_hover
         , tag={Name, {delegate, ?MODULE}}
         , body=body(Name, PanelId) }
@@ -19,10 +19,28 @@ render(_ControlId, Record) ->
     , element_delegated_droppable:render(PanelId, Panel)
 .
 
+is_working_in({iteration, Name}, Me) ->
+    Me == Name;
+is_working_in(_, _) ->
+    false
+.
+
+selection_class(Me) ->
+    case is_working_in(wf_session:session(working_in), Me) of
+        true ->
+            " selected";
+        false ->
+            ""
+    end
+.
+
 body(Name, PanelId) ->
     [#panel{ id=PanelId, actions=#event{type=click
-                   , delegate=element_story_panel
-                   , postback=?SHOW_STORIES(iteration, Name)
+                , delegate=element_story_panel
+                , postback=?SHOW_STORIES(iteration, Name)
+                , actions="$('.backlog_element.selected')"
+                    ++ ".removeClass('selected', 500);"
+                    ++ "$(obj('me')).addClass('selected', 250)"
              }
              , body=[#label{ id=Name ++ "_name", text=Name}
                  , " " , #link{text="edit"

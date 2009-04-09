@@ -40,7 +40,7 @@ iteration_panel() ->
 .
 
 story_panel() ->
-    #story_panel{ data=[] }
+    #story_panel{ data=undefined }
 .
 
 event(Event) -> 

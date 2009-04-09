@@ -31,3 +31,8 @@
 .input_box {
     border: 2px solid darkgrey;
 }
+
+.selected {
+    background-color: lightblue;
+}
+
