@@ -51,7 +51,12 @@ stories([H|T], {Type, Name}) ->
 .
 
 for_what() ->
-    wf_session:session(working_in)
+    case wf_session:session(working_in) of
+        undefined ->
+            {backlog, undefined};
+        {Type, Name} ->
+            {Type, Name}
+    end
 .
 
 for_what(type) ->
