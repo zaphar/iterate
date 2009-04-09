@@ -9,11 +9,23 @@
 render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , Data = stories(Record#story_panel.data)
+    , {Type, Name} = for_what()
+    , Actions = [#link{ text="create"
+          , actions=#event{
+              type=click, delegate=?MODULE
+              , postback=?S_PANEL_CREATE(Type, Name)
+          }}, " "
+       , #link{ text="refresh"
+          , actions=#event{
+              type=click, delegate=?MODULE
+              , postback=?SHOW_STORIES(Type, Name)
+          }}
+    ]
     , Panel = #rounded_panel{ id=PanelId,
         body=[#span{text="Stories", class=panel_title}, #br{}, #br{} 
               , #panel{id=?SPANELID
                 , class=story_panel
-                , body=Data }]
+                , body=Data }] ++ Actions
     }
     , element_rounded_panel:render(ControlId, Panel)
 .
@@ -34,18 +46,8 @@ stories(L) ->
     io:format("Asked for stories for: ~p", [for_what()])
     , stories(L, for_what()).
 
-stories([], {Type, Name}) ->
-    [#link{ text="create"
-        , actions=#event{
-            type=click, delegate=?MODULE
-            , postback=?S_PANEL_CREATE(Type, Name)
-        }}, " "
-     , #link{ text="refresh"
-        , actions=#event{
-            type=click, delegate=?MODULE
-            , postback=?SHOW_STORIES(Type, Name)
-        }}
-    ]; 
+stories([], {_Type, _Name}) ->
+    []; 
 stories([H|T], {Type, Name}) ->
     [ #story{story_name=H} | stories(T, {Type, Name}) ]
 .
