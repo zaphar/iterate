@@ -74,15 +74,11 @@ event(?SHOW_STORIES(iteration, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_iteration_stories(Name) ]
     , wf_session:session(working_in, {iteration, Name})
-    %, wf:wire(body, "$('.backlog_element.selected')"
-    %    ++ ".removeClass('selected', 500);")
     , wf:update(story_list, stories(StoryList, {iteration, Name}) );
 event(?SHOW_STORIES(backlog, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_backlog_stories(Name) ]
     , wf_session:session(working_in, {backlog, Name})
-    %, wf:wire(body, "$('.backlog_element.selected')"
-    %    ++ ".removeClass('selected', 500);")
     , wf:update(story_list, stories(StoryList, {backlog, Name}) );
 event(?S_PANEL_CREATE(_Type, undefined)) ->
     wf:flash("can't create stories without a backlog or iteration");

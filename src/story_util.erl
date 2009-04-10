@@ -113,10 +113,12 @@ update_meta(Meta, Key, Value) ->
         {Key, Value})
 .
 
+aggregate_completion([]) ->
+    0.0;
 aggregate_completion(List) ->
     {FullCount, Total} = lists:foldl(
         fun(S, {Count, Acc}) -> {Count + 1, Acc + completion(S)} end
-        , {0, 0}, List)
+        , {0.0, 0.0}, List)
     , Total / FullCount
 .
 

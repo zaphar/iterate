@@ -321,7 +321,7 @@ story(?Q_ITERATION_STORY(Name)) ->
     Trans = fun() ->
         case iteration(?Q_ITERATION(Name)) of
             [] ->
-                throw({error, no_such_iteration});
+                [];
             [_Iter] ->
                 QH = qlc:q([S || S <-
                     mnesia:table(stories)
