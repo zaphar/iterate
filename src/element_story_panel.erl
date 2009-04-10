@@ -6,6 +6,10 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
+render() ->
+    wf:render(#panel{id=story_box, body=#story_panel{data=undefined}})
+.
+
 render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , Data = stories(Record#story_panel.data)
@@ -74,12 +78,12 @@ event(?SHOW_STORIES(iteration, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_iteration_stories(Name) ]
     , wf_session:session(working_in, {iteration, Name})
-    , wf:update(story_list, stories(StoryList, {iteration, Name}) );
+    , wf:update(story_box, #story_panel{data=StoryList} );
 event(?SHOW_STORIES(backlog, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_backlog_stories(Name) ]
     , wf_session:session(working_in, {backlog, Name})
-    , wf:update(story_list, stories(StoryList, {backlog, Name}) );
+    , wf:update(story_box, #story_panel{data=StoryList} );
 event(?S_PANEL_CREATE(_Type, undefined)) ->
     wf:flash("can't create stories without a backlog or iteration");
 event(?S_PANEL_CREATE(iteration, Backlog)) ->
