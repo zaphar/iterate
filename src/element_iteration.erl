@@ -35,14 +35,16 @@ selection_class(Me) ->
 .
 
 body(Name, PanelId) ->
-    [#panel{ id=PanelId, actions=#event{type=click
+    Title = wf:f("~s ~.1f% complete"
+        , [Name, iterate_wf:iteration_completion(Name)])
+    , [#panel{ id=PanelId, actions=#event{type=click
                 , delegate=element_story_panel
                 , postback=?SHOW_STORIES(iteration, Name)
                 , actions="$('.backlog_element.selected')"
                     ++ ".removeClass('selected', 500);"
                     ++ "$(obj('me')).addClass('selected', 250)"
              }
-             , body=[#label{ id=Name ++ "_name", text=Name}
+             , body=[#label{ id=Name ++ "_name", text=Title}
                  , " " , #link{text="edit"
                          , actions=#event{type=click, delegate=?MODULE
                              , postback=?SHOW_B_EL(Name, PanelId)

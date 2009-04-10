@@ -2,8 +2,8 @@
 
 -include("iterate_records.hrl").
 
--export([completion/1, complete/1, set_percent/2]).
--export([is_complete/1]).
+-export([completion/1, aggregate_completion/1, set_percent/2]).
+-export([complete/1, is_complete/1]).
 -export([order/1, set_order/2]).
 -export([sort/2]).
 -export([iteration/1, set_iteration/2]).
@@ -111,5 +111,12 @@ get_meta(Meta, Key) ->
 update_meta(Meta, Key, Value) ->
     lists:keystore(Key, 1, Meta, 
         {Key, Value})
+.
+
+aggregate_completion(List) ->
+    {FullCount, Total} = lists:foldl(
+        fun(S, {Count, Acc}) -> {Count + 1, Acc + completion(S)} end
+        , {0, 0}, List)
+    , Total / FullCount
 .
 

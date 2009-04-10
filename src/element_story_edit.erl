@@ -41,7 +41,7 @@ render(ControlId, Record) ->
                             delegate=?MODULE
                                 , tag=?TAGCHANGE(Name), text=TagString}
                         , lists:flatten(
-                            io_lib:format("Time Spent: ~.10B Hours ", [TimeSpent]))
+                            io_lib:format("Time Spent: ~.1f Hours ", [TimeSpent]))
                         , #br{}
                         , #link{text="Enter Time",
                                 actions=#event{ delegate=?MODULE,
@@ -104,16 +104,18 @@ event(?COMPLETE_S(Name)) ->
 event(?UPDATE_T_LOG(Name)) ->
     Id = wf:temp_id()
     , PanelId = wf:temp_id()
-    , Msg = io_lib:format("Enter hours for ~p", [Name])
+    , Msg = io_lib:format("Enter hours for ~p ", [Name])
     , wf:flash(#panel{id=PanelId
         , body=[Msg
-                , #textbox{ id=Id, actions=#event{type=change, delegate=?MODULE,
-                    postback=?NEWTIME(Name, Id, PanelId)}}
+                , #textbox{ id=Id, actions=[#event{type=change, delegate=?MODULE
+                        , postback=?NEWTIME(Name, Id, PanelId)}
+                    , #event{type=click, actions="obj('me').select();"}]}
           ]
-    });
+    })
+    , wf:wire(Id, #event{type='timer', delay=300, actions="obj('me').focus();"});
 event(?NEWTIME(Name, Id, PanelId)) ->
     [ValueString] = wf:q(Id)
-    , Value = list_to_integer(ValueString)
+    , Value = list_to_number(ValueString)
     , iterate_db:log_time(?UPDATETIME(Name, Value))
     , wf:update(PanelId, 
         io_lib:format("Updated time for ~p to ~p", [Name, Value]))
@@ -125,6 +127,23 @@ event(Event) ->
 refresh_story_panel(Story) ->
     {Type, Name} = story_util:get_type(Story)
     , element_story_panel:event(?SHOW_STORIES(Type, Name))
+.
+
+
+list_to_number("." ++ L) ->
+    list_to_number("0." ++ L);
+list_to_number(L) ->
+    case string:to_float(L) of
+        {error, no_float} ->
+            case string:to_integer(L) of
+                {error, _} ->
+                    throw({error, not_a_number});
+                {Int, []} ->
+                    Int
+            end;
+        {Float, []} ->
+            Float
+    end
 .
 
 get_story(Name) ->

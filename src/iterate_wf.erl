@@ -10,6 +10,7 @@
 -export([create_iteration/1, delete_iteration/1]).
 -export([close_iteration/1]).
 -export([search_for_iteration/1]).
+-export([iteration_completion/1]).
 
 -export([get_story/1, get_iteration_stories/1, get_backlog_stories/1]).
 -export([move_story_to_backlog/2, move_story_to_iteration/2]).
@@ -107,3 +108,8 @@ delete_iteration(_Name) ->
 search_for_iteration(_Crit) ->
     ok
 .
+
+iteration_completion(Name) ->
+    story_util:aggregate_completion(get_iteration_stories(Name))
+.
+

@@ -398,7 +398,9 @@ log_time(?UPDATETIME(Story, Amount)) ->
     , mnesia:transaction(Trans);
 log_time(?Q_AMT(Story)) ->
     TimeLog = iterate_db:log_time(?Q_STORY_TIME(Story))
-    , lists:foldl(fun({T, _TS, _User}, T2) -> T + T2 end, 0, TimeLog#time_log.t_series)
+    , io:format("~p", [TimeLog#time_log.t_series])
+    , lists:foldl(fun({T, _TS, _User}, T2) -> T + T2 end, 0.0
+        , TimeLog#time_log.t_series)
 .
 
 stat(?Q_ALL) ->

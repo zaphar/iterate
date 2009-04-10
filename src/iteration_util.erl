@@ -19,9 +19,10 @@ started(Iter) when is_record(Iter, iterations) ->
     end
 .
 
-stop(Iter) when is_record(Iter, iterations) ->
+close(Iter) when is_record(Iter, iterations) ->
     Meta = Iter#iterations.meta
+    %% TODO(jwall): need to move any incomplete stories out into
+    %%              Default backlog;
     , Meta2 = lists:keystore(started, 1, Meta, {started, false})
     , Iter#iterations{meta=Meta2}
 .
-
