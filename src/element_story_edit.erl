@@ -163,7 +163,7 @@ get_tags(Name) ->
     {atomic, TagList} = iterate_db:tags(?Q_TAGS(story, Name))
     , case TagList of
         [] ->
-            [?TVALUE(T) || T <- [?STAG(Name, "tag")] ];
+            [?TVALUE(T) || T <- [?STAG('_', Name, "tag")] ];
         List ->
             [?TVALUE(T) || T <- List]
     end

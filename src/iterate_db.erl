@@ -9,6 +9,7 @@
 -export([iterations/0, iterations/1, iteration/1]).
 -export([new_stat/2, new_stat/3]).
 -export([stat/1]).
+-export([uuid/0, rand/1]).
 
 -include("iterate_records.hrl").
 -include("stats.hrl").
@@ -350,7 +351,7 @@ tags(?NEWTAG(story, For, Value)) ->
         %% look for story before adding tag
         case story(?Q_STORY(For)) of
             [_Story] ->
-                mnesia:write(?STAG(For, Value));
+                mnesia:write(?STAG({For, Value}, For, Value));
             [] ->
                 throw({error, no_such_story})
         end
@@ -361,7 +362,7 @@ tags(?NEWTAG(backlog, For, Value)) ->
         %% look for backlog before adding tag
         case backlog(?Q_BACKLOG(For)) of
             [_Backlog] ->
-                mnesia:write(?BTAG(For, Value));
+                mnesia:write(?BTAG({For, Value}, For, Value));
             [] ->
                 throw({error, no_such_backlog})
         end
@@ -369,7 +370,7 @@ tags(?NEWTAG(backlog, For, Value)) ->
     , mnesia:transaction(Trans);
 tags(?Q_TAGS(Type, For)) ->
     Trans = fun() ->
-        mnesia:match_object(?TAG(Type, For,'_'))
+        mnesia:match_object(?TAG('_', Type, For,'_'))
      end
     , mnesia:transaction(Trans)
 .
@@ -426,4 +427,13 @@ new_stat(For, Entry, User) ->
     end
     , mnesia:transaction(Trans)
 .
+
+uuid() ->
+   string:join([rand(8), rand(4), rand(4), rand(4), rand(16)], "-")
+.
+
+rand(Size) ->
+    lists:flatten([hd(string:substr(float_to_list(random:uniform() * 16#1000), 1, 1)) || _N <-  lists:seq(1, Size)])
+.
+
 
