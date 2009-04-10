@@ -68,6 +68,9 @@ move_story_to_backlog(Story, Backlog) ->
     , NewStory = story_util:set_backlog(StoryRecord, Backlog)
     , io:format("changed story to: ~p ~n", [NewStory])
     , iterate_db:story({update, NewStory})
+    %% if the old Story was in an iteration then we need to 
+    %% log the new iteration percent completion
+    , log_iteration_completion(story_util:iteration(StoryRecord))
     , {old_location, OldBacklog}
 .
 
@@ -80,6 +83,11 @@ move_story_to_iteration(Story, Iteration) ->
     , NewStory = story_util:set_iteration(StoryRecord, Iteration)
     , io:format("changed story to: ~p ~n", [NewStory])
     , iterate_db:story({update, NewStory})
+    %% if the old Story was in an iteration then we need to 
+    %% log the new iteration percent completion
+    , log_iteration_completion(story_util:iteration(StoryRecord))
+    %% we need to log the iterations new completion also
+    , log_iteration_completion(story_util:iteration(NewStory))
     , {old_location, OldBacklog}
 .
 
@@ -89,6 +97,16 @@ update_story_completion(Name, Percent) ->
     , iterate_stats:record(story, 
         ?CHANGE_STAT(Name, percent, Percent))
     , iterate_db:story({update, New})
+    %% if story is in an iteration then we need to log iteration's new
+    %% aggregate completion
+    , log_iteration_completion(story_util:iteration(New))
+.
+
+log_iteration_completion(0) ->
+    ok;
+log_iteration_completion(Iter) ->
+    Agg = iteration_completion(Iter)
+    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, percent, Agg))
 .
 
 %% Iteration APIs
