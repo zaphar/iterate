@@ -7,7 +7,13 @@
 -include("iterate_records.hrl").
 
 %% TODO(jwall): these panels are getting general enough I think a 
-%5              refactor is in order.
+%%              refactor is in order.
+
+render() ->
+    wf:render(#panel{id=iteration_panel
+        , body=#iteration_panel{data=iterate_db:iterations(started)}})
+.
+
 render(_ControlId, Record) ->
     PanelId = wf:temp_id()
     , ButtonsId = wf:temp_id()
@@ -43,8 +49,8 @@ iterations([H|T]) ->
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
-event(?REFRESH(Id)) ->
-    wf:update(Id, iterations());
+event(?REFRESH(_Id)) ->
+    wf:update(iteration_panel, #iteration_panel{data=iterate_db:iterations(started)});
 event(?STARTITER(IterPanelId)) ->
     io:format("starting an iteration~n", [])
     , PanelId = wf:temp_id()

@@ -100,7 +100,8 @@ event(?COMPLETE_S(Name)) ->
     , iterate_stats:record(story, ?COMPLETE_STAT(Name, Backlog))
     , Completed = story_util:complete(Story)
     , iterate_db:story({update, Completed})
-    , refresh_story_panel(Story);
+    , refresh_story_panel(Story)
+    , element_iteration_panel:event(?REFRESH(undefined));
 event(?UPDATE_T_LOG(Name)) ->
     Id = wf:temp_id()
     , PanelId = wf:temp_id()
@@ -119,6 +120,7 @@ event(?NEWTIME(Name, Id, PanelId)) ->
     , iterate_db:log_time(?UPDATETIME(Name, Value))
     , wf:update(PanelId, 
         io_lib:format("Updated time for ~p to ~p", [Name, Value]))
+    %% TODO(jwall): update the iteration list also
     , element_story:event(?SHOW_S_EL(Name));
 event(Event) ->
     io:format("~p recieved unknown event ~p~n", [?MODULE, Event])

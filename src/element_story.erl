@@ -107,6 +107,7 @@ inplace_textbox_event(?COMPLETE_S(Name), Value) ->
                 Value
         end)
     , iterate_wf:update_story_completion(Name, Percent)
+    , element_iteration_panel:event(?REFRESH(bogus_id))
     , lists:flatten(io_lib:format("~B%", [(Percent)]))
 .
 

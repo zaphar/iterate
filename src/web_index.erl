@@ -31,13 +31,13 @@ login_contents() ->
        , #inplace_textbox{ text=User, tag=?IDENTIFY }]
 .
 
+% TODO(jwall): change this to be like the story panel
 backlog_panel() ->
     #backlog_panel{data=iterate_db:backlogs()}
 .
 
-% TODO(jwall): change this to like the story panel
 iteration_panel() ->
-    #iteration_panel{data=iterate_db:iterations(started)}
+    element_iteration_panel:render()
 .
 
 story_panel() ->
