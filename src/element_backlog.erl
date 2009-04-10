@@ -92,6 +92,7 @@ drop_event(Story, Backlog) ->
     , [StoryRecord] = iterate_wf:get_story(Story)
     , {Type, _Name} = story_util:get_type(StoryRecord)
     , element_story_panel:event(?SHOW_STORIES(Type, OldBacklog))
+    , element_iteration_panel:event(?REFRESH(bogus_id))
     , ok
 .
 
