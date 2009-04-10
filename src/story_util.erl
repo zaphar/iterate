@@ -31,17 +31,17 @@ set_percent(Story, Num) when is_record(Story, stories) ->
     end
 .
 
-order(Story) when is_record(Story, stories) ->
-    get_meta(Story#stories.meta, ord)
+is_complete(Story) when is_record(Story, stories) ->
+    case completion(Story) of
+        100 ->
+            true;
+        _ ->
+            false
+    end
 .
 
-get_type(Story) when is_record(Story, stories) ->
-    case iteration(Story) of
-        0 ->
-            {backlog, backlog(Story)};
-        Name ->
-            {iteration, Name}
-    end
+order(Story) when is_record(Story, stories) ->
+    get_meta(Story#stories.meta, ord)
 .
 
 iteration(Story) when is_record(Story, stories) ->
@@ -90,12 +90,21 @@ all_or_nothing(Story) when is_record(Story, stories) ->
     end
 .
 
-is_complete(Story) when is_record(Story, stories) ->
-    case completion(Story) of
-        100 ->
-            true;
-        _ ->
-            false
+aggregate_completion([]) ->
+    0.0;
+aggregate_completion(List) ->
+    {FullCount, Total} = lists:foldl(
+        fun(S, {Count, Acc}) -> {Count + 1, Acc + completion(S)} end
+        , {0.0, 0.0}, List)
+    , Total / FullCount
+.
+
+get_type(Story) when is_record(Story, stories) ->
+    case iteration(Story) of
+        0 ->
+            {backlog, backlog(Story)};
+        Name ->
+            {iteration, Name}
     end
 .
 
@@ -111,14 +120,5 @@ get_meta(Meta, Key) ->
 update_meta(Meta, Key, Value) ->
     lists:keystore(Key, 1, Meta, 
         {Key, Value})
-.
-
-aggregate_completion([]) ->
-    0.0;
-aggregate_completion(List) ->
-    {FullCount, Total} = lists:foldl(
-        fun(S, {Count, Acc}) -> {Count + 1, Acc + completion(S)} end
-        , {0.0, 0.0}, List)
-    , Total / FullCount
 .
 
