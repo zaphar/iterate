@@ -5,7 +5,7 @@
                        ]
                  }
 ).
--record(tasks, {task_name, desc, story_name}).
+-record(tasks, {id, task_name, desc, story_name}).
 -record(time_log, {story, t_series=[]}).
 -record(tags, {id, value, type, for}).
 -record(iterations, {iteration_name, desc,
@@ -33,6 +33,9 @@
 -define(UPDATETIME(Story, Amount), {update, {log_time, {Story, Amount}}}).
 -define(Q_AMT(Name), {calc_amt, Name}).
 -define(Q_SEARCH_BACKLOG(Type, Term), {search, {Type, Term}}).
+-define(Q_STORY_TASKS(For), {qry, {tasks, For}}).
+-define(C_NEW_TASK(For, Name), {new, {task, For, Name}}).
+-define(D_TASK(Id), {delete, {task, Id}}).
 
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).
@@ -43,4 +46,3 @@
 -define(TAG(Type,For,Value), #tags{id={Type, For, Value}, type=Type, for=For, value=Value}).
 -define(STAG(S,V), #tags{id={story, S, V}, type=story, for=S, value=V}).
 -define(BTAG(B,V), #tags{id={backlog, B, V}, type=backlog, for=B, value=V}).
-

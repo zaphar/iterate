@@ -5,6 +5,7 @@
 -export([backlogs/0, stories/1]).
 -export([backlog/1, story/1]).
 -export([tags/1, tag_delete/2]).
+-export([task/1]).
 -export([log_time/1]).
 -export([iterations/0, iterations/1, iteration/1]).
 -export([new_stat/2, new_stat/3]).
@@ -36,6 +37,7 @@ setup() ->
     , mk_table(tags, record_info(fields, tags))
     , mk_table(iterations, record_info(fields, iterations))
     , mk_table(stats, record_info(fields, stats))
+    , mk_table(tasks, record_info(fields, stats))
 .
 
 bootstrap() ->
@@ -193,10 +195,6 @@ backlog_desc_filter(Value) ->
     end
 .
 
-get_qh(Table, F) ->
-    qlc:q([B || B <- Table, F(B)])
-.
-
 iterations() ->
     iteration(?Q_ALL)
 .
@@ -257,7 +255,6 @@ iteration(?Q_ITERATION(Name)) ->
     end
 .
 
-%% TODO(jwall): move stats recording to workflow module
 story({delete, Record}) when is_record(Record, stories) ->
     iterate_stats:record(story, ?DELETE_STAT(Record#stories.story_name))
     , Trans = fun() ->
@@ -346,16 +343,22 @@ stories(B) ->
     story(?Q_BACKLOG_STORY(B))
 .
 
-tag_delete(Type, For) ->
+task(?Q_STORY_TASKS(For)) ->
     Trans = fun() ->
-        mnesia:match_object(?TAG(Type, For,'_'))
-     end
-    , {atomic, Tags} = mnesia:transaction(Trans)
-    , DelTrans = fun() ->
-        [ mnesia:delete_object(T) || T <- Tags]
+        mnesia:match_object(#tasks{id='_', task_name='_', desc='_'
+            , story_name=For})
     end
-    , Result = mnesia:transaction(DelTrans)
-    , wf:flash(wf:f("~p", [Result]))
+    , mnesia:transaction(Trans);
+task(?C_NEW_TASK(For, Name)) ->
+    Trans = fun() ->
+        mnesia:write(#tasks{id=uuid(), task_name=Name, story_name=For})
+    end
+    , mnesia:transaction(Trans);
+task(?D_TASK(Id)) ->
+    Trans = fun() ->
+        mnesia:delete({tasks, Id})
+    end
+    , mnesia:transaction(Trans)
 .
 
 tags(?NEWTAG(story, For, Value)) ->
@@ -385,6 +388,18 @@ tags(?Q_TAGS(Type, For)) ->
         mnesia:match_object(?TAG(Type, For,'_'))
      end
     , mnesia:transaction(Trans)
+.
+
+tag_delete(Type, For) ->
+    Trans = fun() ->
+        mnesia:match_object(?TAG(Type, For,'_'))
+     end
+    , {atomic, Tags} = mnesia:transaction(Trans)
+    , DelTrans = fun() ->
+        [ mnesia:delete_object(T) || T <- Tags]
+    end
+    , Result = mnesia:transaction(DelTrans)
+    , wf:flash(wf:f("~p", [Result]))
 .
 
 log_time(?Q_STORY_TIME(Story)) ->
@@ -446,6 +461,10 @@ uuid() ->
 
 rand(Size) ->
     lists:flatten([hd(string:substr(float_to_list(random:uniform() * 16#1000), 1, 1)) || _N <-  lists:seq(1, Size)])
+.
+
+get_qh(Table, F) ->
+    qlc:q([I || I <- Table, F(I)])
 .
 
 
