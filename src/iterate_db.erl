@@ -345,19 +345,19 @@ stories(B) ->
 
 task(?Q_STORY_TASKS(For)) ->
     Trans = fun() ->
-        mnesia:match_object(#tasks{id='_', task_name='_', desc='_'
-            , story_name=For})
+        mnesia:match_object(#tasks{story_name=For, _='_'})
     end
     , mnesia:transaction(Trans);
 task(?Q_TASK(Id)) ->
     Trans = fun() ->
-        mnesia:match_object(#tasks{id=Id, task_name='_', desc='_'
-            , story_name='_'})
+        mnesia:match_object(#tasks{id=Id, _='_'})
     end
     , mnesia:transaction(Trans);
 task(?C_NEW_TASK(For, Name)) ->
     Trans = fun() ->
-        mnesia:write(#tasks{id=uuid(), task_name=Name, story_name=For})
+        Id = uuid()
+        , mnesia:write(#tasks{id=uuid(), task_name=Name, story_name=For})
+        , Id
     end
     , mnesia:transaction(Trans);
 task(?U_TASK(Record)) when is_record(Record, tasks) ->
