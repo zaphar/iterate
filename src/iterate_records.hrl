@@ -40,7 +40,7 @@
 -define(TVALUE(T), T#tags.value).
 
 %% tagging macros
--define(TAG(Id, Type,For,Value), #tags{id=Id, type=Type, for=For, value=Value}).
--define(STAG(Id, S,V), #tags{id=Id, type=story, for=S, value=V}).
--define(BTAG(Id, B,V), #tags{id=Id, type=backlog, for=B, value=V}).
+-define(TAG(Type,For,Value), #tags{id={Type, For, Value}, type=Type, for=For, value=Value}).
+-define(STAG(S,V), #tags{id={story, S, V}, type=story, for=S, value=V}).
+-define(BTAG(B,V), #tags{id={backlog, B, V}, type=backlog, for=B, value=V}).
 

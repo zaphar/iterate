@@ -4,7 +4,7 @@
 -export([bootstrap/0, info/0, info/1]).
 -export([backlogs/0, stories/1]).
 -export([backlog/1, story/1]).
--export([tags/1]).
+-export([tags/1, tag_delete/2]).
 -export([log_time/1]).
 -export([iterations/0, iterations/1, iteration/1]).
 -export([new_stat/2, new_stat/3]).
@@ -346,12 +346,24 @@ stories(B) ->
     story(?Q_BACKLOG_STORY(B))
 .
 
+tag_delete(Type, For) ->
+    Trans = fun() ->
+        mnesia:match_object(?TAG(Type, For,'_'))
+     end
+    , {atomic, Tags} = mnesia:transaction(Trans)
+    , DelTrans = fun() ->
+        [ mnesia:delete_object(T) || T <- Tags]
+    end
+    , Result = mnesia:transaction(DelTrans)
+    , wf:flash(wf:f("~p", [Result]))
+.
+
 tags(?NEWTAG(story, For, Value)) ->
     Trans = fun() ->
         %% look for story before adding tag
         case story(?Q_STORY(For)) of
             [_Story] ->
-                mnesia:write(?STAG({For, Value}, For, Value));
+                mnesia:write(?STAG(For, Value));
             [] ->
                 throw({error, no_such_story})
         end
@@ -362,7 +374,7 @@ tags(?NEWTAG(backlog, For, Value)) ->
         %% look for backlog before adding tag
         case backlog(?Q_BACKLOG(For)) of
             [_Backlog] ->
-                mnesia:write(?BTAG({For, Value}, For, Value));
+                mnesia:write(?BTAG(For, Value));
             [] ->
                 throw({error, no_such_backlog})
         end
@@ -370,7 +382,7 @@ tags(?NEWTAG(backlog, For, Value)) ->
     , mnesia:transaction(Trans);
 tags(?Q_TAGS(Type, For)) ->
     Trans = fun() ->
-        mnesia:match_object(?TAG('_', Type, For,'_'))
+        mnesia:match_object(?TAG(Type, For,'_'))
      end
     , mnesia:transaction(Trans)
 .
