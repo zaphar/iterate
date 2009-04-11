@@ -349,6 +349,12 @@ task(?Q_STORY_TASKS(For)) ->
             , story_name=For})
     end
     , mnesia:transaction(Trans);
+task(?Q_TASK(Id)) ->
+    Trans = fun() ->
+        mnesia:match_object(#tasks{id=Id, task_name='_', desc='_'
+            , story_name='_'})
+    end
+    , mnesia:transaction(Trans);
 task(?C_NEW_TASK(For, Name)) ->
     Trans = fun() ->
         mnesia:write(#tasks{id=uuid(), task_name=Name, story_name=For})

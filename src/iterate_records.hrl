@@ -34,6 +34,7 @@
 -define(Q_AMT(Name), {calc_amt, Name}).
 -define(Q_SEARCH_BACKLOG(Type, Term), {search, {Type, Term}}).
 -define(Q_STORY_TASKS(For), {qry, {tasks, For}}).
+-define(Q_TASK(Id), {qry, {task, Id}}).
 -define(C_NEW_TASK(For, Name), {new, {task, For, Name}}).
 -define(D_TASK(Id), {delete, {task, Id}}).
 
