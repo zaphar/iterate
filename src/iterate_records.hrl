@@ -5,7 +5,7 @@
                        ]
                  }
 ).
--record(tasks, {id, task_name, desc, story_name}).
+-record(tasks, {id, task_name, desc, story_name, complete=false}).
 -record(time_log, {story, t_series=[]}).
 -record(tags, {id, value, type, for}).
 -record(iterations, {iteration_name, desc,
@@ -36,6 +36,7 @@
 -define(Q_STORY_TASKS(For), {qry, {tasks, For}}).
 -define(Q_TASK(Id), {qry, {task, Id}}).
 -define(C_NEW_TASK(For, Name), {new, {task, For, Name}}).
+-define(U_TASK(T), {update, {task, T}}).
 -define(D_TASK(Id), {delete, {task, Id}}).
 
 %% access macros

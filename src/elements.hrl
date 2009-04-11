@@ -8,22 +8,20 @@
     tag, body=[], accept_groups=all, active_class=active, hover_class=hover}).
 
 %% elements for the building blocks of the widgets
--record(backlog,      {?ELEMENT_BASE(element_backlog),      ?ITER_ELEMENT_BASE,
+-record(backlog, {?ELEMENT_BASE(element_backlog), ?ITER_ELEMENT_BASE,
     backlog_name, container}).
 -record(backlog_edit, {?ELEMENT_BASE(element_backlog_edit), ?ITER_ELEMENT_BASE,
     backlog_id, desc, el_id}).
--record(iteration,      {?ELEMENT_BASE(element_iteration),  ?ITER_ELEMENT_BASE,
+-record(iteration, {?ELEMENT_BASE(element_iteration), ?ITER_ELEMENT_BASE,
     iteration_name, container}).
 -record(iteration_edit, {?ELEMENT_BASE(element_iteration_edit), ?ITER_ELEMENT_BASE,
     iteration_id, desc, el_id}).
--record(story_edit,   {?ELEMENT_BASE(element_story_edit),   ?ITER_ELEMENT_BASE,
+-record(story_edit, {?ELEMENT_BASE(element_story_edit), ?ITER_ELEMENT_BASE,
     story_name, desc, sp}).
--record(story,        {?ELEMENT_BASE(element_story),        ?ITER_ELEMENT_BASE,
+-record(story, {?ELEMENT_BASE(element_story), ?ITER_ELEMENT_BASE,
     story_name, backlog}).
--record(task,         {?ELEMENT_BASE(element_task),         ?ITER_ELEMENT_BASE,
-    task_name}).
--record(task_edit,    {?ELEMENT_BASE(element_task_edit),    ?ITER_ELEMENT_BASE,
-    task_name}).
+-record(story_tasks, {?ELEMENT_BASE(element_story_tasks), ?ITER_ELEMENT_BASE,
+    story}).
 
 %% elements for the high level widgets
 -record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter="Filter Backlogs"}).

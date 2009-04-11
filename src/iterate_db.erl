@@ -37,7 +37,7 @@ setup() ->
     , mk_table(tags, record_info(fields, tags))
     , mk_table(iterations, record_info(fields, iterations))
     , mk_table(stats, record_info(fields, stats))
-    , mk_table(tasks, record_info(fields, stats))
+    , mk_table(tasks, record_info(fields, tasks))
 .
 
 bootstrap() ->
@@ -358,6 +358,11 @@ task(?Q_TASK(Id)) ->
 task(?C_NEW_TASK(For, Name)) ->
     Trans = fun() ->
         mnesia:write(#tasks{id=uuid(), task_name=Name, story_name=For})
+    end
+    , mnesia:transaction(Trans);
+task(?U_TASK(Record)) when is_record(Record, tasks) ->
+    Trans = fun() ->
+        mnesia:write(Record)
     end
     , mnesia:transaction(Trans);
 task(?D_TASK(Id)) ->

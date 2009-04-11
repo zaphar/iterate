@@ -40,8 +40,10 @@ render(ControlId, Record) ->
                         , "Tags: ", #my_inplace_textbox{
                             delegate=?MODULE
                                 , tag=?TAGCHANGE(Name), text=TagString}
+                        , #story_tasks{story=Name}
                         , lists:flatten(
-                            io_lib:format("Time Spent: ~.1f Hours ", [TimeSpent]))
+                            io_lib:format("Time Spent: ~.1f Hours "
+                                , [TimeSpent]))
                         , #br{}
                         , #link{text="Enter Time",
                                 actions=#event{ delegate=?MODULE,
