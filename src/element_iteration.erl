@@ -34,9 +34,6 @@ selection_class(Me) ->
     end
 .
 
--define(CLOSE_I_EL(Name, PanelId), 
-    {close, {iteration, Name}
-        , {panel, PanelId}}).
 body(Name, PanelId) ->
     Title = wf:f("~s ~.1f%"
         , [Name, iterate_wf:iteration_completion(Name)])
@@ -70,31 +67,23 @@ body(Name, PanelId) ->
 
 %% showing iteration info
 event(?UPDATE_B_EL(Name, Id)) ->
-    io:format("updating iteration widget ~s for: ~s~n", [Id, Name])
-    , case iterate_db:iteration(?Q_ITERATION(Name)) of
+    case iterate_db:iteration(?Q_ITERATION(Name)) of
         [_ | []] ->
             wf:update(Id, body(Name, Id))
     end;
 event(?SHOW_B_EL(Name, Id)) ->
-    io:format("showing edit widget for: ~s~n", [Name])
-    , case iterate_db:iteration(?Q_ITERATION(Name)) of
+    case iterate_db:iteration(?Q_ITERATION(Name)) of
         [B | []] ->
             wf:update(Name ++ "_target",
                 #iteration_edit{ iteration_id=Name, el_id=Id, 
                     desc=B#iterations.desc })
     end;
 event(?DELETE_B_EL(Name, Id)) ->
-    iterate_stats:record(iteration, ?DELETE_STAT(Name))
-    , io:format("hiding element: ~p~n", [Id])
-    , Result = iterate_db:iteration(?DELITER(Name))
-    , io:format("Result: ~p~n", [Result])
+    iterate_wf:delete_iteration(Name)
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
     , event(?REMOVE_B_EL(Name, Id));
 event(?CLOSE_I_EL(Name, Id)) ->
-    iterate_stats:record(iteration, ?CLOSE_STAT(iteration, Name))
-    , {ok, Iter} = get_iter(Name) 
-    , Result = iterate_db:iteration(?UPDATEITER(iteration_util:close(Iter)))
-    , io:format("Result: ~p~n", [Result])
+    iterate_wf:close_iteration(Name)
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
     , event(?REMOVE_B_EL(Name, Id));
 event(?REMOVE_B_EL(Name, _Id)) ->

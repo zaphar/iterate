@@ -38,7 +38,7 @@ render(_ControlId, Record) ->
 
 %% generate our backlog list
 iterations() ->
-    iterations(iterate_db:iterations(started))
+    iterations(iterate_wf:get_started_iterations())
 .
 
 iterations([]) ->
@@ -50,7 +50,8 @@ iterations([H|T]) ->
 .
 
 event(?REFRESH(_Id)) ->
-    wf:update(iteration_panel, #iteration_panel{data=iterate_db:iterations(started)});
+    wf:update(iteration_panel
+        , #iteration_panel{data=iterate_wf:get_started_iterations()});
 event(?STARTITER(IterPanelId)) ->
     io:format("starting an iteration~n", [])
     , PanelId = wf:temp_id()
@@ -66,8 +67,7 @@ event(?STARTITER(IterPanelId)) ->
     , wf:flash(Panel);
 event(?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)) ->
     [Value] = wf:q(TextBoxId)
-    , Desc = "fill in description here"
-    , iterate_db:iteration(?NEWITER(Value, Desc))
+    , iterate_wf:create_iteration(Value)
     , wf:update(PanelId, "created iteration: " ++ Value)
     , event(?REFRESH(IterPanelId));
 event(Event) ->

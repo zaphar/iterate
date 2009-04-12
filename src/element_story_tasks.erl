@@ -40,13 +40,6 @@ build_rows(Name, PanelId) ->
     , #table{class=tasks, rows=Content }
 .
 
--define(COMPLETE_TASK(CBId, Id), {complete
-    , {task, Id}
-    , {checkbox, CBId}}).
--define(DELETE_TASK(Id, PanelId, Story), {delete
-    , {task, Id}
-    , {panel, PanelId}
-    , {story, Story}}).
 build_task_row(T, PanelId) ->
     TextBox = #my_inplace_textbox{text=T#tasks.task_name
         , delegate=?MODULE, tag={update, T#tasks.id, T#tasks.story_name}}

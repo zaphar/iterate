@@ -37,6 +37,20 @@
 -define(NEWTIME(Name, Id, PanelId), {newtime, Name, Id, PanelId}).
 -define(TAGCHANGE(For), {update, {tag, For}}).
 
+%% iteration event tags
+-define(CLOSE_I_EL(Name, PanelId), 
+    {close, {iteration, Name}
+        , {panel, PanelId}}).
+
+%% task event tags
+-define(COMPLETE_TASK(CBId, Id), {complete
+    , {task, Id}
+    , {checkbox, CBId}}).
+-define(DELETE_TASK(Id, PanelId, Story), {delete
+    , {task, Id}
+    , {panel, PanelId}
+    , {story, Story}}).
+
 %% misc shared event tags
 -define(REFRESH(Id), {refresh, Id}).
 -define(REFRESH_TYPE(Id, Type), {refresh, Id, Type}).

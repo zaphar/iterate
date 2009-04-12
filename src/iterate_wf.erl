@@ -1,20 +1,10 @@
 -module(iterate_wf).
+-compile(export_all).
 
 -include("events.hrl").
 -include("iterate_records.hrl").
 -include("stats.hrl").
 
--export([create_backlog/1, delete_backlog/1]).
--export([search_for_backlog/1]).
-
--export([create_iteration/1, delete_iteration/1]).
--export([close_iteration/1]).
--export([search_for_iteration/1]).
--export([iteration_completion/1]).
-
--export([get_story/1, get_iteration_stories/1, get_backlog_stories/1]).
--export([move_story_to_backlog/2, move_story_to_iteration/2]).
--export([update_story_completion/2]).
 
 %% TODO(jwall): should these be broken into story_wf, backlog_wf and so on?
 
@@ -111,23 +101,39 @@ log_iteration_completion(Iter) ->
 
 %% Iteration APIs
 
-create_iteration(_Name) ->
-    ok
+create_iteration(Name) ->
+    Desc = "fill in description here"
+    , iterate_db:iteration(?NEWITER(Name, Desc))
 .
 
-close_iteration(_Name) ->
-    ok
+close_iteration(Name) ->
+    iterate_stats:record(iteration, ?CLOSE_STAT(iteration, Name))
+    , {ok, Iter} = get_iteration(Name) 
+    , iterate_db:iteration(?UPDATEITER(iteration_util:close(Iter)))
 .
 
-delete_iteration(_Name) ->
-    ok
+delete_iteration(Name) ->
+    iterate_stats:record(iteration, ?DELETE_STAT(Name))
+    , iterate_db:iteration(?DELITER(Name))
 .
 
 search_for_iteration(_Crit) ->
     ok
 .
 
+get_started_iterations() ->
+    iterate_db:iterations(started)
+.
+
 iteration_completion(Name) ->
     story_util:aggregate_completion(get_iteration_stories(Name))
 .
 
+get_iteration(Name) ->
+    case iterate_db:iteration(?Q_ITERATION(Name)) of
+        [Iteration] ->
+            {ok, Iteration};
+        [] ->
+            {abort, no_such_iteration}
+    end
+.
