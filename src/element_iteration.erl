@@ -34,8 +34,11 @@ selection_class(Me) ->
     end
 .
 
+-define(CLOSE_I_EL(Name, PanelId), 
+    {close, {iteration, Name}
+        , {panel, PanelId}}).
 body(Name, PanelId) ->
-    Title = wf:f("~s ~.1f% complete"
+    Title = wf:f("~s ~.1f%"
         , [Name, iterate_wf:iteration_completion(Name)])
     , [#panel{ id=PanelId, actions=#event{type=click
                 , delegate=element_story_panel
@@ -53,6 +56,11 @@ body(Name, PanelId) ->
                  , " " , #link{text="delete"
                          , actions=#event{type=click, delegate=?MODULE
                              , postback=?DELETE_B_EL(Name, PanelId)
+                         }
+                 }
+                 , " " , #link{text="close"
+                         , actions=#event{type=click, delegate=?MODULE
+                             , postback=?CLOSE_I_EL(Name, PanelId)
                          }
                  }
              ]
@@ -76,10 +84,16 @@ event(?SHOW_B_EL(Name, Id)) ->
                     desc=B#iterations.desc })
     end;
 event(?DELETE_B_EL(Name, Id)) ->
-    wf:flash(io_lib:format("hiding element: ~p~n", [Id]))
-    , iterate_stats:record(iteration, ?DELETE_STAT(Name))
+    iterate_stats:record(iteration, ?DELETE_STAT(Name))
     , io:format("hiding element: ~p~n", [Id])
     , Result = iterate_db:iteration(?DELITER(Name))
+    , io:format("Result: ~p~n", [Result])
+    , wf:wire(Id, #hide{ effect=slide, speed=500 })
+    , event(?REMOVE_B_EL(Name, Id));
+event(?CLOSE_I_EL(Name, Id)) ->
+    iterate_stats:record(iteration, ?CLOSE_STAT(iteration, Name))
+    , {ok, Iter} = get_iter(Name) 
+    , Result = iterate_db:iteration(?UPDATEITER(iteration_util:close(Iter)))
     , io:format("Result: ~p~n", [Result])
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
     , event(?REMOVE_B_EL(Name, Id));
@@ -105,5 +119,14 @@ drop_event(Story, Iteration) ->
     , {Type, _Name} = story_util:get_type(StoryRecord)
     , element_story_panel:event(?SHOW_STORIES(Type, Backlog))
     , element_iteration_panel:event(?REFRESH(bogus_id))
+.
+
+get_iter(Name) ->
+    case iterate_db:iteration(?Q_ITERATION(Name)) of
+        [Iteration] ->
+            {ok, Iteration};
+        [] ->
+            {abort, no_such_iteration}
+    end
 .
 
