@@ -356,7 +356,7 @@ task(?Q_TASK(Id)) ->
 task(?C_NEW_TASK(For, Name)) ->
     Trans = fun() ->
         Id = uuid()
-        , mnesia:write(#tasks{id=uuid(), task_name=Name, story_name=For})
+        , mnesia:write(#tasks{id=Id, task_name=Name, story_name=For})
         , Id
     end
     , mnesia:transaction(Trans);
@@ -467,7 +467,8 @@ new_stat(For, Entry, User) ->
 .
 
 uuid() ->
-   string:join([rand(8), rand(4), rand(4), rand(4), rand(16)], "-")
+   wf_utils:guid()
+   %string:join([rand(8), rand(4), rand(4), rand(4), rand(16)], "-")
 .
 
 rand(Size) ->

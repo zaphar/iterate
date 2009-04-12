@@ -68,7 +68,6 @@ build_task_row(T, PanelId) ->
 event({new, {task, Name}, Id, Story}) ->
     case iterate_db:task(?C_NEW_TASK(Story, Name)) of
         {atomic, _TId} ->
-            %%wf:flash(wf:f("created story with id: ~p", [TId]))
             event({refresh, Id, Story});
         Err ->
             throw(Err)
