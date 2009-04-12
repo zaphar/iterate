@@ -43,23 +43,6 @@ setup() ->
 bootstrap() ->
    backlog({new, ?DEFAULTB})
   , backlog({new, ?IDEAPOOL})
-  , F = fun(B) ->
-       fun(N) ->
-           story({new, #stories{backlog=B, story_name=N, sp=3}})
-       end
-  end
-  , lists:foreach(F("Default"), ["00 - Historical event logging"
-                                , "03 - backlog types (iteration/staging)"
-                                , "story order"
-                                , "story time tracking"
-                                ]
-  )
-  , lists:foreach(F("Idea Pool"), ["01 - Reporting"
-                                  , "02 - color code stories"
-                                  , "04 - comet updates of the stories and backlogs"
-                                  , "06 - tasks for stories"
-                                  ]
-  )
 .
 
 mk_table(Name, Info) ->
