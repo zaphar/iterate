@@ -4,6 +4,9 @@
 -record(my_inplace_textbox, {?CONTROL_BASE(element_my_inplace_textbox),
     text="", html_encode=true, start_mode=view, validators=[],
     delegate=?MODULE}).
+-record(inplace_textarea, {?CONTROL_BASE(element_inplace_textarea),
+    text="", html_encode=true, start_mode=view, validators=[],
+    delegate=?MODULE, input_class}).
 -record(delegated_droppable, {?ELEMENT_BASE(element_delegated_droppable),
     tag, body=[], accept_groups=all, active_class=active, hover_class=hover}).
 

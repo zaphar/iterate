@@ -20,6 +20,11 @@
     width: 600px;
 }
 
+textarea.story_desc {
+    width: 350px;
+    height: 150px;
+}
+
 .backlog_element {
     width: 200px;
 }
