@@ -24,9 +24,7 @@ build_rows(Name, PanelId) ->
     , io:format("our PanelId for tasks still is: ~p", [PanelId])
     , Tasks = case TaskList of
         [] ->
-            [build_task_row(#tasks{id=iterate_db:uuid()
-                , task_name="Do it (a task placeholder)"
-                , story_name=Name}, PanelId)];
+            [];
         List ->
             [ build_task_row(T, PanelId) || T <- List ]
     end
@@ -36,7 +34,7 @@ build_rows(Name, PanelId) ->
     , Refresh = #link{text="refresh", actions=#event{
         delegate=?MODULE, postback={refresh, PanelId, Name}}}
     , HeaderFooter = [#tableheader{body=[NewTask, " | ", Refresh]}]
-    , Content = HeaderFooter ++ Tasks ++ HeaderFooter
+    , Content = HeaderFooter ++ Tasks
     , #table{class=tasks, rows=Content }
 .
 
