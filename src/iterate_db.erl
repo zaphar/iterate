@@ -450,12 +450,17 @@ new_stat(For, Entry, User) ->
 .
 
 uuid() ->
-   wf_utils:guid()
-   %string:join([rand(8), rand(4), rand(4), rand(4), rand(16)], "-")
+   %wf_utils:guid()
+   string:join([rand(8), rand(4), rand(4), rand(4), rand(16)], "-")
 .
 
 rand(Size) ->
-    lists:flatten([hd(string:substr(float_to_list(random:uniform() * 16#1000), 1, 1)) || _N <-  lists:seq(1, Size)])
+    {S1, S2, S3} = now()
+    , random:seed(S1, S2, S3)
+    , lists:flatten(
+        [
+            hd(integer_to_list(random:uniform(10) - 1)) 
+                || _N <-  lists:seq(1, Size)])
 .
 
 get_qh(Table, F) ->
