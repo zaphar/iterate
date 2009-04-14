@@ -32,8 +32,9 @@ render(ControlId, Record) ->
     , Panel = #panel{ id=PanelId
                     , body=[
                         "Description: ", #inplace_textarea{
-                            input_class=story_desc, delegate=?MODULE
-                                , tag=?UPDATE_S_DESC(Name), text=Desc}, #br{}
+                            html_encode=false, input_class=story_desc
+                                , delegate=?MODULE, tag=?UPDATE_S_DESC(Name)
+                                , text=Desc}, #br{}
                         , "Story Points: ", #my_inplace_textbox{
                             delegate=?MODULE
                                 , tag=?UPDATESP(Name), text=StoryPoints}

@@ -120,32 +120,31 @@ event(?S_PANEL_CREATE(backlog, Backlog)) ->
         }]
     })
     , ok;
+%% TODO(jwall): refactor these two they are identical
 event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->
     [Value] = wf:q(Id)
-    , Story = story_util:set_iteration(#stories{story_name=Value}, Backlog)
-    , case iterate_db:story({new, Story}) of
-        {error, Msg} ->
+    , try 
+        iterate_wf:create_story_for(Value, {iteration, Backlog})
+        , wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
+        , event(?SHOW_STORIES(iteration, Backlog))
+    catch
+        Msg ->
             wf:update(PanelId, "Failed!!")
-            , wf:flash(io_lib:format("~p", [Msg]));
-        {atomic, ok} ->
-            wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
-            , event(?SHOW_STORIES(iteration, Backlog));
-        _ ->
-            throw({error, unknown})
+            , wf:flash(io_lib:format("~p", [Msg]))
+
     end
     , ok;
 event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
     [Value] = wf:q(Id)
-    , Story = story_util:set_backlog(#stories{story_name=Value}, Backlog)
-    , case iterate_db:story({new, Story}) of
-        {error, Msg} ->
+    , try 
+        iterate_wf:create_story_for(Value, {backlog, Backlog})
+        , wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
+        , event(?SHOW_STORIES(iteration, Backlog))
+    catch
+        Msg ->
             wf:update(PanelId, "Failed!!")
-            , wf:flash(io_lib:format("~p", [Msg]));
-        {atomic, ok} ->
-            wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
-            , event(?SHOW_STORIES(backlog, Backlog));
-        _ ->
-            throw({error, unknown})
+            , wf:flash(io_lib:format("~p", [Msg]))
+
     end
     , ok;
 event(Event) -> 

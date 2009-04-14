@@ -25,6 +25,10 @@ textarea.story_desc {
     height: 150px;
 }
 
+.story_title {
+    display: inline;
+}
+
 .backlog_element {
     width: 200px;
 }

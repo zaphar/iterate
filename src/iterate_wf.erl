@@ -36,6 +36,28 @@ search_for_backlog(Term) ->
 
 %% Story APIs
 
+create_story(Title) ->
+    #stories{story_name=iterate_db:uuid(), story_title=Title}
+.
+
+create_story_for(Title, {backlog, Backlog}) ->
+    Story = story_util:set_backlog(create_story(Title), Backlog)
+    , iterate_db:story({new, Story})
+    , commit_story(Story);
+create_story_for(Title, {iteration, Iteration}) ->
+    Story = story_util:set_iteration(create_story(Title), Iteration)
+    , commit_story(Story)
+.
+
+commit_story(Story) ->
+    case iterate_db:story({new, Story}) of
+        {error, Msg} ->
+            throw(Msg);
+        {atomic, ok} ->
+            Story
+    end
+.
+
 get_story(Name) ->
     iterate_db:story(?Q_STORY(Name))
 .

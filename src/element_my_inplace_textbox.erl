@@ -34,7 +34,7 @@ render(ControlID, Record) ->
 		class="inplace_textbox " ++ wf:to_list(Record#my_inplace_textbox.class),
 		style=Record#my_inplace_textbox.style,
 		body = [
-			#panel { id=ViewPanelID, class="view", body=[
+			#panel { id=ViewPanelID, style="display:inline;", class="view ", body=[
 				#span { id=LabelID, class="label", text=Text, html_encode=Record#my_inplace_textbox.html_encode, actions=[
 					#buttonize { target=ViewPanelID }
 				]},
@@ -48,7 +48,7 @@ render(ControlID, Record) ->
 				#event { type=mouseover, target=MouseOverID, actions=#show{} },
 				#event { type=mouseout, target=MouseOverID, actions=#hide{} }
 			]},
-			#panel { id=EditPanelID, class="edit", body=[
+			#panel { id=EditPanelID, style="display:inline;", class="edit", body=[
 				#textbox { id=TextBoxID, text=Text, next=OKButtonID },
 				#button { id=OKButtonID, text="OK", actions=OKEvent#event { type=click } },
 				#button { id=CancelButtonID, text="Cancel", actions=CancelEvent#event { type=click } }
