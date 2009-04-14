@@ -56,7 +56,6 @@ render(_ControlId, Record) ->
                                 }
                             }, " | "
                             , #my_inplace_textbox{delegate=?MODULE,
-                                class=story_title,
                                 text=io_lib:format("~.10B%", [Percent]),
                                 tag=?COMPLETE_S(StoryId)
                             }, " ]"
