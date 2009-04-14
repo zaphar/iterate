@@ -54,7 +54,7 @@ render(_ControlId, Record) ->
                                     , delegate=?MODULE
                                     , postback=?DELETE_S_EL(StoryId, PanelId)
                                 }
-                            }, " | ]"
+                            }, " ]"
                             , #my_inplace_textbox{delegate=?MODULE,
                                 text=io_lib:format("~.10B%", [Percent]),
                                 tag=?COMPLETE_S(StoryId)
