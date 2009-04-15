@@ -139,7 +139,7 @@ event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
     , try 
         iterate_wf:create_story_for(Value, {backlog, Backlog})
         , wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
-        , event(?SHOW_STORIES(iteration, Backlog))
+        , event(?SHOW_STORIES(backlog, Backlog))
     catch
         Msg ->
             wf:update(PanelId, "Failed!!")

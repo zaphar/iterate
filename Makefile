@@ -1,4 +1,6 @@
 compile: 
+	(cd deps/nitrogen && make)
+	(cd deps/mochiweb && make)
 	erl -make
 	
 clean:
