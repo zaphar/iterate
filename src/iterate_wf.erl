@@ -11,9 +11,9 @@
 %% Backlog APIs
 
 create_backlog(Name) ->
-   Result = iterate_db:backlog({new, #backlogs{backlog_name=Name}})
-   , iterate_stats:record(backlog, ?CREATE_STAT(Name))
-   , Result
+    Result = iterate_db:backlog({new, #backlogs{backlog_name=Name}})
+    , iterate_stats:record(backlog, ?CREATE_STAT(Name))
+    , Result
 .
 
 delete_backlog(Name) ->
@@ -23,7 +23,7 @@ delete_backlog(Name) ->
     , Result = iterate_db:backlog({delete, Record})
     , iterate_stats:record(backlog, ?DELETE_STAT(Name))
     , io:format("Result: ~p~n", [Result])
-    , ok
+    , Result
 .
 
 search_for_backlog("desc:" ++ Term) ->
@@ -41,7 +41,8 @@ create_story(Title) ->
 .
 
 create_story_for(Title, {backlog, Backlog}) ->
-    Story = story_util:set_backlog(create_story(Title), Backlog)
+    iterate_stats:record(story, ?CREATE_STAT(Title))
+    , Story = story_util:set_backlog(create_story(Title), Backlog)
     , iterate_db:story({new, Story})
     , commit_story(Story);
 create_story_for(Title, {iteration, Iteration}) ->
@@ -124,8 +125,8 @@ log_iteration_completion(Iter) ->
 %% Iteration APIs
 
 create_iteration(Name) ->
-    Desc = "fill in description here"
-    , iterate_db:iteration(?NEWITER(Name, Desc))
+    iterate_stats:record(iteration, ?CREATE_STAT(Name))
+    , iterate_db:iteration(?NEWITER(Name, "fill in description here"))
 .
 
 close_iteration(Name) ->
