@@ -139,15 +139,7 @@ backlog(?Q_SEARCH_BACKLOG(all, Value)) ->
     end
     , backlog({do_search, get_qh(mnesia:table(backlogs), F)});
 backlog({do_search, QH}) ->
-    Trans = fun() ->
-        qlc:eval(QH)
-    end,
-    case mnesia:transaction(Trans) of
-        {atomic, RecordList} ->
-            RecordList;
-        {abort, Msg} ->
-            {error, Msg}
-    end
+    run_qh(QH)
 .
 
 backlog_id_filter(Value) ->
@@ -426,7 +418,9 @@ log_time(?Q_AMT(Story)) ->
 .
 
 stat(?Q_ALL) ->
-    Trans = fun() -> mnesia:match_object(#stats{_='_'}) end
+    stat(?Q_MATCH_STAT(#stats{_='_'}));
+stat(?Q_MATCH_STAT(MatchSpec)) ->
+    Trans = fun() -> mnesia:match_object(MatchSpec) end
     , case mnesia:transaction(Trans) of
         {atomic, RecordList} ->
             RecordList;
@@ -434,7 +428,9 @@ stat(?Q_ALL) ->
             {error, Msg};
         Error ->
             throw({error, Error})
-    end
+    end;
+stat(?Q_FILTER_STATS(F)) ->
+    run_qh(get_qh(mnesia:table(stats), F))
 .
 
 new_stat(Type, Entry) ->
@@ -467,4 +463,15 @@ get_qh(Table, F) ->
     qlc:q([I || I <- Table, F(I)])
 .
 
+run_qh(QH) ->
+    Trans = fun() ->
+        qlc:eval(QH)
+    end
+    , case mnesia:transaction(Trans) of
+        {atomic, RecordList} ->
+            RecordList;
+        {abort, Msg} ->
+            {error, Msg}
+    end
+.
 

@@ -24,6 +24,8 @@
 -define(Q_BACKLOG(Name), {qry, Name}).
 -define(Q_ITERATION(Name), {qry, Name}).
 -define(Q_TAGS(Type, For), {qry, Type, For}).
+-define(Q_MATCH_STAT(MatchSpec), {match, MatchSpec}).
+-define(Q_FILTER_STATS(F), {filter, F}).
 -define(NEWTAG(Type, For, Value), {new, {Type, For, Value}}).
 -define(NEWITER(Name, Desc), {new, {iteration, Name, Desc}}).
 -define(DELITER(Name), {delete, {iteration, Name}}).
