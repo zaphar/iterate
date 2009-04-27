@@ -20,8 +20,11 @@ completion({iteration, Iter}) ->
         (_) ->
             false
     end
-    , [ translate_completion_stats(S) ||
-        S <- iterate_db:stat(?Q_FILTER_STATS(F))]
+    , lists:sort(fun({A1, A2, _}, {B1, B2, _}) ->
+            is_time_older_than({A1, A2}, {B1, B2})
+        end
+        , [ translate_completion_stats(S) ||
+        S <- iterate_db:stat(?Q_FILTER_STATS(F))])
 .
 
 translate_completion_stats(S) when is_record(S, stats) ->
@@ -29,4 +32,24 @@ translate_completion_stats(S) when is_record(S, stats) ->
     , ?CHANGE_STAT(_For, percent, Value) = S#stats.entry
     , ?TIMESERIES(Date, Time, {percent, Value})
 .
+
+is_time_older_than({Date, Time}, Mark) ->
+    is_time_older_than(calendar:datetime_to_gregorian_seconds({Date, Time})
+        , Mark);
+is_time_older_than(Time, {DateMark, TimeMark}) ->
+    is_time_older_than(Time
+        , calendar:datetime_to_gregorian_seconds({DateMark, TimeMark}));
+is_time_older_than(Time, Mark)  when is_integer(Time), is_integer(Mark) ->
+    Time < Mark
+.
+
+%is_time_sooner_than({Date, Time}, Mark) ->
+%    is_time_sooner_than(calendar:datetime_to_gregorian_seconds({Date, Time})
+%        , Mark);
+%is_time_sooner_than(Time, {DateMark, TimeMark}) ->
+%    is_time_sooner_than(Time
+%        , calendar:datetime_to_gregorian_seconds({DateMark, TimeMark}));
+%is_time_sooner_than(Time, Mark)  when is_integer(Time), is_integer(Mark) ->
+%    Time > Mark
+%.
 
