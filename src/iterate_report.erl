@@ -7,19 +7,8 @@
 
 -define(TIMESERIES(Date, Time, Value), {Date, Time, Value}).
 
-completion({iteration, Iter}) ->
-    IsForIter = fun
-        (?CHANGE_STAT(IterName, percent, _)) ->
-            Iter == IterName;
-        (_) ->
-            false
-    end
-    , F = fun
-        (Stat) when is_record(Stat, stats), Stat#stats.for == iteration ->
-             IsForIter(Stat#stats.entry);
-        (_) ->
-            false
-    end
+completion({Type, Iter}) ->
+    F = mk_is_change_stat_fun(Iter, percent, Type)
     , lists:sort(fun({A1, A2, _}, {B1, B2, _}) ->
             is_time_older_than({A1, A2}, {B1, B2})
         end
@@ -27,11 +16,31 @@ completion({iteration, Iter}) ->
         S <- iterate_db:stat(?Q_FILTER_STATS(F))])
 .
 
+%% stat utils
+
 translate_completion_stats(S) when is_record(S, stats) ->
     {Date, Time} = calendar:now_to_local_time(S#stats.ts)
     , ?CHANGE_STAT(_For, percent, Value) = S#stats.entry
     , ?TIMESERIES(Date, Time, {percent, Value})
 .
+
+mk_is_change_stat_fun(Name, StatType, Type) ->
+    F = fun
+        (?CHANGE_STAT(ForName, ThisStatType, _)) 
+            when StatType == ThisStatType ->
+                Name == ForName;
+        (_) ->
+            false
+    end
+    , fun
+        (Stat) when is_record(Stat, stats), Stat#stats.for == Type ->
+             F(Stat#stats.entry);
+        (_) ->
+            false
+    end
+.
+
+%% time utils
 
 is_time_older_than({Date, Time}, Mark) ->
     is_time_older_than(calendar:datetime_to_gregorian_seconds({Date, Time})
