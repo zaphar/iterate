@@ -1,27 +1,55 @@
 -module(iterate_report).
+-compile(export_all).
 
 -include("stats.hrl").
 -include("iterate_records.hrl").
 
--export([completion/1]).
+-export([completion/1, completion_for_last_week/1]).
+-import(date_util, [now_to_milliseconds_hires/1, is_time_older_than/2
+    , is_older_by/3]).
 
--define(TIMESERIES(Date, Time, Value), {Date, Time, Value}).
+completion_for_last_week({Type, Name}) ->
+    {Now, _} = calendar:local_time()
+    , F1 = mk_is_change_stat_fun(Name, percent, Type)
+    , F2 = fun(S) ->
+        {Date, _} = get_date_time_for_stat(S)
+        , is_older_by(Date, Now, {days, 7}) orelse Date == Now
+    end
+    , F = fun(S) ->
+        F1(S) and F2(S)
+    end
+    , Sort = make_sorter_desc()
+    , get_stats(F, Sort,  mk_completion_translater())
+.
 
-completion({Type, Iter}) ->
-    F = mk_is_change_stat_fun(Iter, percent, Type)
-    , lists:sort(fun({A1, A2, _}, {B1, B2, _}) ->
-            is_time_older_than({A1, A2}, {B1, B2})
-        end
-        , [ translate_completion_stats(S) ||
+completion({Type, Name}) ->
+    F = mk_is_change_stat_fun(Name, percent, Type)
+    , Sort = make_sorter_desc()
+    , get_stats(F, Sort, mk_completion_translater())
+.
+
+get_stats(F, Sort, Transform) ->
+    lists:sort(Sort, [ Transform(S) ||
         S <- iterate_db:stat(?Q_FILTER_STATS(F))])
 .
 
 %% stat utils
 
-translate_completion_stats(S) when is_record(S, stats) ->
-    {Date, Time} = calendar:now_to_local_time(S#stats.ts)
-    , ?CHANGE_STAT(_For, percent, Value) = S#stats.entry
-    , ?TIMESERIES(Date, Time, {percent, Value})
+make_sorter_desc() ->
+    fun(TS1, TS2) ->
+        is_time_older_than({TS1#tsentry.date, TS1#tsentry.time}
+            , {TS2#tsentry.date, TS2#tsentry.time})
+    end
+.
+
+mk_completion_translater() -> 
+    fun(S) when is_record(S, stats) ->
+        {Date, Time} = calendar:now_to_local_time(S#stats.ts)
+        , Epoch = now_to_milliseconds_hires(S#stats.ts)
+        , ?CHANGE_STAT(_For, percent, Value) = S#stats.entry
+        , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Value, percent)
+    end
 .
 
 mk_is_change_stat_fun(Name, StatType, Type) ->
@@ -32,7 +60,11 @@ mk_is_change_stat_fun(Name, StatType, Type) ->
         (_) ->
             false
     end
-    , fun
+    , mk_is_stat_type_fun(Type, F)
+.
+
+mk_is_stat_type_fun(Type, F) ->
+    fun
         (Stat) when is_record(Stat, stats), Stat#stats.for == Type ->
              F(Stat#stats.entry);
         (_) ->
@@ -40,25 +72,6 @@ mk_is_change_stat_fun(Name, StatType, Type) ->
     end
 .
 
-%% time utils
-
-is_time_older_than({Date, Time}, Mark) ->
-    is_time_older_than(calendar:datetime_to_gregorian_seconds({Date, Time})
-        , Mark);
-is_time_older_than(Time, {DateMark, TimeMark}) ->
-    is_time_older_than(Time
-        , calendar:datetime_to_gregorian_seconds({DateMark, TimeMark}));
-is_time_older_than(Time, Mark)  when is_integer(Time), is_integer(Mark) ->
-    Time < Mark
+get_date_time_for_stat(S) ->
+        calendar:now_to_local_time(S#stats.ts)
 .
-
-%is_time_sooner_than({Date, Time}, Mark) ->
-%    is_time_sooner_than(calendar:datetime_to_gregorian_seconds({Date, Time})
-%        , Mark);
-%is_time_sooner_than(Time, {DateMark, TimeMark}) ->
-%    is_time_sooner_than(Time
-%        , calendar:datetime_to_gregorian_seconds({DateMark, TimeMark}));
-%is_time_sooner_than(Time, Mark)  when is_integer(Time), is_integer(Mark) ->
-%    Time > Mark
-%.
-
