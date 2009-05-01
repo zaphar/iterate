@@ -25,6 +25,26 @@ now_to_milliseconds_hires({Mega, Sec, Micro}) ->
     now_to_seconds_hires({Mega, Sec, Micro}) * 1000
 .
 
+epoch_gregorian_seconds() ->
+    calendar:datetime_to_gregorian_seconds({{1970,1,1}, {0,0,0}})
+.
+
+now_to_gregorian_seconds() ->
+    epoch_to_gregorian_seconds(now())
+.
+
+epoch_to_gregorian_seconds({Mega, Sec, Micro}) ->
+    epoch_to_gregorian_seconds(now_to_seconds({Mega, Sec, Micro}));
+epoch_to_gregorian_seconds(Now) ->
+    EpochSecs = epoch_gregorian_seconds()
+    , Now + EpochSecs
+.
+
+gregorian_seconds_to_epoch(Secs) ->
+    EpochSecs = epoch_gregorian_seconds()
+    , Secs - EpochSecs
+.
+
 is_older_by(T1, T2, {days, N}) ->
     N1 = day_difference(T1, T2)
     , case N1 of
@@ -73,3 +93,9 @@ is_time_sooner_than(Time, {DateMark, TimeMark}) ->
 is_time_sooner_than(Time, Mark)  when is_integer(Time), is_integer(Mark) ->
     Time > Mark
 .
+
+subtract(Date, {days, N}) ->
+    New = calendar:date_to_gregorian_days(Date) - N
+    , calendar:gregorian_days_to_date(New)
+.
+
