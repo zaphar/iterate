@@ -15,12 +15,14 @@ render() ->
 
 render(ControlId, _Record) ->
     PanelId = wf:temp_id()
-    , CChart = build_completion_chart({iteration, "rc2 sprint"})
+    , CChart = build_completion_chart(wf_session:session(working_in))
     , Panel = #panel{id=PanelId, body=["Completion Burnup chart"
         , CChart]}
     , element_panel:render(ControlId, Panel)
 .
 
+build_completion_chart(undefined) ->
+    "no reports selected";
 build_completion_chart({Type, Name}) ->
     TS = completion_for_last_week({Type, Name})
     % TODO(jwall): make this into a widget and blog about it
@@ -33,29 +35,8 @@ build_completion_chart({Type, Name}) ->
     , YTicks = 5
     , MinY = 0
     , MaxY = 100
-    %, BGColor = "white"
-    %, ChartColor = "grey"
     , Data = [[V#tsentry.epoch, V#tsentry.value] || V <- TS]
-    , TargetId = wf:temp_id()
-    , GraphId = wf:temp_id()
-    , ScriptId = wf:temp_id()
-    %% TODO(jwall): legend support
-    %% TODO(jwall): colors
-    %% TODO(jwall): add interactive support (zoom, tooltip, select)
-    , Script = wf:f("<script id=~p language='javascript', type='text/javascript'>"
-        ++ "$(function() { ~n"
-        ++ "var d = ~w;~n"
-        ++ "$.plot($('#' + ~p), [d], {xaxis: { mode: 'time',"
-        ++ " ticks: 7,"
-        ++ " min: (new Date(~p).getTime()),"
-        ++ " max: (new Date(~p).getTime())"
-        ++ " }, "
-        ++ "yaxis: {ticks: ~p,"
-        ++ "min: ~p,"
-        ++ "max: ~p,"
-        ++ "}"
-        ++ "});~n});</script>"
-        , [ScriptId, Data, TargetId, MinX, MaxX, YTicks, MinY, MaxY])
-    , Panel = #panel{id=TargetId, style=wf:f("width:~ppx;height:~ppx", [Width, Height])}
-    , #panel{id=GraphId, body=[Panel, Script]}
+    , #flot_chart{width=Width, height=Height
+        , minx=MinX, maxx=MaxX, yticks=YTicks, xticks=8
+        , miny=MinY, maxy=MaxY, values=Data}
 .

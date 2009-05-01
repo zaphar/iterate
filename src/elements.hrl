@@ -25,6 +25,9 @@
     story_name, backlog}).
 -record(story_tasks, {?ELEMENT_BASE(element_story_tasks), ?ITER_ELEMENT_BASE,
     story}).
+-record(flot_chart, {?ELEMENT_BASE(element_flot_chart), width, height, minx
+    , maxx, miny, maxy, xticks, yticks, title
+    , values}).
 
 %% elements for the high level widgets
 -record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter="Filter Backlogs"}).
