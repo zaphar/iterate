@@ -45,6 +45,11 @@ gregorian_seconds_to_epoch(Secs) ->
     , Secs - EpochSecs
 .
 
+datetime_to_epoch({Date, Time}) ->
+    gregorian_seconds_to_epoch(
+        calendar:datetime_to_gregorian_seconds({Date, Time}))
+.
+
 is_older_by(T1, T2, {days, N}) ->
     N1 = day_difference(T1, T2)
     , case N1 of
