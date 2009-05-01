@@ -45,6 +45,10 @@ gregorian_seconds_to_epoch(Secs) ->
     , Secs - EpochSecs
 .
 
+date_to_epoch(Date) ->
+    datetime_to_epoch({Date, {0,0,0} })
+.
+
 datetime_to_epoch({Date, Time}) ->
     gregorian_seconds_to_epoch(
         calendar:datetime_to_gregorian_seconds({Date, Time}))
@@ -101,6 +105,11 @@ is_time_sooner_than(Time, Mark)  when is_integer(Time), is_integer(Mark) ->
 
 subtract(Date, {days, N}) ->
     New = calendar:date_to_gregorian_days(Date) - N
+    , calendar:gregorian_days_to_date(New)
+.
+
+add(Date, {days, N}) ->
+    New = calendar:date_to_gregorian_days(Date) + N
     , calendar:gregorian_days_to_date(New)
 .
 

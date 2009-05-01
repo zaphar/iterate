@@ -75,3 +75,4 @@ mk_is_stat_type_fun(Type, F) ->
 get_date_time_for_stat(S) ->
         calendar:now_to_local_time(S#stats.ts)
 .
+
