@@ -27,7 +27,7 @@
     story}).
 -record(flot_chart, {?ELEMENT_BASE(element_flot_chart), width, height, minx
     , maxx, miny, maxy, xticks, yticks, title
-    , values}).
+    , values, lines=true, points=true, selectmode="xy"}).
 
 %% elements for the high level widgets
 -record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter="Filter Backlogs"}).

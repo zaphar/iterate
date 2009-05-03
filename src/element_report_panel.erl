@@ -35,7 +35,7 @@ build_completion_chart({Type, Name}) ->
     , YTicks = 5
     , MinY = 0
     , MaxY = 100
-    , Data = [[V#tsentry.epoch, V#tsentry.value] || V <- TS]
+    , Data = {Name, [[V#tsentry.epoch, V#tsentry.value] || V <- TS]}
     , #flot_chart{width=Width, height=Height
         , minx=MinX, maxx=MaxX, yticks=YTicks, xticks=8
         , miny=MinY, maxy=MaxY, values=Data}
