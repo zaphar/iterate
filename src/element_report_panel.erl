@@ -28,8 +28,8 @@ build_completion_chart({Type, Name}) ->
     % TODO(jwall): make this into a widget and blog about it
     %, Length = length(TS)
     %, Title = wf:f("~p Completion Burndown for Last 7 days", [Name])
-    , Width = 600
-    , Height = 300
+    , Width = 300
+    , Height = 150
     , MinX = date_util:date_to_epoch(date_util:subtract(date(), {days, 7})) * 1000 
     , MaxX = date_util:date_to_epoch(date_util:add(date(), {days, 1})) * 1000
     , YTicks = 5

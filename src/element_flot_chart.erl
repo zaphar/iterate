@@ -39,6 +39,7 @@ render(ControlId, Record) ->
             Id
     end
     , ToolTipId = wf:temp_id()
+    %% TODO(jwall): support date formatting for timeseries data
     %% TODO(jwall): colors
     , Script = wf:f("<script id=~p language='javascript', type='text/javascript'>"
         ++ "var " ++ PlotId ++ ";"
