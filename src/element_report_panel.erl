@@ -32,7 +32,7 @@ build_completion_chart({Type, Name}) ->
     , Width = 300
     , Height = 150
     , MinX = date_util:date_to_epoch(date_util:subtract(date(), {days, 7})) * 1000 
-    , MaxX = date_util:date_to_epoch(date_util:add(date(), {days, 1})) * 1000
+    , MaxX = date_util:date_to_epoch(date_util:add(date(), {days, 2})) * 1000
     , YTicks = 5
     , MinY = 0
     , MaxY = 100
