@@ -25,8 +25,10 @@
     story_name, backlog}).
 -record(story_tasks, {?ELEMENT_BASE(element_story_tasks), ?ITER_ELEMENT_BASE,
     story}).
--record(flot_chart, {?ELEMENT_BASE(element_flot_chart), width, height, minx
-    , maxx, miny, maxy, xticks, yticks, title
+-record(flot_chart, {?ELEMENT_BASE(element_flot_chart), width, height, title
+    , minx, maxx, miny, maxy, xticks, yticks
+    , modex, modey, modex2, modey2
+    , minx2, maxx2, miny2, maxy2, x2ticks, y2ticks
     , values, lines=true, points=true, selectmode="xy"
     , placeholder}).
 

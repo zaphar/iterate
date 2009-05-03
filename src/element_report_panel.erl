@@ -16,19 +16,18 @@ render() ->
 render(ControlId, _Record) ->
     PanelId = wf:temp_id()
     , CChart = build_completion_chart(wf_session:session(working_in))
-    , SpChart = build_sp_chart(wf_session:session(working_in))
-    , Panel = #panel{id=PanelId, body=["Completion Burnup chart"
-        , CChart
-        , "Story_Point Chart"
-        , SpChart]}
+    , Panel = #panel{id=PanelId, body=["Completion/Story Point chart"
+        , CChart]}
     , element_panel:render(ControlId, Panel)
 .
 
 build_completion_chart(undefined) ->
     "no reports selected";
 build_completion_chart({Type, Name}) ->
-    TS = completion_for_last_week({Type, Name})
+    TS1 = iterate_report:stats(incomplete_sp, Type, Name)
+    , TS2 = completion_for_last_week({Type, Name})
     % TODO(jwall): make this into a widget and blog about it
+    , {Complete, Incomplete} = iterate_wf:iteration_story_points(Name)
     , Width = 300
     , Height = 150
     , MinX = date_util:date_to_epoch(date_util:subtract(date(), {days, 7})) * 1000 
@@ -36,28 +35,13 @@ build_completion_chart({Type, Name}) ->
     , YTicks = 5
     , MinY = 0
     , MaxY = 100
-    , Data = {Name, [[V#tsentry.epoch, V#tsentry.value] || V <- TS]}
-    , #flot_chart{width=Width, height=Height
+    , MinY2 = 0
+    , MaxY2 = Complete + Incomplete 
+    , Data = [{"Completion", [[V#tsentry.epoch, V#tsentry.value] || V <- TS2]}
+        , {"StoryPoints", [[V#tsentry.epoch, V#tsentry.value] || V <- TS1]}]
+    , #flot_chart{width=Width, height=Height, modex="time"
         , minx=MinX, maxx=MaxX, yticks=YTicks, xticks=8
-        , miny=MinY, maxy=MaxY, values=Data}
-.
-
-build_sp_chart(undefined) ->
-    "no reports selected";
-build_sp_chart({Type, Name}) ->
-    TS = iterate_report:stats(incomplete_sp, Type, Name)
-    , {Complete, Incomplete} = iterate_wf:iteration_story_points(Name)
-    % TODO(jwall): make this into a widget and blog about it
-    , Width = 300
-    , Height = 150
-    , MinX = date_util:date_to_epoch(date_util:subtract(date(), {days, 7})) * 1000 
-    , MaxX = date_util:date_to_epoch(date_util:add(date(), {days, 2})) * 1000
-    , YTicks = 5
-    , MinY = 0
-    , MaxY = Complete + Incomplete
-    , Data = {Name, [[V#tsentry.epoch, V#tsentry.value] || V <- TS]}
-    , #flot_chart{width=Width, height=Height
-        , minx=MinX, maxx=MaxX, yticks=YTicks, xticks=8
-        , miny=MinY, maxy=MaxY, values=Data}
+        , miny=MinY, maxy=MaxY, values=Data
+        , miny2=MinY2, maxy2=MaxY2}
 .
 
