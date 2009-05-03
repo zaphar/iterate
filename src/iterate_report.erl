@@ -5,7 +5,7 @@
 -include("iterate_records.hrl").
 
 -export([completion/1, completion_for_last_week/1]).
--export([story_points/1, story_points_for_last_week/1]).
+-export([story_points_completed/1, story_points_completed_for_last_week/1]).
 -import(date_util, [now_to_milliseconds_hires/1, is_time_older_than/2
     , is_older_by/3]).
 
@@ -17,12 +17,12 @@ completion({Type, Name}) ->
     stats(percent, Type, Name)
 .
 
-story_points_for_last_week({Type, Name}) ->
-    stats_for_last_week(sp, Type, Name)
+story_points_completed_for_last_week({Type, Name}) ->
+    stats_for_last_week(complete_sp, Type, Name)
 .
 
-story_points({Type, Name}) ->
-    stats(sp, Type, Name)
+story_points_completed({Type, Name}) ->
+    stats(complete_sp, Type, Name)
 .
 
 stats(Kind, Type, Name) ->

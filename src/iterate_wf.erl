@@ -176,8 +176,9 @@ log_iteration_completion(Iter) ->
 .
 
 log_iteration_story_points(Iter) ->
-    Agg = iteration_story_points(Iter)
-    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, sp, Agg))
+    {Complete, Incomplete} = iteration_story_points(Iter)
+    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, incomplete_sp, Incomplete))
+    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, complete_sp, Complete))
 .
 
 iteration_completion(Name) ->
@@ -185,7 +186,17 @@ iteration_completion(Name) ->
 .
 
 iteration_story_points(Name) ->
-    story_util:aggregate_story_points(get_iteration_stories(Name))
+    {Complete, Incomplete} = lists:foldl(
+        fun(S, {CompAgg, IncAgg}) ->
+            case story_util:is_complete(S) of
+                true ->
+                    {[S | CompAgg], IncAgg};
+                false ->
+                    {CompAgg, [S | IncAgg]}
+            end
+        end, {[], []}, get_iteration_stories(Name))
+    , {story_util:aggregate_story_points(Complete)
+       , story_util:aggregate_story_points(Incomplete)}
 .
 
 get_iteration(Name) ->
