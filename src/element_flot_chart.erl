@@ -27,14 +27,14 @@ render(ControlId, Record) ->
         PlaceHolder ->
             PlaceHolder
     end
-    , GraphId = wf:temp_id()
-    , ScriptId = wf:temp_id()
     , PlotId = case Record#flot_chart.id of
         undefined ->
             wf:temp_id();
         Id ->
             Id
     end
+    , GraphId = wf:temp_id()
+    , ScriptId = wf:temp_id()
     , ToolTipId = wf:temp_id()
     %% TODO(jwall): support date formatting for timeseries data
     %% TODO(jwall): colors
@@ -121,7 +121,10 @@ data_as_js_preparse([H | T]) when is_tuple(H) ->
 data_as_js_preparse([H | T]) when is_list(H) ->
    [ data_as_js_preparse({"undefined", H}) | data_as_js_preparse(T)];
 data_as_js_preparse({Label, Data}) when is_list(Data) ->
-    wf:f("{ label: '~s', data: ~w}", [Label, Data])
+    wf:f("{ label: '~s', data: ~w}", [Label, Data]);
+data_as_js_preparse({Label, Data, {Axis, Num}}) 
+    when is_list(Data) and is_atom(Axis) and is_integer(Num) ->
+        wf:f("{ label: '~s', data: ~w, ~p: ~p}", [Label, Data, Axis, Num])
 .
 
 xaxis(Record) ->
