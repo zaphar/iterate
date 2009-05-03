@@ -24,7 +24,12 @@ render(ControlId, Record) ->
     , Points = Record#flot_chart.points
     , SelectMode = Record#flot_chart.selectmode
     %% IDs for the elements
-    , TargetId = wf:temp_id()
+    , TargetId = case Record#flot_chart.placeholder of
+        undefined ->
+            wf:temp_id();
+        Id ->
+            Id
+    end
     , GraphId = wf:temp_id()
     , ScriptId = wf:temp_id()
     , PlotId = case Record#flot_chart.id of
