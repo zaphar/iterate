@@ -27,8 +27,8 @@ render(ControlId, Record) ->
     , TargetId = case Record#flot_chart.placeholder of
         undefined ->
             wf:temp_id();
-        Id ->
-            Id
+        PlaceHolder ->
+            PlaceHolder
     end
     , GraphId = wf:temp_id()
     , ScriptId = wf:temp_id()
