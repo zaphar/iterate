@@ -54,10 +54,8 @@ render(ControlId, Record) ->
         ++ "min: ~p,~n" % MinY
         ++ "max: ~p,~n" % MaxY
         ++ "},~n"
-        % TODO(jwall): lines and points should be modifiable
         ++ "lines: {show: ~p},~n" % Lines
         ++ "points: {show: ~p},~n" % Points
-        % TODO(jwall): selection mode should be modifiable
         ++ "selection: {mode: ~p},~n" % SelectMode
         ++ "grid: {hoverable: true, clickable: true},~n"
         ++ "});~n"

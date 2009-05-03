@@ -55,7 +55,8 @@ commit_story(Story) ->
         {error, Msg} ->
             throw(Msg);
         {atomic, ok} ->
-            Story
+            log_story_stats(Story)
+            , Story
     end
 .
 
@@ -83,7 +84,7 @@ move_story_to_backlog(Story, Backlog) ->
     , iterate_db:story({update, NewStory})
     %% if the old Story was in an iteration then we need to 
     %% log the new iteration percent completion
-    , log_iteration_completion(story_util:iteration(StoryRecord))
+    , log_iteration_stats(story_util:iteration(StoryRecord))
     , {old_location, OldBacklog}
 .
 
@@ -98,28 +99,42 @@ move_story_to_iteration(Story, Iteration) ->
     , iterate_db:story({update, NewStory})
     %% if the old Story was in an iteration then we need to 
     %% log the new iteration percent completion
-    , log_iteration_completion(story_util:iteration(StoryRecord))
+    , log_iteration_stats(story_util:iteration(StoryRecord))
     %% we need to log the iterations new completion also
-    , log_iteration_completion(story_util:iteration(NewStory))
+    , log_iteration_stats(story_util:iteration(NewStory))
     , {old_location, OldBacklog}
 .
 
 update_story_completion(Name, Percent) ->
     [Original] = iterate_db:story(?Q_STORY(Name))
     , New = story_util:set_percent(Original, Percent)
-    , iterate_stats:record(story, 
-        ?CHANGE_STAT(Name, percent, Percent))
-    , iterate_db:story({update, New})
+    , Resulting = iterate_db:story({update, New})
     %% if story is in an iteration then we need to log iteration's new
     %% aggregate completion
-    , log_iteration_completion(story_util:iteration(New))
+    , log_story_stats(New)
+    , log_iteration_stats(story_util:iteration(New))
+    , Resulting
 .
 
-log_iteration_completion(0) ->
-    ok;
-log_iteration_completion(Iter) ->
-    Agg = iteration_completion(Iter)
-    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, percent, Agg))
+update_story_points(Story, Value) 
+    when is_integer(Value) and is_record(Story, stories) ->
+        Updated = Story#stories{sp=Value}
+        , Resulting = iterate_db:story({update, Updated})
+        , log_story_stats(Story)
+        , log_iteration_stats(story_util:iteration(Story))
+        , Resulting;
+update_story_points(Name, Value) when is_list(Value) ->
+    update_story_points(Name, list_to_integer(Value));
+update_story_points(Name, Value) when is_integer(Value) ->
+    [Story] = get_story(Name)
+    , update_story_points(Story, Value)
+.
+
+log_story_stats(S) ->
+    iterate_stats:record(story
+        , ?CHANGE_STAT(S#stories.story_name, sp, S#stories.sp))
+    , iterate_stats:record(story
+        , ?CHANGE_STAT(S#stories.story_name, percent, story_util:completion(S)))
 .
 
 %% Iteration APIs
@@ -148,8 +163,29 @@ get_started_iterations() ->
     iterate_db:iterations(started)
 .
 
+log_iteration_stats(Iter) ->
+    log_iteration_completion(Iter)
+    , log_iteration_story_points(Iter)
+.
+
+log_iteration_completion(0) ->
+    ok;
+log_iteration_completion(Iter) ->
+    Agg = iteration_completion(Iter)
+    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, percent, Agg))
+.
+
+log_iteration_story_points(Iter) ->
+    Agg = iteration_story_points(Iter)
+    , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, sp, Agg))
+.
+
 iteration_completion(Name) ->
     story_util:aggregate_completion(get_iteration_stories(Name))
+.
+
+iteration_story_points(Name) ->
+    story_util:aggregate_story_points(get_iteration_stories(Name))
 .
 
 get_iteration(Name) ->

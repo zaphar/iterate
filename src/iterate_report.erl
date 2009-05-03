@@ -5,12 +5,35 @@
 -include("iterate_records.hrl").
 
 -export([completion/1, completion_for_last_week/1]).
+-export([story_points/1, story_points_for_last_week/1]).
 -import(date_util, [now_to_milliseconds_hires/1, is_time_older_than/2
     , is_older_by/3]).
 
 completion_for_last_week({Type, Name}) ->
+    stats_for_last_week(percent, Type, Name)
+.
+
+completion({Type, Name}) ->
+    stats(percent, Type, Name)
+.
+
+story_points_for_last_week({Type, Name}) ->
+    stats_for_last_week(sp, Type, Name)
+.
+
+story_points({Type, Name}) ->
+    stats(sp, Type, Name)
+.
+
+stats(Kind, Type, Name) ->
+    F = mk_is_change_stat_fun(Name, Kind, Type)
+    , Sort = make_sorter_desc()
+    , get_stats(F, Sort, mk_translater(Kind))
+.
+
+stats_for_last_week(Kind, Type, Name) ->
     {Now, _} = calendar:local_time()
-    , F1 = mk_is_change_stat_fun(Name, percent, Type)
+    , F1 = mk_is_change_stat_fun(Name, Kind, Type)
     , F2 = fun(S) ->
         {Date, _} = get_date_time_for_stat(S)
         , is_older_by(Date, Now, {days, 7}) orelse Date == Now
@@ -19,13 +42,7 @@ completion_for_last_week({Type, Name}) ->
         F1(S) and F2(S)
     end
     , Sort = make_sorter_desc()
-    , get_stats(F, Sort,  mk_completion_translater())
-.
-
-completion({Type, Name}) ->
-    F = mk_is_change_stat_fun(Name, percent, Type)
-    , Sort = make_sorter_desc()
-    , get_stats(F, Sort, mk_completion_translater())
+    , get_stats(F, Sort,  mk_translater(Kind))
 .
 
 get_stats(F, Sort, Transform) ->
@@ -42,15 +59,17 @@ make_sorter_desc() ->
     end
 .
 
-mk_completion_translater() -> 
+mk_translater(Kind) ->
     fun(S) when is_record(S, stats) ->
         {Date, Time} = calendar:now_to_local_time(S#stats.ts)
         , Epoch = now_to_milliseconds_hires(S#stats.ts)
-        , ?CHANGE_STAT(_For, percent, Value) = S#stats.entry
+        , ?CHANGE_STAT(_For, Kind, Value) = S#stats.entry
         , ?TIMESERIES(trunc(Epoch), Date, Time
-            , Value, percent)
+            , Value, Kind)
     end
 .
+
+mk_completion_translater() -> mk_translater(percent).
 
 mk_is_change_stat_fun(Name, StatType, Type) ->
     F = fun

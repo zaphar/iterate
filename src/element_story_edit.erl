@@ -73,13 +73,7 @@ map_entry(Id, Attr) when is_list(Id), is_list(Attr) ->
 
 inplace_textbox_event(?UPDATESP(Name), Value) ->
     io:format("updating story points for ~s~n", [Name])
-    , iterate_stats:record(story, ?CHANGE_STAT(Name, sp, Value))
-    , Story = get_story(Name)
-    , Updated = Story#stories{sp=Value}
-    , io:format("Original ~p~n", [Story])
-    , io:format("updated: ~p~n", [Updated])   
-    , Resulting = iterate_db:story({update, Updated})
-    , io:format("Result: ~p~n", [Resulting])
+    , iterate_wf:update_story_points(Name, Value)
     , Value;
 inplace_textbox_event(?UPDATE_S_DESC(Name), Value) ->
     Story = get_story(Name)

@@ -3,6 +3,7 @@
 -include("iterate_records.hrl").
 
 -export([completion/1, aggregate_completion/1, set_percent/2]).
+-export([aggregate_story_points/1]).
 -export([complete/1, is_complete/1]).
 -export([order/1, set_order/2]).
 -export([sort/2]).
@@ -97,6 +98,23 @@ aggregate_completion(List) ->
         fun(S, {Count, Acc}) -> {Count + 1, Acc + completion(S)} end
         , {0.0, 0.0}, List)
     , Total / FullCount
+.
+
+aggregate_story_points([]) ->
+    0;
+aggregate_story_points(List) ->
+    {_FullCount, Total} = lists:foldl(
+        fun(S, {Count, Acc}) -> 
+            SP = case S#stories.sp of
+                N when is_integer(N) ->
+                    N;
+                _ ->
+                    0
+            end
+            , {Count + 1, Acc + SP}
+        end
+        , {0, 0}, List)
+    , Total
 .
 
 get_type(Story) when is_record(Story, stories) ->
