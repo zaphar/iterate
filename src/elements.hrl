@@ -30,7 +30,8 @@
     , modex, modey, modex2, modey2
     , minx2, maxx2, miny2, maxy2, x2ticks, y2ticks
     , values, lines=true, points=true, selectmode="xy"
-    , placeholder}).
+    , placeholder, legend
+    , hover, click, select}).
 
 %% elements for the high level widgets
 -record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter="Filter Backlogs"}).

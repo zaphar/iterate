@@ -33,6 +33,12 @@ render(ControlId, Record) ->
         Id ->
             Id
     end
+    , LegendId = case Record#flot_chart.legend of
+        undefined ->
+            wf:temp_id();
+        Legend ->
+            Legend
+    end
     , GraphId = wf:temp_id()
     , ScriptId = wf:temp_id()
     , ToolTipId = wf:temp_id()
@@ -52,6 +58,8 @@ render(ControlId, Record) ->
         ++ "points: {show: ~p},~n" % Points
         ++ "selection: {mode: ~p},~n" % SelectMode
         ++ "grid: {hoverable: true, clickable: true},~n"
+        %% Legend
+        ++ "legend: { container: $('#' + ~p) } " % LegendId
         ++ "});~n"
         %% tooltip code
         ++ "function showTooltip(x, y, contents) {~n"
@@ -77,7 +85,7 @@ render(ControlId, Record) ->
         ++ "   $('#' + ~p).remove();~n" % ToolTipId
         ++ "   var x = item.datapoint[0].toFixed(2),~n"
         ++ "       y = item.datapoint[1].toFixed(2);~n"
-        ++ "   showTooltip(item.pageX, item.pageY, y + '%');~n"
+        ++ "   showTooltip(item.pageX, item.pageY, y);~n"
         ++ "  } else {~n"
         ++ "   $('#' + ~p).remove();~n" % ToolTipId
         ++ "   previousPoint = null;~n"
@@ -95,15 +103,17 @@ render(ControlId, Record) ->
         ++ "})~n"
         ++ "});~n</script>"
         , [ScriptId, DataSet, TargetId
-            , Lines, Points, SelectMode
+            , Lines, Points, SelectMode, LegendId
             , ToolTipId, TargetId, ToolTipId, ToolTipId
             , TargetId, TargetId
         ])
     %% TODO(jwall): dataset manipulation
     %% TODO(jwall): zoom controls?
     %% TODO(jwall): pan buttons?
+    , LegendPanel = #panel{id=LegendId}
     , Panel = #panel{id=TargetId, style=wf:f("width:~ppx;height:~ppx", [Width, Height])}
-    , element_panel:render(ControlId, #panel{id=GraphId, body=[Panel, Script]})
+    , element_singlerow:render(ControlId, #singlerow{id=GraphId, cells=[#tablecell{body=Panel}
+        , #tablecell{body=LegendPanel}, #tablecell{body=Script}]})
 .
 
 data_as_js(T) when is_tuple(T) ->
