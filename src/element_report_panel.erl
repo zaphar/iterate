@@ -10,7 +10,7 @@
 reflect() -> record_info(fields, report_panel).
 
 render() ->
-    wf:render(#report_panel{})
+    wf:render(#panel{id=report_panel, body=#report_panel{}})
 .
 
 render(ControlId, _Record) ->

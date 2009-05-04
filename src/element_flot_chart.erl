@@ -41,12 +41,10 @@ render(ControlId, Record) ->
             Legend
     end
     , GraphId = wf:temp_id()
-    , ScriptId = wf:temp_id()
     , ToolTipId = wf:temp_id()
     %% TODO(jwall): support date formatting for timeseries data
     %% TODO(jwall): colors
-    , Script = wf:f("<script id=~p language='javascript', type='text/javascript'>"
-        ++ "var " ++ PlotId ++ ";"
+    , Script = wf:f("var " ++ PlotId ++ ";"
         ++ "$(function() { ~n"
         ++ "var d = ~s;~n" % DataSet
         ++ PlotId ++ " = $.plot($('#' + ~p), d, ~n{" % TargetId
@@ -103,8 +101,8 @@ render(ControlId, Record) ->
         ++ "$('#' + ~p).bind('plotclick', function (event, pos, item) {~n" % TargetId
         ++ " //alert(item.dataIndex + ' = ' + d[item.dataIndex]);~n"
         ++ "})~n"
-        ++ "});~n</script>"
-        , [ScriptId, DataSet, TargetId
+        ++ "});~n"
+        , [DataSet, TargetId
             , Lines, Points, Bar, SelectMode, LegendId
             , ToolTipId, TargetId, ToolTipId, ToolTipId
             , TargetId, TargetId
@@ -114,8 +112,10 @@ render(ControlId, Record) ->
     %% TODO(jwall): pan buttons?
     , LegendPanel = #panel{id=LegendId}
     , Panel = #panel{id=TargetId, style=wf:f("width:~ppx;height:~ppx", [Width, Height])}
+    , wf:wire(TargetId, #event{type='timer', delay=1
+        , actions=#script{script=Script}})
     , element_singlerow:render(ControlId, #singlerow{id=GraphId, cells=[#tablecell{body=Panel}
-        , #tablecell{body=LegendPanel}, #tablecell{body=Script}]})
+        , #tablecell{body=LegendPanel}]})
 .
 
 data_as_js(T) when is_tuple(T) ->
