@@ -233,6 +233,8 @@ create_opt({tickdecimals, Value}) when is_integer(Value) ->
     wf:f("tickDecimals: ~p", [Value])
 .
 
+generate_ticks([[]]) ->
+    [];
 generate_ticks([H | T]) ->
     [generate_tick(0, H) | generate_ticks(1, T)]
 .

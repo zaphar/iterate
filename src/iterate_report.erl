@@ -23,9 +23,14 @@ story_points_completed({Type, Name}) ->
     stats(complete_sp, Type, Name)
 .
 
+tag_spread({backlog, Name}) ->
+    TagList = iterate_wf:backlog_tags(Name)
+    , tag_spread({taglist, TagList});
 tag_spread({iteration, Name}) ->
     TagList = iterate_wf:iteration_tags(Name)
-    , lists:foldl(
+    , tag_spread({taglist, TagList});
+tag_spread({taglist, TagList}) ->
+    lists:foldl(
         fun
             (T, {Total, []}) ->
                {Total + 1, [{T, 1}]}; 
@@ -38,7 +43,9 @@ tag_spread({iteration, Name}) ->
                 end
                 , {Total + 1, lists:keystore(T, 1, L, {T, Count+1})}
         end
-        , {0, []}, TagList)
+        , {0, []}, TagList);
+tag_spread({_, _}) ->
+    {0, []}
 .
 
 stats(Kind, Type, Name) ->

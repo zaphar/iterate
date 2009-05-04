@@ -34,6 +34,11 @@ search_for_backlog(Term) ->
     iterate_db:backlog(?Q_SEARCH_BACKLOG(all, Term))
 .
 
+backlog_tags(Name) ->
+    [ binary_to_list(B) || B <- string_utils:flatten_string_list([ get_story_tags(S) 
+            || S <- get_backlog_stories(Name)]), B /= <<"tag">> ]
+.
+
 %% Story APIs
 
 create_story(Title) ->

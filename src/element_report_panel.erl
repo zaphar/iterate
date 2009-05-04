@@ -30,7 +30,12 @@ build_tag_chart({Type, Name}) ->
     , Height = 150
     , MinX = 0 
     , MaxX = length(DataSet)
-    , Ticks = element_flot_chart:generate_ticks([ X || {X, _} <- DataSet ])
+    , Ticks = case DataSet of
+        [] ->
+            [];
+        _ ->
+            element_flot_chart:generate_ticks([ X || {X, _} <- DataSet ])
+    end
     , MinY = 0
     , MaxY = Total
     , {_, Transformed} = lists:foldl(fun({_, Y}, {I, L}) ->
@@ -43,7 +48,7 @@ build_tag_chart({Type, Name}) ->
 .
 
 build_completion_chart(undefined) ->
-    "no reports selected";
+    "";
 build_completion_chart({Type, Name}) ->
     TS1 = iterate_report:stats(incomplete_sp, Type, Name)
     , TS2 = iterate_report:stats(complete_sp, Type, Name)
