@@ -155,5 +155,5 @@ get_story(Name) ->
     end
 .
 
-get_tags(Name) -> iterate_wf:get_story_tags(Name).
+get_tags(Name) -> [ binary_to_list(B) || B <- iterate_wf:get_story_tags(Name)].
 
