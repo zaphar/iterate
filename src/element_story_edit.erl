@@ -83,9 +83,7 @@ inplace_textbox_event(?UPDATE_S_DESC(Name), Value) ->
     , Value;
 inplace_textbox_event(?TAGCHANGE(For), Value) ->
     TagList = string:tokens(Value, ",")
-    , io:format("~p recieved tags:  [~p] for ~p~n", [?MODULE, TagList, For])
-    , iterate_db:tag_delete(story, For)
-    , [iterate_db:tags(?NEWTAG(story, For, T)) || T <- TagList]
+    , iterate_wf:update_story_tags(For, TagList)
     , Value;
 inplace_textbox_event(Tag, Value) ->
     event({inplace_event, Tag})
@@ -157,13 +155,5 @@ get_story(Name) ->
     end
 .
 
-get_tags(Name) ->
-    {atomic, TagList} = iterate_db:tags(?Q_TAGS(story, Name))
-    , case TagList of
-        [] ->
-            [?TVALUE(T) || T <- [?STAG(Name, "tag")] ];
-        List ->
-            [?TVALUE(T) || T <- List]
-    end
-.
+get_tags(Name) -> iterate_wf:get_story_tags(Name).
 

@@ -25,6 +25,24 @@ story_points_completed({Type, Name}) ->
     stats(complete_sp, Type, Name)
 .
 
+tag_spread({iteration, Name}) ->
+    TagList = iterate_wf:iteration_tags(Name)
+    , lists:foldl(
+        fun
+            (T, {Total, []}) ->
+               {Total + 1, [{T, 1}]}; 
+            (T, {Total, L}) ->
+                Count = case lists:keysearch(T, 1, L) of
+                    false ->
+                        0;
+                    {value, {T, N}} ->
+                       N 
+                end
+                , {Total + 1, lists:keystore(T, 1, L, {T, Count+1})}
+        end
+        , {0, []}, TagList)
+.
+
 stats(Kind, Type, Name) ->
     F = mk_is_change_stat_fun(Name, Kind, Type)
     , Sort = make_sorter_desc()

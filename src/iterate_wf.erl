@@ -64,6 +64,24 @@ get_story(Name) ->
     iterate_db:story(?Q_STORY(Name))
 .
 
+get_story_tags(S) when is_record(S, stories) ->
+    get_story_tags(S#stories.story_name);
+get_story_tags(Name) ->
+    {atomic, TagList} = iterate_db:tags(?Q_TAGS(story, Name))
+    , case TagList of
+        [] ->
+            [list_to_binary(?TVALUE(T)) || T <- [?STAG(Name, "tag")] ];
+        List ->
+            [list_to_binary(?TVALUE(T)) || T <- List]
+    end
+.
+
+update_story_tags(For, TagList) ->
+    iterate_db:tag_delete(story, For)
+    , [iterate_db:tags(?NEWTAG(story, For, T)) || T <- TagList]
+    , TagList
+.
+
 get_iteration_stories(Name) ->
     iterate_db:story(?Q_ITERATION_STORY(Name))
 .
@@ -197,6 +215,11 @@ iteration_story_points(Name) ->
         end, {[], []}, get_iteration_stories(Name))
     , {story_util:aggregate_story_points(Complete)
        , story_util:aggregate_story_points(Incomplete)}
+.
+
+iteration_tags(Name) ->
+    [ binary_to_list(B) || B <- string_utils:flatten_string_list([ get_story_tags(S) 
+            || S <- get_iteration_stories(Name)]), B /= <<"tag">> ]
 .
 
 get_iteration(Name) ->
