@@ -19,6 +19,7 @@ render(ControlId, Record) ->
     % TODO(jwall): dual axis support
     , Lines = Record#flot_chart.lines
     , Points = Record#flot_chart.points
+    , Bar = Record#flot_chart.bar
     , SelectMode = Record#flot_chart.selectmode
     %% IDs for the elements
     , TargetId = case Record#flot_chart.placeholder of
@@ -56,6 +57,7 @@ render(ControlId, Record) ->
         % insert optional y2axis here
         ++ "lines: {show: ~p},~n" % Lines
         ++ "points: {show: ~p},~n" % Points
+        ++ "bars: {show: ~p},~n" % Bar
         ++ "selection: {mode: ~p},~n" % SelectMode
         ++ "grid: {hoverable: true, clickable: true},~n"
         %% Legend
@@ -103,7 +105,7 @@ render(ControlId, Record) ->
         ++ "})~n"
         ++ "});~n</script>"
         , [ScriptId, DataSet, TargetId
-            , Lines, Points, SelectMode, LegendId
+            , Lines, Points, Bar, SelectMode, LegendId
             , ToolTipId, TargetId, ToolTipId, ToolTipId
             , TargetId, TargetId
         ])
@@ -132,6 +134,10 @@ data_as_js_preparse([H | T]) when is_list(H) ->
    [ data_as_js_preparse({"undefined", H}) | data_as_js_preparse(T)];
 data_as_js_preparse({Label, Data}) when is_list(Data) ->
     wf:f("{ label: '~s', data: ~w}", [Label, Data]);
+data_as_js_preparse({Label, Data, Opts}) 
+    when is_list(Data) and is_list(Opts) ->
+        OptString = create_options(Opts)
+        , wf:f("{ label: '~s', data: ~w, ~s}", [Label, Data, OptString]);
 data_as_js_preparse({Label, Data, {Axis, Num}}) 
     when is_list(Data) and is_atom(Axis) and is_integer(Num) ->
         wf:f("{ label: '~s', data: ~w, ~p: ~p}", [Label, Data, Axis, Num])
@@ -142,7 +148,7 @@ xaxis(Record) ->
     , Max = Record#flot_chart.maxx
     , Mode = Record#flot_chart.modex
     , Ticks = Record#flot_chart.xticks
-    , create_axis(xaxis, [opt(min, Min)
+    , create_option(xaxis, [opt(min, Min)
         , opt(max, Max), opt(ticks, Ticks)
         , opt(mode, Mode)])
 .
@@ -152,7 +158,7 @@ yaxis(Record) ->
     , Max = Record#flot_chart.maxy
     , Mode = Record#flot_chart.modey
     , Ticks = Record#flot_chart.yticks
-    , create_axis(yaxis, [opt(min, Min)
+    , create_option(yaxis, [opt(min, Min)
         , opt(max, Max), opt(ticks, Ticks)
         , opt(mode, Mode)])
 .
@@ -162,7 +168,7 @@ x2axis(Record) ->
     , Max = Record#flot_chart.maxx2
     , Mode = Record#flot_chart.modex2
     , Ticks = Record#flot_chart.x2ticks
-    , create_axis(x2axis, [opt(min, Min)
+    , create_option(x2axis, [opt(min, Min)
         , opt(max, Max), opt(ticks, Ticks)
         , opt(mode, Mode)])
 .
@@ -172,19 +178,27 @@ y2axis(Record) ->
     , Max = Record#flot_chart.maxy2
     , Mode = Record#flot_chart.modey2
     , Ticks = Record#flot_chart.y2ticks
-    , create_axis(y2axis, [opt(min, Min)
+    , create_option(y2axis, [opt(min, Min)
         , opt(max, Max), opt(ticks, Ticks)
         , opt(mode, Mode)])
 .
 
-opt(Type, Value) ->
-    {Type, Value}
+create_options(L) when is_list(L) ->
+    lists:join(create_options_from_list(L), ",")
 .
 
-create_axis(Name, Items) when is_list(Items) ->
+create_options_from_list([{Name, Items} | T]) ->
+    [create_option(Name, Items) | create_options(T)]
+.
+
+create_option(Name, Items) when is_list(Items) ->
     Opts = string:join(create_opts(Items), ",")
-    , lists:flatten([wf:f("~p: {", [Name])
-     , Opts, "}"])
+    , lists:flatten([wf:f("~p: {~n", [Name])
+     , Opts, "}~n"])
+.
+
+opt(Type, Value) ->
+    {Type, Value}
 .
 
 create_opts([]) ->
@@ -197,6 +211,8 @@ create_opt({Type, undefined}) ->
     wf:f("~p: null", [Type]);
 create_opt({mode, Value}) when Value == "time" ->
     wf:f("mode: ~p", [Value]);
+create_opt({show, Value}) when is_boolean(Value)  ->
+    wf:f("show: ~p", [Value]);
 create_opt({min, Value}) when is_integer(Value) or is_float(Value) ->
     wf:f("min: ~p", [Value]);
 create_opt({max, Value}) when is_integer(Value) or is_float(Value) ->
@@ -216,3 +232,19 @@ create_opt({tickformatter, Value}) when is_list(Value) ->
 create_opt({tickdecimals, Value}) when is_integer(Value) ->
     wf:f("tickDecimals: ~p", [Value])
 .
+
+generate_ticks([H | T]) ->
+    [generate_tick(0, H) | generate_ticks(1, T)]
+.
+
+generate_ticks(_, []) ->
+    [];
+generate_ticks(N, [H | T]) ->
+    [generate_tick(N, H) | generate_ticks(N+1, T)]
+.
+
+generate_tick(N, Tick) ->
+    [N, Tick]
+.
+
+

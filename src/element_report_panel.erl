@@ -16,9 +16,30 @@ render() ->
 render(ControlId, _Record) ->
     PanelId = wf:temp_id()
     , CChart = build_completion_chart(wf_session:session(working_in))
+    , TagChart = build_tag_chart(wf_session:session(working_in))
     , Panel = #panel{id=PanelId, body=["Completion/Story Point chart"
-        , CChart]}
+        , CChart, "Tag Spread Chart", TagChart]}
     , element_panel:render(ControlId, Panel)
+.
+
+build_tag_chart(undefined) ->
+    "";
+build_tag_chart({Type, Name}) ->
+    {Total, DataSet} = iterate_report:tag_spread({Type, Name})
+    , Width = 400
+    , Height = 150
+    , MinX = 0 
+    , MaxX = length(DataSet)
+    , Ticks = element_flot_chart:generate_ticks([ X || {X, _} <- DataSet ])
+    , MinY = 0
+    , MaxY = Total
+    , {_, Transformed} = lists:foldl(fun({_, Y}, {I, L}) ->
+        {I+1, [{I+1, Y} | L]}
+    end, {-1, []}, DataSet)
+    , Data = [{"tag spread", [ [I, Y] || {I, Y} <- Transformed ]}]
+    , #flot_chart{width=Width, height=Height, lines=false, points=false
+        , bar=true, minx=MinX, maxx=MaxX, xticks=Ticks
+        , miny=MinY, maxy=MaxY, values=Data}
 .
 
 build_completion_chart(undefined) ->

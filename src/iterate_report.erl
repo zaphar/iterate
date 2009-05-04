@@ -4,8 +4,6 @@
 -include("stats.hrl").
 -include("iterate_records.hrl").
 
--export([completion/1, completion_for_last_week/1]).
--export([story_points_completed/1, story_points_completed_for_last_week/1]).
 -import(date_util, [now_to_milliseconds_hires/1, is_time_older_than/2
     , is_older_by/3]).
 
