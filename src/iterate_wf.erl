@@ -235,3 +235,15 @@ get_iteration(Name) ->
             {abort, no_such_iteration}
     end
 .
+
+%% Misc
+
+working_in() ->
+    case wf_session:session(working_in) of
+        undefined ->
+            {backlog, "Default"};
+        {Type, Name} ->
+            {Type, Name}
+    end
+.
+

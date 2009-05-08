@@ -57,18 +57,13 @@ stories([H|T], {Type, Name}) ->
 .
 
 for_what() ->
-    case wf_session:session(working_in) of
-        undefined ->
-            {backlog, undefined};
-        {Type, Name} ->
-            {Type, Name}
-    end
+    iterate_wf:working_in()
 .
 
 for_what(type) ->
     {Type, _} = for_what()
     , Type;
-for_what(name) ->
+for_what('name') ->
     {_, N} = for_what()
     , N
 .
@@ -84,7 +79,8 @@ event(?SHOW_STORIES(backlog, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_backlog_stories(Name) ]
     , wf_session:session(working_in, {backlog, Name})
-    , wf:update(story_box, #story_panel{data=StoryList} );
+    , wf:update(story_box, #story_panel{data=StoryList} )
+    , wf:update(report_panel, #report_panel{});
 event(?S_PANEL_CREATE(_Type, undefined)) ->
     wf:flash("can't create stories without a backlog or iteration");
 event(?S_PANEL_CREATE(iteration, Backlog)) ->

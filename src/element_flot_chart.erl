@@ -11,6 +11,7 @@ rec() -> #flot_chart{}.
 render(ControlId, Record) ->
     %% handle multiple datasets
     Data = Record#flot_chart.values
+    , io:format("Creating a Chart with values: ~p~n", [Data])
     , DataSet = data_as_js(Data)
     %% description of the graph
     , _Title = Record#flot_chart.title
@@ -112,7 +113,7 @@ render(ControlId, Record) ->
     %% TODO(jwall): pan buttons?
     , LegendPanel = #panel{id=LegendId}
     , Panel = #panel{id=TargetId, style=wf:f("width:~ppx;height:~ppx", [Width, Height])}
-    , wf:wire(TargetId, #event{type='timer', delay=1
+    , wf:wire(TargetId, #event{type='timer', delay=10
         , actions=#script{script=Script}})
     , element_singlerow:render(ControlId, #singlerow{id=GraphId, cells=[#tablecell{body=Panel}
         , #tablecell{body=LegendPanel}]})

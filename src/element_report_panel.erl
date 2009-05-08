@@ -15,8 +15,9 @@ render() ->
 
 render(ControlId, _Record) ->
     PanelId = wf:temp_id()
-    , CChart = build_completion_chart(wf_session:session(working_in))
-    , TagChart = build_tag_chart(wf_session:session(working_in))
+    , io:format("Creating report for: ~p~n", [iterate_wf:working_in()])
+    , CChart = build_completion_chart(iterate_wf:working_in())
+    , TagChart = build_tag_chart(iterate_wf:working_in())
     , Panel = #panel{id=PanelId, body=["Completion/Story Point chart"
         , CChart, "Tag Spread Chart", TagChart]}
     , element_panel:render(ControlId, Panel)

@@ -26,7 +26,7 @@ is_working_in(_, _) ->
 .
 
 selection_class(Me) ->
-    case is_working_in(wf_session:session(working_in), Me) of
+    case is_working_in(iterate_wf:working_in(), Me) of
         true ->
             " selected";
         false ->
