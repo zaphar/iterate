@@ -86,11 +86,11 @@ event(?CLOSE_I_EL(Name, Id)) ->
     iterate_wf:close_iteration(Name)
     , wf:wire(Id, #hide{ effect=slide, speed=500 })
     , event(?REMOVE_B_EL(Name, Id));
-event(?REMOVE_B_EL(Name, _Id)) ->
+event(?REMOVE_B_EL(_Name, _Id)) ->
     iterate_wf:stop_working_in()
     , {Type, BName} = iterate_wf:working_in()
     , element_iteration_panel:event(?REFRESH(_Id))
-    , element_story_panel:event(?SHOW_STORIES(Type, BName))
+    , element_story_panel:event(?SHOW_STORIES(Type, BName));
 event(Event) -> 
     io:format("received event: ~p~n", [Event])
 .
