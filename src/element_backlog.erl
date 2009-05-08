@@ -74,12 +74,15 @@ event(?SHOW_B_EL(Name, Id)) ->
     end;
 event(?DELETE_B_EL(Name, Id)) ->
     % TODO(jwall): do something with attempts to delete the permanent backlogs
-    io:format("hiding element: ~p~n", [Id])
-    , wf:wire(Id, #hide{ effect=slide, speed=500 })
-    , iterate_wf:delete_backlog(Name)
+    iterate_wf:delete_backlog(Name)
     , event(?REMOVE_B_EL(Name, Id));
 event(?REMOVE_B_EL(Name, _Id)) ->
-    wf:update(Name ++ "_target", "");
+    wf:update(Name ++ "_target", "")
+    , iterate_wf:stop_working_in()
+    , {Type, BName} = iterate_wf:working_in()
+    , element_backlog_panel:event(?REFRESH("backlog_panel"))
+    , element_story_panel:event(?SHOW_STORIES(Type, BName))
+    ;
 event(Event) -> 
     io:format("received event: ~p~n", [Event])
 .

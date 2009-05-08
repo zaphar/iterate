@@ -8,10 +8,14 @@
 
 -define(SEARCHBOX, search_backlogs_box).
 
+render() ->
+    wf:render(#panel{id="backlogs"
+        , body=#backlog_panel{data=iterate_wf:get_backlogs()}}).
+
 %% TODO(jwall): these panels are getting general enough I think a 
 %%              refactor is in order.
 render(ControlId, Record) ->
-    PanelId = "backlog_panel"
+    PanelId = wf:temp_id()
     , io:format("the control id is ~p~n", [ControlId])
     , Filter = Record#backlog_panel.filter
     , Data    = case Record#backlog_panel.data of
@@ -45,7 +49,7 @@ backlogs([], Id) ->
      #link{ text="view all", 
            actions=#event{ 
                type=click, delegate=?MODULE, 
-               postback=?REFRESH(Id)
+               postback=?REFRESH(undefined)
            }}
     ];
 backlogs([H|T], Id) ->
@@ -84,13 +88,14 @@ event(?CREATE_B(Id, PanelId)) ->
             wf:flash(io_lib:format("~p", [Msg]));
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Backlog ~p Created", [Value])),
-            wf:insert_top("backlog_panel", #backlog{backlog_name=Value}); 
+            event(?REFRESH(undefined)); 
         _ ->
             throw({error, unknown})
     end,
     ok;
-event(?REFRESH(Id)) ->
-    wf:update(Id, #backlog_panel{data=iterate_db:backlogs()});
+event(?REFRESH(_Id)) ->
+    %% TODO(jwall): refresh should honor the search box
+    wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
 event(?B_PANEL_SEARCH(Id, PanelId)) ->
     [Value] = wf:q(Id)
     , io:format("~p searching for: ~p~n", [?MODULE, Value])

@@ -72,13 +72,13 @@ for_what('name') ->
 event(?SHOW_STORIES(iteration, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_iteration_stories(Name) ]
-    , wf_session:session(working_in, {iteration, Name})
+    , iterate_wf:working_in({iteration, Name})
     , wf:update(story_box, #story_panel{data=StoryList} )
     , wf:update(report_panel, #report_panel{});
 event(?SHOW_STORIES(backlog, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_backlog_stories(Name) ]
-    , wf_session:session(working_in, {backlog, Name})
+    , iterate_wf:working_in({backlog, Name})
     , wf:update(story_box, #story_panel{data=StoryList} )
     , wf:update(report_panel, #report_panel{});
 event(?S_PANEL_CREATE(_Type, undefined)) ->

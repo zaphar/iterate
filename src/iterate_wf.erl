@@ -39,6 +39,8 @@ backlog_tags(Name) ->
             || S <- get_backlog_stories(Name)]), B /= <<"tag">> ]
 .
 
+get_backlogs() -> iterate_db:backlogs().
+
 %% Story APIs
 
 create_story(Title) ->
@@ -237,6 +239,15 @@ get_iteration(Name) ->
 .
 
 %% Misc
+
+stop_working_in() ->
+        wf_session:session(working_in, undefined)
+.
+
+working_in({Type, Name}) 
+    when Type == iteration orelse Type == backlog ->
+        wf_session:session(working_in, {Type, Name})
+.
 
 working_in() ->
     case wf_session:session(working_in) of
