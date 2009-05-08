@@ -240,6 +240,10 @@ get_iteration(Name) ->
 
 %% Misc
 
+get_default_backlog() ->
+    {backlog, "Default"}
+.
+
 stop_working_in() ->
         wf_session:session(working_in, undefined)
 .
@@ -252,7 +256,7 @@ working_in({Type, Name})
 working_in() ->
     case wf_session:session(working_in) of
         undefined ->
-            {backlog, "Default"};
+            get_default_backlog();
         {Type, Name} ->
             {Type, Name}
     end
