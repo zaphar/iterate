@@ -18,15 +18,12 @@
 
 .story_element {
     width: 600px;
+    overflow: auto;
 }
 
 textarea.story_desc {
     width: 350px;
     height: 150px;
-}
-
-.story_title {
-    display: inline;
 }
 
 .backlog_element {
@@ -45,3 +42,6 @@ textarea.story_desc {
     background-color: lightblue;
 }
 
+.inline {
+    display: inline;
+}

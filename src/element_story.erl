@@ -16,7 +16,7 @@ render(_ControlId, Record) ->
     , Order = story_util:order(Story)
     , Percent = story_util:completion(Story)
     , TitleEditBox = #my_inplace_textbox{delegate=?MODULE
-        , class=story_title
+        , class="inline"
         , text=Story#stories.story_title
         , tag={edit_title, StoryId}}
     , Class = case story_util:is_complete(Story) of
@@ -27,12 +27,12 @@ render(_ControlId, Record) ->
     end
     , Panel = #panel{ id=PanelId2
                     , class=Class
-                    , body=#panel{ id=PanelId
+                    , body=#panel{id=PanelId
                         , body=[
-                            #draggable{ tag=StoryId
+                            #draggable{ class="inline", tag=StoryId
                                 , id=DraggableId
                                 , body="[drag me] " }
-                            , #textbox{ id=OrderElId
+                            , #textbox{id=OrderElId
                                 , actions=#event{
                                     type=change
                                     , delegate=?MODULE
@@ -42,7 +42,7 @@ render(_ControlId, Record) ->
                                 , text=lists:flatten(
                                     io_lib:format("~.10B", [Order]))}
                             , " - ", TitleEditBox
-                            , " - [ "
+                            , "<br /> [ "
                             , #link{text="edit"
                                 , actions=#event{ type=click, delegate=?MODULE
                                                 , postback=?SHOW_S_EL(StoryId)
@@ -54,8 +54,8 @@ render(_ControlId, Record) ->
                                     , delegate=?MODULE
                                     , postback=?DELETE_S_EL(StoryId, PanelId)
                                 }
-                            }, " ]"
-                            , #my_inplace_textbox{delegate=?MODULE,
+                            }, " ] - "
+                            , #my_inplace_textbox{ class="inline", delegate=?MODULE,
                                 text=io_lib:format("~.10B%", [Percent]),
                                 tag=?COMPLETE_S(StoryId)
                             }

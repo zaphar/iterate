@@ -69,6 +69,10 @@ for_what('name') ->
 .
 
 %% showing stories
+event(?REFRESH(_Id)) ->
+    {Type, Name} = iterate_wf:working_in()
+    , io:format("refreshing stories for: ~p", [{Type, Name}])
+    , event(?SHOW_STORIES(Type, Name));
 event(?SHOW_STORIES(iteration, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
         iterate_wf:get_iteration_stories(Name) ]

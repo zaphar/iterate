@@ -79,10 +79,8 @@ event(?DELETE_B_EL(Name, Id)) ->
 event(?REMOVE_B_EL(Name, _Id)) ->
     wf:update(Name ++ "_target", "")
     , iterate_wf:stop_working_in()
-    , {Type, BName} = iterate_wf:working_in()
     , element_backlog_panel:event(?REFRESH("backlog_panel"))
-    , element_story_panel:event(?SHOW_STORIES(Type, BName))
-    ;
+    , element_story_panel:event(?SHOW_STORIES(backlog, "Default"));
 event(Event) -> 
     io:format("received event: ~p~n", [Event])
 .

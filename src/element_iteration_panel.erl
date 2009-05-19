@@ -14,7 +14,7 @@ render() ->
         , body=#iteration_panel{data=iterate_db:iterations(started)}})
 .
 
-render(_ControlId, Record) ->
+render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , ButtonsId = wf:temp_id()
     , ContentId = wf:temp_id()
@@ -33,7 +33,7 @@ render(_ControlId, Record) ->
                         , delegate=?MODULE
                         , postback=?STARTITER(ContentId)}}]}
         , #panel{id=ContentId, body=iterations(Data)}]}
-    , element_rounded_panel:render(PanelId, Panel)
+    , element_rounded_panel:render(ControlId, Panel)
 .
 
 %% generate our backlog list
@@ -45,7 +45,6 @@ iterations([]) ->
     [];
 iterations([H|T]) ->
     Name = H#iterations.iteration_name
-    , io:format("adding iteration: ~p~n", [H])
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
@@ -53,8 +52,7 @@ event(?REFRESH(_Id)) ->
     wf:update(iteration_panel
         , #iteration_panel{data=iterate_wf:get_started_iterations()});
 event(?STARTITER(IterPanelId)) ->
-    io:format("starting an iteration~n", [])
-    , PanelId = wf:temp_id()
+    PanelId = wf:temp_id()
     , TextBoxId = wf:temp_id()
     , ButtonId = wf:temp_id()
     , Panel = #panel{ id=PanelId, body=[ "Enter an Iteration Name: "

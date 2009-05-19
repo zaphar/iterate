@@ -244,21 +244,41 @@ get_default_backlog() ->
     {backlog, "Default"}
 .
 
+stop_working_in({Type, Name}) ->
+    case working_in() of
+        {Type, Name} ->
+            stop_working_in();
+        _ ->
+            {Type, Name}
+    end
+.
+
 stop_working_in() ->
         wf_session:session(working_in, undefined)
+        , working_in()
 .
 
 working_in({Type, Name}) 
     when Type == iteration orelse Type == backlog ->
-        wf_session:session(working_in, {Type, Name})
+        session(working_in, {Type, Name})
 .
 
 working_in() ->
-    case wf_session:session(working_in) of
+    case session(working_in) of
         undefined ->
+            get_default_backlog();
+        {'EXIT', _} ->
             get_default_backlog();
         {Type, Name} ->
             {Type, Name}
     end
+.
+
+session(Key, Val) ->
+    catch wf_session:session(Key, Val)
+.
+
+session(Key) ->
+    catch wf_session:session(Key)
 .
 
