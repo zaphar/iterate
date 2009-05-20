@@ -8,7 +8,13 @@
 
 render_action(TriggerPath, TargetPath, Record) -> 
 	EventType = Record#event.type, 
-	Postback = make_postback(Record#event.postback, EventType, TriggerPath, TargetPath, Record#event.delegate),
+	Override = case Record#event.override of
+        false ->
+            "return true;";
+        true ->
+            "return false;"
+    end,
+    Postback = make_postback(Record#event.postback, EventType, TriggerPath, TargetPath, Record#event.delegate),
 	Actions = [wf_render:render_actions(TriggerPath, TargetPath, Record#event.actions)],
 
 	case EventType of
@@ -24,7 +30,7 @@ render_action(TriggerPath, TargetPath, Record) ->
 			
 		_ ->
 			[
-				wf:f("Nitrogen.$observe_event(obj('~s'), '~s', function anonymous(event) { ~s ~s });\r\n", [wf:to_js_id(TriggerPath), EventType, Postback, Actions])
+				wf:f("Nitrogen.$observe_event(obj('~s'), '~s', function anonymous(event) { ~s ~s ~s });\r\n", [wf:to_js_id(TriggerPath), EventType, Postback, Actions, Override])
 			]
 	end.
 	

@@ -78,7 +78,7 @@
 %%% Actions %%%
 -define(ACTION_BASE(Module), module=Module, trigger, target, actions, show_if=true).
 -record(actionbase, {?ACTION_BASE(undefined)}).
--record(event, {?ACTION_BASE(action_event), type=click, delay=1, postback, delegate}).
+-record(event, {?ACTION_BASE(action_event), type=click, delay=1, postback, delegate, override=false}).
 -record(validate, {?ACTION_BASE(action_validate), on=submit, success_text=" ", validators, attach_to }).
 -record(validation_error, {?ACTION_BASE(action_validation_error), text="" }).
 -record(alert, {?ACTION_BASE(action_alert), text=""}).
