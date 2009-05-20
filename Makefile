@@ -1,7 +1,7 @@
 compile: 
 	(cd deps/nitrogen && make)
 	(cd deps/mochiweb && make)
-	ERL_LIBS=deps erl -make
+	ERL_LIBS=$ERL_LIBS:deps erl -make
 	
 clean:
 	rm -rf ./ebin/*.beam
