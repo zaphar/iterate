@@ -15,6 +15,10 @@ completion({Type, Name}) ->
     stats(percent, Type, Name)
 .
 
+story_points_incomplete_for_last_week({Type, Name}) ->
+    stats_for_last_week(incomplete_sp, Type, Name)
+.
+
 story_points_completed_for_last_week({Type, Name}) ->
     stats_for_last_week(complete_sp, Type, Name)
 .
@@ -65,29 +69,44 @@ stats_for_last_week(Kind, Type, Name) ->
         F1(S) and F2(S)
     end
     , Sort = make_sorter_desc()
-    %TODO(jwall): handle the case of no data 
-    %             by getting last stat and using
-    %             that for first datapoint
+    %% TODO(jwall): refactor this into get_stats instead?
     , case get_stats(F, Sort,  mk_translater(Kind)) of
         [] ->
-            [current_stat({Type, Name}, Kind)];
+            [current_stat(Type, Name, Kind)];
         L  ->
-            [current_stat({Type, Name}, Kind)] ++ L 
+            L ++ [current_stat(Type, Name, Kind)] 
     end
 .
 
-current_stat({backlog, Name}, percent) ->
-    Value = iterate_wf:backlog_completion(Name)
-    , Date = date()
+current_stat(Type, Name, Kind) ->
+    Date = date()
     , Time = time()
     , Epoch = date_util:now_to_milliseconds()
+    , current_stat({Type, Name}, Kind, Date, Time, Epoch)
+.
+
+current_stat({iteration, Name}, incomplete_sp, Date, Time, Epoch) ->
+    {_, Incomplete} = iterate_wf:iteration_story_points(Name)
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Incomplete, incomplete_sp);
+current_stat({iteration, Name}, complete_sp, Date, Time, Epoch) ->
+    {Complete, _} = iterate_wf:iteration_story_points(Name)
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Complete, complete_sp);
+current_stat({backlog, Name}, incomplete_sp, Date, Time, Epoch) ->
+    {_, Incomplete} = iterate_wf:backlog_story_points(Name)
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Incomplete, incomplete_sp);
+current_stat({backlog, Name}, complete_sp, Date, Time, Epoch) ->
+    {Complete, _} = iterate_wf:backlog_story_points(Name)
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Complete, complete_sp);
+current_stat({backlog, Name}, percent, Date, Time, Epoch) ->
+    Value = iterate_wf:backlog_completion(Name)
     , ?TIMESERIES(trunc(Epoch), Date, Time
             , Value, percent);
-current_stat({iteration, Name}, percent) ->
+current_stat({iteration, Name}, percent, Date, Time, Epoch) ->
     Value = iterate_wf:iteration_completion(Name)
-    , Date = date()
-    , Time = time()
-    , Epoch = date_util:now_to_milliseconds()
     , ?TIMESERIES(trunc(Epoch), Date, Time
             , Value, percent)
 .

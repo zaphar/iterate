@@ -51,8 +51,8 @@ build_tag_chart({Type, Name}) ->
 build_completion_chart(undefined) ->
     "";
 build_completion_chart({Type, Name}) ->
-    TS1 = iterate_report:stats(incomplete_sp, Type, Name)
-    , TS2 = iterate_report:stats(complete_sp, Type, Name)
+    TS1 = iterate_report:story_points_completed_for_last_week({Type, Name})
+    , TS2 = iterate_report:story_points_incomplete_for_last_week({Type, Name})
     , TS3 = completion_for_last_week({Type, Name})
     % TODO(jwall): make this into a widget and blog about it
     , {Complete, Incomplete} = iterate_wf:iteration_story_points(Name)

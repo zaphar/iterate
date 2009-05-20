@@ -45,6 +45,9 @@ backlog_completion(Name) ->
     story_util:aggregate_completion(get_iteration_stories(Name))
 .
 
+backlog_story_points(Name) ->
+    total_story_points(get_backlog_stories(Name))
+.
 
 %% Story APIs
 
@@ -212,21 +215,11 @@ log_iteration_story_points(Iter) ->
 .
 
 iteration_completion(Name) ->
-    story_util:aggregate_completion(get_backlog_stories(Name))
+    story_util:aggregate_completion(get_iteration_stories(Name))
 .
 
 iteration_story_points(Name) ->
-    {Complete, Incomplete} = lists:foldl(
-        fun(S, {CompAgg, IncAgg}) ->
-            case story_util:is_complete(S) of
-                true ->
-                    {[S | CompAgg], IncAgg};
-                false ->
-                    {CompAgg, [S | IncAgg]}
-            end
-        end, {[], []}, get_iteration_stories(Name))
-    , {story_util:aggregate_story_points(Complete)
-       , story_util:aggregate_story_points(Incomplete)}
+    total_story_points(get_iteration_stories(Name))
 .
 
 iteration_tags(Name) ->
@@ -285,5 +278,25 @@ session(Key, Val) ->
 
 session(Key) ->
     catch wf_session:session(Key)
+.
+
+total_story_points(iteration, Name) ->
+    total_story_points(get_iteration_stories(Name));
+total_story_points(backlog, Name) ->
+    total_story_points(get_backlog_stories(Name))
+.
+
+total_story_points(List) ->
+    {Complete, Incomplete} = lists:foldl(
+        fun(S, {CompAgg, IncAgg}) ->
+            case story_util:is_complete(S) of
+                true ->
+                    {[S | CompAgg], IncAgg};
+                false ->
+                    {CompAgg, [S | IncAgg]}
+            end
+        end, {[], []}, List)
+    , {story_util:aggregate_story_points(Complete)
+       , story_util:aggregate_story_points(Incomplete)}
 .
 
