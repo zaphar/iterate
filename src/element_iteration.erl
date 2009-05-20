@@ -47,16 +47,19 @@ body(Name, PanelId) ->
              , body=[#label{ id=Name ++ "_name", text=Title}
                  , " " , #link{text="edit"
                          , actions=#event{type=click, delegate=?MODULE
+                             , override=true
                              , postback=?SHOW_B_EL(Name, PanelId)
                          }
                  }
                  , " " , #link{text="delete"
                          , actions=#event{type=click, delegate=?MODULE
+                             , override=true
                              , postback=?DELETE_B_EL(Name, PanelId)
                          }
                  }
                  , " " , #link{text="close"
                          , actions=#event{type=click, delegate=?MODULE
+                             , override=true
                              , postback=?CLOSE_I_EL(Name, PanelId)
                          }
                  }
