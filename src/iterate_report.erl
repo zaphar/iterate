@@ -65,7 +65,31 @@ stats_for_last_week(Kind, Type, Name) ->
         F1(S) and F2(S)
     end
     , Sort = make_sorter_desc()
-    , get_stats(F, Sort,  mk_translater(Kind))
+    %TODO(jwall): handle the case of no data 
+    %             by getting last stat and using
+    %             that for first datapoint
+    , case get_stats(F, Sort,  mk_translater(Kind)) of
+        [] ->
+            [current_stat({Type, Name}, Kind)];
+        L  ->
+            [current_stat({Type, Name}, Kind)] ++ L 
+    end
+.
+
+current_stat({backlog, Name}, percent) ->
+    Value = iterate_wf:backlog_completion(Name)
+    , Date = date()
+    , Time = time()
+    , Epoch = date_util:now_to_milliseconds()
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Value, percent);
+current_stat({iteration, Name}, percent) ->
+    Value = iterate_wf:iteration_completion(Name)
+    , Date = date()
+    , Time = time()
+    , Epoch = date_util:now_to_milliseconds()
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Value, percent)
 .
 
 get_stats(F, Sort, Transform) ->

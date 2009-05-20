@@ -13,6 +13,10 @@ now_to_seconds({Mega, Sec, _}) ->
     (Mega * 1000000) + Sec
 .
 
+now_to_milliseconds() ->
+    now_to_milliseconds(now())
+.
+
 now_to_milliseconds({Mega, Sec, Micro}) ->
     now_to_seconds({Mega, Sec, Micro}) * 1000
 .

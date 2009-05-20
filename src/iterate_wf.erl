@@ -41,6 +41,11 @@ backlog_tags(Name) ->
 
 get_backlogs() -> iterate_db:backlogs().
 
+backlog_completion(Name) ->
+    story_util:aggregate_completion(get_iteration_stories(Name))
+.
+
+
 %% Story APIs
 
 create_story(Title) ->
@@ -207,7 +212,7 @@ log_iteration_story_points(Iter) ->
 .
 
 iteration_completion(Name) ->
-    story_util:aggregate_completion(get_iteration_stories(Name))
+    story_util:aggregate_completion(get_backlog_stories(Name))
 .
 
 iteration_story_points(Name) ->
