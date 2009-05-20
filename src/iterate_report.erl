@@ -55,7 +55,12 @@ tag_spread({_, _}) ->
 stats(Kind, Type, Name) ->
     F = mk_is_change_stat_fun(Name, Kind, Type)
     , Sort = make_sorter_desc()
-    , get_stats(F, Sort, mk_translater(Kind))
+    , case get_stats(F, Sort,  mk_translater(Kind)) of
+        [] ->
+            [current_stat(Type, Name, Kind)];
+        L  ->
+            L ++ [current_stat(Type, Name, Kind)] 
+    end
 .
 
 stats_for_last_week(Kind, Type, Name) ->
