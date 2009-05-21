@@ -6,6 +6,9 @@
 -include("elements.hrl").
 
 -import(iterate_report, [completion_for_last_week/1]).
+-define(GRAPHW, 600).
+-define(GRAPHH, 150).
+
 
 reflect() -> record_info(fields, report_panel).
 
@@ -27,8 +30,8 @@ build_tag_chart(undefined) ->
     "";
 build_tag_chart({Type, Name}) ->
     {Total, DataSet} = iterate_report:tag_spread({Type, Name})
-    , Width = 400
-    , Height = 150
+    , Width = ?GRAPHW
+    , Height = ?GRAPHH
     , MinX = 0 
     , MaxX = length(DataSet)
     , Ticks = case DataSet of
@@ -47,7 +50,6 @@ build_tag_chart({Type, Name}) ->
         , bar=true, minx=MinX, maxx=MaxX, xticks=Ticks
         , miny=MinY, maxy=MaxY, values=Data}
 .
-
 build_completion_chart(undefined) ->
     "";
 build_completion_chart({Type, Name}) ->
@@ -56,8 +58,8 @@ build_completion_chart({Type, Name}) ->
     , TS3 = completion_for_last_week({Type, Name})
     % TODO(jwall): make this into a widget and blog about it
     , {Complete, Incomplete} = iterate_wf:iteration_story_points(Name)
-    , Width = 400
-    , Height = 150
+    , Width = ?GRAPHW
+    , Height = ?GRAPHH
     , MinX = date_util:date_to_epoch(date_util:subtract(date(), {days, 7})) * 1000 
     , MaxX = date_util:date_to_epoch(date_util:add(date(), {days, 2})) * 1000
     , YTicks = 5
