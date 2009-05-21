@@ -35,14 +35,18 @@ selection_class(Me) ->
 .
 
 body(Name, PanelId) ->
-    Title = wf:f("~s ~.1f%"
+    Jscript = "if ($(obj('me')).hasClass('selected')) {"
+               ++ "$(obj('me')).addClass('selected');"
+            ++ "} else {" 
+               ++ "$('.backlog_element.selected').removeClass('selected');" 
+               ++ "$(obj('me')).addClass('selected');"
+            ++ "}" 
+    , Title = wf:f("~s ~.1f%"
         , [Name, iterate_wf:iteration_completion(Name)])
     , [#panel{ id=PanelId, actions=#event{type=click
                 , delegate=element_story_panel
                 , postback=?SHOW_STORIES(iteration, Name)
-                , actions="$('.backlog_element.selected')"
-                    ++ ".removeClass('selected', 500);"
-                    ++ "$(obj('me')).addClass('selected', 250)"
+                , actions=Jscript
              }
              , body=[#label{ id=Name ++ "_name", text=Title}
                  , " " , #link{text="edit"

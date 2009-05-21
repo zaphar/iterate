@@ -35,12 +35,16 @@ selection_class(Me) ->
 .
 
 body(Name, PanelId) ->
-    [#panel{ id=PanelId, actions=#event{type=click
+    Jscript = "if ($(obj('me')).hasClass('selected')) {"
+               ++ "$(obj('me')).addClass('selected');"
+            ++ "} else {" 
+               ++ "$('.backlog_element.selected').removeClass('selected');" 
+               ++ "$(obj('me')).addClass('selected');"
+            ++ "}" 
+    , [#panel{ id=PanelId, actions=#event{type=click
                 , delegate=element_story_panel
                 , postback=?SHOW_STORIES(backlog, Name)
-                , actions="$('.backlog_element.selected')" 
-                    ++ ".removeClass('selected', 500);" 
-                    ++ "$(obj('me')).addClass('selected', 250)"
+                , actions=Jscript
             }
             , body=[#label{ id=Name ++ "_name", text=Name}
                 , " " , #link{text="edit"
