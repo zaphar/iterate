@@ -384,8 +384,7 @@ tag_delete(Type, For) ->
     , DelTrans = fun() ->
         [ mnesia:delete_object(T) || T <- Tags]
     end
-    , Result = mnesia:transaction(DelTrans)
-    , wf:flash(wf:f("~p", [Result]))
+    , mnesia:transaction(DelTrans)
 .
 
 log_time(?Q_STORY_TIME(Story)) ->
