@@ -64,7 +64,13 @@ build_completion_chart({Type, Name}) ->
     , MinY = 0
     , MaxY = 100
     , MinY2 = 0
-    , MaxY2 = Complete + Incomplete 
+    , MaxIncomplete = lists:max([R#tsentry.value || R <- TS2])
+    , MaxY2 = case (Complete + Incomplete) > MaxIncomplete of
+        true ->
+            Complete + Incomplete;
+        false ->
+            MaxIncomplete
+    end
     , Data = [{"Completion", [[V#tsentry.epoch, V#tsentry.value] || V <- TS3]}
         , {"SP burndown", [[V#tsentry.epoch, V#tsentry.value] || V <- TS1], {yaxis, 2}}
         , {"SP burnup", [[V#tsentry.epoch, V#tsentry.value] || V <- TS2], {yaxis, 2}}]
