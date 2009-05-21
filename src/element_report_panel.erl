@@ -74,8 +74,8 @@ build_completion_chart({Type, Name}) ->
             MaxIncomplete
     end
     , Data = [{"Completion", [[V#tsentry.epoch, V#tsentry.value] || V <- TS3]}
-        , {"SP burndown", [[V#tsentry.epoch, V#tsentry.value] || V <- TS1], {yaxis, 2}}
-        , {"SP burnup", [[V#tsentry.epoch, V#tsentry.value] || V <- TS2], {yaxis, 2}}]
+        , {"SP burnup", [[V#tsentry.epoch, V#tsentry.value] || V <- TS1], {yaxis, 2}}
+        , {"SP burndown", [[V#tsentry.epoch, V#tsentry.value] || V <- TS2], {yaxis, 2}}]
     , #flot_chart{width=Width, height=Height, modex="time"
         , minx=MinX, maxx=MaxX, yticks=YTicks, xticks=8
         , miny=MinY, maxy=MaxY, values=Data
