@@ -7,8 +7,11 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
+reflect() -> record_info(fields, story_edit).
+
 render(ControlId, Record) ->
     PanelId = wf:temp_id()
+    , Name = Record#story_edit.story_name
     , Name = Record#story_edit.story_name
     , Story = get_story(Name)
     , TagString = string:join(get_tags(Name), ",")
@@ -26,8 +29,8 @@ render(ControlId, Record) ->
             3;
         0 ->
             "0";
-        N ->
-            N
+        N when is_integer(N) ->
+            integer_to_list(N)
     end
     , Panel = #panel{ id=PanelId
                     , body=[
@@ -100,9 +103,11 @@ event(?COMPLETE_S(Name)) ->
     , element_iteration_panel:event(?REFRESH(undefined));
 event(?UPDATE_T_LOG(Name)) ->
     Id = wf:temp_id()
+    , Story = get_story(Name)
+    , Title = Story#stories.story_title
     , PanelId = wf:temp_id()
-    , Msg = io_lib:format("Enter hours for ~p ", [Name])
-    , wf:flash(#panel{id=PanelId
+    , Msg = io_lib:format("Enter hours for ~p ", [Title])
+    , element_notify:msg(#panel{id=PanelId
         , body=[Msg
                 , #textbox{ id=Id, actions=[#event{type=change, delegate=?MODULE
                         , postback=?NEWTIME(Name, Id, PanelId)}

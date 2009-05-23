@@ -152,6 +152,7 @@ update_story_completion(Name, Percent) ->
 update_story_points(Story, Value) 
     when is_integer(Value) and is_record(Story, stories) ->
         Updated = Story#stories{sp=Value}
+        , io:format("updating story points: ~p ~n", [Updated])
         , Resulting = iterate_db:story({update, Updated})
         , log_story_stats(Story)
         , log_iteration_stats(story_util:iteration(Story))
