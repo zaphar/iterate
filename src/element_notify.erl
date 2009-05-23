@@ -31,7 +31,9 @@ render(ControlId, R) ->
     , Link = #link{text="dismiss", actions=?HIDE(click, undefined, Id)}
     , InnerPanel = #panel{body=R#notify.msg}
     , Panel = #panel{id=Id, class=["notify", R#notify.class]
-        , body=[InnerPanel,Link]}
+        , body=#singlerow{ 
+            cells=[#tablecell{align=left, body=InnerPanel}
+                , #tablecell{align=right, body=Link}]}}
     , element_panel:render(Id, Panel)
 .
 

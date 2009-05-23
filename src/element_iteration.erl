@@ -41,14 +41,14 @@ body(Name, PanelId) ->
                ++ "$('.backlog_element.selected').removeClass('selected');" 
                ++ "$(obj('me')).addClass('selected');"
             ++ "}" 
-    , Title = wf:f("~s ~.1f%"
+    , Title = wf:f("~s  ~.1f%"
         , [Name, iterate_wf:iteration_completion(Name)])
     , [#panel{ id=PanelId, actions=#event{type=click
                 , delegate=element_story_panel
                 , postback=?SHOW_STORIES(iteration, Name)
                 , actions=Jscript
              }
-             , body=[#label{ id=Name ++ "_name", text=Title}
+             , body=[#panel{ class=bold, id=Name ++ "_name", body=Title}
                  , " " , #link{text="edit"
                          , actions=#event{type=click, delegate=?MODULE
                              , override=true

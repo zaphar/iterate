@@ -21,7 +21,7 @@ render(_ControlId, Record) ->
         , tag={edit_title, StoryId}}
     , Class = case story_util:is_complete(Story) of
         true ->
-            "complete panel_element story_element";
+            "panel_element story_element complete ";
         false ->
             "panel_element story_element"
     end

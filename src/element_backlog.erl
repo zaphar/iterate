@@ -46,7 +46,7 @@ body(Name, PanelId) ->
                 , postback=?SHOW_STORIES(backlog, Name)
                 , actions=Jscript
             }
-            , body=[#label{ id=Name ++ "_name", text=Name}
+            , body=[#panel{ class=bold, id=Name ++ "_name", body=Name}
                 , " " , #link{text="edit"
                         , actions=#event{type=click, delegate=?MODULE
                             , postback=?SHOW_B_EL(Name, PanelId)

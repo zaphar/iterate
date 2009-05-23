@@ -10,6 +10,7 @@
     padding: 3px;
     margin-bottom: 6px;
     border: 2px outset;
+
 }
 
 .complete {
@@ -18,7 +19,6 @@
 
 .story_element {
     width: 600px;
-    overflow: auto;
 }
 
 textarea.story_desc {
@@ -38,10 +38,24 @@ textarea.story_desc {
     border: 2px solid darkgrey;
 }
 
+.notify {
+    background-color: lightYellow;
+    border: 2px solid yellow;
+    padding: 4px;
+}
+
+.notify table {
+    width: 100%;
+}
+
 .selected {
     background-color: lightblue;
 }
 
 .inline {
     display: inline;
+}
+
+.bold {
+    font-weight: bold;
 }
