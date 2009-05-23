@@ -71,7 +71,7 @@ event(?B_PANEL_CREATE(_Id)) ->
     TB_Id = wf:temp_id(),
     PanelId = wf:temp_id(),
     ButtonId = wf:temp_id(),
-    wf:flash(#panel{ id=PanelId 
+    element_notify:msg(#panel{ id=PanelId 
         , body=[#textbox{ id=TB_Id, next=ButtonId,  text="Enter Name Here"}
         , #button{ id=ButtonId,
             text="Create",
@@ -85,7 +85,7 @@ event(?CREATE_B(Id, PanelId)) ->
     case iterate_wf:create_backlog(Value) of
         {error, Msg} ->
             wf:update(PanelId, "Failed!!"),
-            wf:flash(io_lib:format("~p", [Msg]));
+            element_notify:msg(io_lib:format("~p", [Msg]), 1*60*1000);
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Backlog ~p Created", [Value])),
             event(?REFRESH(undefined)); 

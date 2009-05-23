@@ -86,13 +86,14 @@ event(?SHOW_STORIES(backlog, Name)) ->
     , wf:update(story_box, #story_panel{data=StoryList} )
     , wf:update(report_panel, #report_panel{});
 event(?S_PANEL_CREATE(_Type, undefined)) ->
-    wf:flash("can't create stories without a backlog or iteration");
+    element_notify:msg("can't create stories without a backlog or iteration"
+        , 1*60*1000);
 event(?S_PANEL_CREATE(iteration, Backlog)) ->
     %% we need a create story widget
     TB_Id = wf:temp_id()
     , PanelId = wf:temp_id()
     , ButtonId = wf:temp_id()
-    , wf:flash(#panel{ id=PanelId
+    , element_notify:msg(#panel{ id=PanelId
         , body=[
             "creating story for iteration: " ++ Backlog, #br{ }
             , #textbox{ id=TB_Id, next=ButtonId,  text="Enter Name Here"}
@@ -109,7 +110,7 @@ event(?S_PANEL_CREATE(backlog, Backlog)) ->
     TB_Id = wf:temp_id()
     , PanelId = wf:temp_id()
     , ButtonId = wf:temp_id()
-    , wf:flash(#panel{ id=PanelId
+    , element_notify:msg(#panel{ id=PanelId
         , body=[
             "creating story for backlog: " ++ Backlog, #br{ }
             , #textbox{ id=TB_Id, next=ButtonId,  text="Enter Name Here"}
@@ -131,7 +132,7 @@ event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->
     catch
         Msg ->
             wf:update(PanelId, "Failed!!")
-            , wf:flash(io_lib:format("~p", [Msg]))
+            , element_notify:msg(io_lib:format("~p", [Msg]), 1*60*1000)
 
     end
     , ok;
@@ -144,7 +145,7 @@ event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
     catch
         Msg ->
             wf:update(PanelId, "Failed!!")
-            , wf:flash(io_lib:format("~p", [Msg]))
+            , element_notify:msg(io_lib:format("~p", [Msg]), 1*60*1000)
 
     end
     , ok;

@@ -110,8 +110,9 @@ drop_event(Story, Iteration) ->
     , NewStory = story_util:set_iteration(StoryRecord, Iteration)
     , io:format("changed story to: ~p ~n", [NewStory])
     , iterate_db:story(?Q_UPDATE_STORY(NewStory))
-    , wf:flash(
-        io_lib:format("Took on Story: ~p in Iteration: ~p", [Story, Iteration]))
+    , element_notify:msg(
+        io_lib:format("Took on Story: ~p in Iteration: ~p", [Story, Iteration])
+            , 400)
     , {Type, _Name} = story_util:get_type(StoryRecord)
     , element_story_panel:event(?SHOW_STORIES(Type, Backlog))
     , element_iteration_panel:event(?REFRESH(bogus_id))

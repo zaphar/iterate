@@ -77,17 +77,17 @@ event(?COMPLETE_TASK(CBId, Id)) ->
         {ok, Task} ->
             iterate_db:task(?U_TASK(Task#tasks{complete=Value}));
         {abort, Err} ->
-            wf:flash(wf:f(
+            element_notify:msg(wf:f(
                 "whoops it looks we encountered an error [~p] while updating this task ~p"
-                , [Err, Id]))
+                , [Err, Id]), 1*60*1000)
     end;
 event(?DELETE_TASK(Id, PanelId, Story)) ->
     case iterate_db:task(?D_TASK(Id)) of
         {atomic, ok} ->
             wf:update(PanelId, build_rows(Story, PanelId));
         {abort, Err} ->
-            wf:flash(wf:f("whoops we appear to have encountered an error [~p] while deleting this task ~p",
-                [Err, Id]))
+            element_notify:msg(wf:f("whoops we appear to have encountered an error [~p] while deleting this task ~p",
+                [Err, Id]), 1*60*1000)
     end;
 event(E) ->
     io:format("warning: encountered unhandled event ~p", [E])
