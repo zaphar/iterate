@@ -28,6 +28,8 @@ transform_stories() ->
                 , backlog=Backlog
                 , meta=Meta
             };
+        %% if any titles or descriptions are in string format we
+        %% want them to binary from now on
         ({stories, StoryName, StoryTitle, Desc, Sp, Backlog, Meta})
             when is_list(StoryTitle) orelse is_list(Desc) ->
                 Story = case is_list(StoryTitle) of

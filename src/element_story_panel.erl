@@ -86,7 +86,7 @@ event(?SHOW_STORIES(backlog, Name)) ->
     , wf:update(report_panel, #report_panel{});
 event(?S_PANEL_CREATE(_Type, undefined)) ->
     element_notify:msg("can't create stories without a backlog or iteration"
-        , 1*60*1000);
+        , 600);
 event(?S_PANEL_CREATE(iteration, Backlog)) ->
     %% we need a create story widget
     TB_Id = wf:temp_id()
@@ -131,7 +131,7 @@ event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->
     catch
         Msg ->
             wf:update(PanelId, "Failed!!")
-            , element_notify:msg(io_lib:format("~p", [Msg]), 1*60*1000)
+            , element_notify:msg(io_lib:format("~p", [Msg]), 600)
 
     end
     , ok;
@@ -144,7 +144,7 @@ event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
     catch
         Msg ->
             wf:update(PanelId, "Failed!!")
-            , element_notify:msg(io_lib:format("~p", [Msg]), 1*60*1000)
+            , element_notify:msg(io_lib:format("~p", [Msg]), 600)
 
     end
     , ok;

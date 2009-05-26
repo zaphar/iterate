@@ -87,7 +87,7 @@ event(?CREATE_B(Id, PanelId)) ->
     case iterate_wf:create_backlog(Value) of
         {error, Msg} ->
             wf:update(PanelId, "Failed!!"),
-            element_notify:msg(io_lib:format("~p", [Msg]), 1*60*1000);
+            element_notify:msg(io_lib:format("~p", [Msg]), 600);
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Backlog ~p Created", [Value])),
             event(?REFRESH(undefined)); 
