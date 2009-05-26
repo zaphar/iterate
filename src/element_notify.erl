@@ -13,7 +13,7 @@ render() ->
 -define(HIDE(Type, Delay, Id), #event{type=Type, delay=Delay
     , actions=#hide{effect=blind, target=Id}}).
 
-render(ControlId, R) ->
+render(ControlId, R) when is_record(R, notify) ->
     Id = ControlId
     , case R#notify.expire of
         false ->
@@ -28,11 +28,13 @@ render(ControlId, R) ->
             , undefined
     end
     , Link = #link{text="dismiss", actions=?HIDE(click, undefined, Id)}
-    , InnerPanel = #panel{class=body=R#notify.msg}
-    , Panel = #panel{id=Id, class=["notify ", R#notify.class]
+    , InnerPanel = #panel{class="notify_inner", body=R#notify.msg}
+    , Panel = #panel{id=Id
+        , class=["notify ", R#notify.class]
         , body=#singlerow{ 
             cells=[#tablecell{align=left, body=InnerPanel}
-                , #tablecell{align=right, body=Link}]}}
+                , #tablecell{align=right, body=Link}]}
+    }
     , element_panel:render(Id, Panel)
 .
 
