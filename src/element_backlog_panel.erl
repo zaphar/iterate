@@ -28,14 +28,14 @@ render(ControlId, Record) ->
     , SearchEvent = #event{type=change, delegate=?MODULE,
         postback={search, SearchId, ControlId}}
     , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
-    , Panel = #rounded_panel{ body=[
+    , Panel = #rounded_panel{ class="backlog_panel", body=[
         #span{text="Backlogs", class=panel_title}, #br{}, #br{}
         , #textbox{id=SearchId, text=Filter
             , style="margin-bottom: 6px;"
             , class=input_box
             , actions=[SearchEvent
                 , SearchFocusEvent]}, #br{}
-        , #panel{id=PanelId, body=backlogs(Data, ControlId)}]}
+        , #panel{class="menu", id=PanelId, body=backlogs(Data, ControlId)}]}
     , element_rounded_panel:render(ControlId, Panel)
 .
 

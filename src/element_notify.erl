@@ -29,7 +29,7 @@ render(ControlId, R) ->
     , io:format("Added notification: ~p~n", [Id])
     %, io:format("Expire is: ~p Set Event: ~p~n", [R#notify.expire, Expire])
     , Link = #link{text="dismiss", actions=?HIDE(click, undefined, Id)}
-    , InnerPanel = #panel{body=R#notify.msg}
+    , InnerPanel = #panel{class=body=R#notify.msg}
     , Panel = #panel{id=Id, class=["notify", R#notify.class]
         , body=#singlerow{ 
             cells=[#tablecell{align=left, body=InnerPanel}

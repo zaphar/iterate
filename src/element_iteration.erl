@@ -7,11 +7,11 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-render(_ControlId, Record) ->
+render(ControlId, Record) ->
     Name    = Record#iteration.iteration_name
-    , PanelId = wf:temp_id()
+    , PanelId = ControlId
     , Panel = #delegated_droppable{ id=PanelId
-        , class="panel_element backlog_element" ++ selection_class(Name)
+        , class="panel_element backlog_element iteration_element" ++ selection_class(Name)
         , hover_class=drop_hover
         , tag={Name, {delegate, ?MODULE}}
         , body=body(Name, PanelId) }

@@ -25,10 +25,9 @@ render(ControlId, Record) ->
               , postback=?SHOW_STORIES(Type, Name)
           }}
     ]
-    , Panel = #rounded_panel{ id=PanelId,
+    , Panel = #rounded_panel{ class="story_panel", id=PanelId,
         body=[#span{text="Stories", class=panel_title}, #br{}, #br{} 
-              , #panel{id=?SPANELID
-                , class=story_panel
+              , #panel{class="story_list", id=?SPANELID
                 , body=Data }] ++ Actions
     }
     , element_rounded_panel:render(ControlId, Panel)

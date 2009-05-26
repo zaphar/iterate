@@ -16,7 +16,7 @@ render(_, T) ->
 build_tasks(Name) ->
     PanelId = wf:temp_id()
     , Content = build_rows(Name, PanelId)
-    , {PanelId, #panel{id=PanelId, body=Content}}
+    , {PanelId, #panel{class="task_panel", id=PanelId, body=Content}}
 .
 
 build_rows(Name, PanelId) ->
@@ -35,10 +35,11 @@ build_rows(Name, PanelId) ->
         delegate=?MODULE, postback={refresh, PanelId, Name}}}
     , HeaderFooter = [#tableheader{body=[NewTask, " | ", Refresh]}]
     , Content = HeaderFooter ++ Tasks
-    , #table{class=tasks, rows=Content }
+    , #table{class="tasks", rows=Content }
 .
 
 build_task_row(T, PanelId) ->
+    %TODO(jwall): make these fixed width divs?
     TextBox = #my_inplace_textbox{text=T#tasks.task_name
         , delegate=?MODULE, tag={update, T#tasks.id, T#tasks.story_name}}
     , CBId = wf:temp_id()
@@ -48,10 +49,10 @@ build_task_row(T, PanelId) ->
     , Delete = #link{text="delete", actions=#event{type=click
         , delegate=?MODULE
         , postback=?DELETE_TASK(T#tasks.id, PanelId, T#tasks.story_name)}}
-    , #tablerow{id=T#tasks.id, cells=[
-        #tablecell{body=CheckBox}
-        , #tablecell{body=TextBox}
-        , #tablecell{body=Delete}
+    , #tablerow{class="task", id=T#tasks.id, cells=[
+        #tablecell{body=#panel{class="task_complete", body=CheckBox}}
+        , #tablecell{body=#panel{class="task_title", body=TextBox}}
+        , #tablecell{body=#panel{class="task_actions", body=Delete}}
         ]
     }
 .

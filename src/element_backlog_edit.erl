@@ -7,7 +7,7 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-render(_ControlId, Record) ->
+render(_, Record) ->
     Id       = Record#backlog_edit.backlog_id
     , ElId     = Record#backlog_edit.el_id
     , Name     = Id ++ "_BacklogEditBox"
@@ -27,7 +27,7 @@ render(_ControlId, Record) ->
             "Description goes here"
     end
     , io:format("the description is: ~s~n", [Desc])
-    , Panel = #panel{ id=Name
+    , Panel = #panel{ class="edit_panel", id=Name
         , body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
                 delegate=?MODULE, text=Desc }, #br{}
