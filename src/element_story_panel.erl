@@ -34,7 +34,7 @@ render(ControlId, Record) ->
 .
 
 stories(undefined) ->
-    io:format("Default is stories for: ~p", [for_what()])
+    iterate_log:log_debug(wf:f("Default is stories for: ~p", [for_what()]))
     , {Type, Name} = for_what()
     , L = case Type of
         iteration ->
@@ -46,7 +46,7 @@ stories(undefined) ->
     end
     , stories(L, for_what());
 stories(L) ->
-    io:format("Asked for stories for: ~p", [for_what()])
+    iterate_log:log_debug(wf:f("Asked for stories for: ~p", [for_what()]))
     , stories(L, for_what()).
 
 stories([], {_Type, _Name}) ->
@@ -70,7 +70,7 @@ for_what('name') ->
 %% showing stories
 event(?REFRESH(_Id)) ->
     {Type, Name} = iterate_wf:working_in()
-    , io:format("refreshing stories for: ~p", [{Type, Name}])
+    , iterate_log:log_debug(wf:f("refreshing stories for: ~p", [{Type, Name}]))
     , event(?SHOW_STORIES(Type, Name));
 event(?SHOW_STORIES(iteration, Name)) ->
     StoryList = [ S#stories.story_name || S <- 
@@ -149,7 +149,7 @@ event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
     end
     , ok;
 event(Event) -> 
-    io:format("recieved unknown event: ~p~n", [Event]),
-    ok
+    iterate_log:log_debug(wf:f("recieved unknown event: ~p~n", [Event]))
+    , ok
 .
 

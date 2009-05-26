@@ -18,7 +18,7 @@ init(_Args) ->
 %% handle the stats events
 handle_event({For, User, Entry}, State) ->
     Result = iterate_db:new_stat(For, Entry, User)
-    , io:format("creating a new stat: ~p", [Result])
+    , iterate_log:log_info(wf:f("creating a new stat: ~p", [Result]))
     , {ok, State} 
 .
 

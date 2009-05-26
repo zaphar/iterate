@@ -75,7 +75,7 @@ map_entry(Id, Attr) when is_list(Id), is_list(Attr) ->
     list_to_atom(Id ++ "@" ++ Attr).
 
 inplace_textbox_event(?UPDATESP(Name), Value) ->
-    io:format("updating story points for ~s~n", [Name])
+    iterate_log:log_debug(wf:f("updating story points for ~s~n", [Name]))
     , iterate_wf:update_story_points(Name, Value)
     , Value;
 inplace_textbox_event(?UPDATE_S_DESC(Name), Value) ->
@@ -124,7 +124,8 @@ event(?NEWTIME(Name, Id, PanelId)) ->
     %% TODO(jwall): update the iteration list also
     , element_story:event(?SHOW_S_EL(Name));
 event(Event) ->
-    io:format("~p recieved unknown event ~p~n", [?MODULE, Event])
+    iterate_log:log_warning(wf:f("~p recieved unknown event ~p~n"
+        , [?MODULE, Event]))
 .
 
 refresh_story_panel(Story) ->

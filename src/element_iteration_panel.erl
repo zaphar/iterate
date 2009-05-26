@@ -69,7 +69,7 @@ event(?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)) ->
     , wf:update(PanelId, "created iteration: " ++ Value)
     , event(?REFRESH(IterPanelId));
 event(Event) ->
-    io:format("~p recieved event: ~p~n", [?MODULE, Event]),
+    iterate_log:log_debug(wf:f("~p recieved event: ~p~n", [?MODULE, Event])),
     ok
 .
 

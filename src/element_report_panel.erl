@@ -18,7 +18,8 @@ render() ->
 
 render(ControlId, _Record) ->
     PanelId = wf:temp_id()
-    , io:format("Creating report for: ~p~n", [iterate_wf:working_in()])
+    , iterate_log:log_debug(wf:f("Creating report for: ~p~n"
+        , [iterate_wf:working_in()]))
     , CChart = build_completion_chart(iterate_wf:working_in())
     , TagChart = build_tag_chart(iterate_wf:working_in())
     , Panel = #panel{class="report_panel"

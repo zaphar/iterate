@@ -42,7 +42,7 @@ inplace_textbox_event(?IDENTIFY, Value) ->
 .
 
 login_update(Value) ->
-    io:format("now working as: ~p~n", [Value])
+    iterate_log:log_info(wf:f("now working as: ~p~n", [Value]))
     %% TODO(jwall): users should get added to a db when they
     %% haven't been encountered before
     , wf:user(Value)

@@ -18,11 +18,11 @@ create_backlog(Name) ->
 
 delete_backlog(Name) ->
     Records = iterate_db:backlog({qry, Name})
-    , io:format("found: ~p~n", [Records])
+    , iterate_log:log_debug(wf:f("found: ~p~n", [Records]))
     , [Record | []] = Records
     , Result = iterate_db:backlog({delete, Record})
     , iterate_stats:record(backlog, ?DELETE_STAT(Name))
-    , io:format("Result: ~p~n", [Result])
+    , iterate_log:log_debug(wf:f("Result: ~p~n", [Result]))
     , Result
 .
 
@@ -111,9 +111,9 @@ move_story_to_backlog(Story, Backlog) ->
     , OldBacklog = StoryRecord#stories.backlog
     %% TODO(jwall): figure out if the old location was iteration or backlog
     , iterate_stats:record(story, ?MOVE_STAT(Story, Backlog, OldBacklog))
-    , io:format("found story: ~p ~n", [StoryRecord])
+    , iterate_log:log_debug(wf:f("found story: ~p ~n", [StoryRecord]))
     , NewStory = story_util:set_backlog(StoryRecord, Backlog)
-    , io:format("changed story to: ~p ~n", [NewStory])
+    , iterate_log:log_debug(wf:f("changed story to: ~p ~n", [NewStory]))
     , iterate_db:story({update, NewStory})
     %% if the old Story was in an iteration then we need to 
     %% log the new iteration percent completion
@@ -126,9 +126,9 @@ move_story_to_iteration(Story, Iteration) ->
     , OldBacklog = StoryRecord#stories.backlog
     %% TODO(jwall): figure out if the old location was iteration or backlog
     , iterate_stats:record(story, ?MOVE_STAT(Story, Iteration, OldBacklog))
-    , io:format("found story: ~p ~n", [StoryRecord])
+    , iterate_log:log_debug(wf:f("found story: ~p ~n", [StoryRecord]))
     , NewStory = story_util:set_iteration(StoryRecord, Iteration)
-    , io:format("changed story to: ~p ~n", [NewStory])
+    , iterate_log:log_debug(wf:f("changed story to: ~p ~n", [NewStory]))
     , iterate_db:story({update, NewStory})
     %% if the old Story was in an iteration then we need to 
     %% log the new iteration percent completion
@@ -152,7 +152,7 @@ update_story_completion(Name, Percent) ->
 update_story_points(Story, Value) 
     when is_integer(Value) and is_record(Story, stories) ->
         Updated = Story#stories{sp=Value}
-        , io:format("updating story points: ~p ~n", [Updated])
+        , iterate_log:log_debug(wf:f("updating story points: ~p ~n", [Updated]))
         , Resulting = iterate_db:story({update, Updated})
         , log_story_stats(Story)
         , log_iteration_stats(story_util:iteration(Story))

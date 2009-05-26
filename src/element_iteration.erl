@@ -15,7 +15,8 @@ render(ControlId, Record) ->
         , hover_class=drop_hover
         , tag={Name, {delegate, ?MODULE}}
         , body=body(Name, PanelId) }
-    , io:format("the panel id for ~s is ~s~n", [Name, PanelId])
+    , iterate_log:log_debug(wf:f("the panel id for ~s is ~s~n"
+        , [Name, PanelId]))
     , element_delegated_droppable:render(PanelId, Panel)
 .
 
@@ -96,19 +97,20 @@ event(?REMOVE_B_EL(Name, Id)) ->
     , element_iteration_panel:event(?REFRESH(Id))
     , element_story_panel:event(?REFRESH(undefined));
 event(Event) -> 
-    io:format("received event: ~p~n", [Event])
+    iterate_log:log_debug(wf:f("received event: ~p~n", [Event]))
 .
 
 %% move a story to a backlog
 drop_event(Story, Iteration) ->
-    io:format("received event: ~p -> ~p~n", [Story, Iteration])
+    iterate_log:log_debug(wf:f("received event: ~p -> ~p~n"
+        , [Story, Iteration]))
     , [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
     , Backlog = StoryRecord#stories.backlog
     , iterate_stats:record(story
         , ?MOVE_STAT(Story, Iteration, Backlog))
-    , io:format("found story: ~p ~n", [StoryRecord])
+    , iterate_log:log_debug(wf:f("found story: ~p ~n", [StoryRecord]))
     , NewStory = story_util:set_iteration(StoryRecord, Iteration)
-    , io:format("changed story to: ~p ~n", [NewStory])
+    , iterate_log:log_debug(wf:f("changed story to: ~p ~n", [NewStory]))
     , iterate_db:story(?Q_UPDATE_STORY(NewStory))
     , element_notify:msg(
         io_lib:format("Took on Story: ~p in Iteration: ~p", [Story, Iteration])

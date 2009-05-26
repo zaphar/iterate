@@ -26,7 +26,8 @@ render(_, Record) ->
         _                       ->
             "Description goes here"
     end
-    , io:format("the description is: ~s~n", [Desc])
+    , Msg = wf:f("the description is: ~s~n", [Desc])
+    , iterate_log:log_debug(Msg)
     , Panel = #panel{ class="edit_panel", id=Name
         , body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
@@ -38,7 +39,8 @@ render(_, Record) ->
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->
-    io:format("updating desc for ~s", [Name])
+    Msg = wf:f("updating desc for ~s", [Name])
+    , iterate_log:log_debug(Msg)
     , iterate_stats:record(backlog, ?UPDATE_DESC_STAT(Name))
     , case iterate_db:backlog({qry, Name}) of
         %%{error, Msg} ->

@@ -92,15 +92,16 @@ event(?ORDEDIT(StoryId, Id)) ->
         [Found] ->
             Found
     end
-    , io:format("updating order of ~p to ~p", [StoryId, Value])
+    , iterate_log:log_debug(wf:f("updating order of ~p to ~p"
+        , [StoryId, Value]))
     , Story = get_story(StoryId)
     , Updated = story_util:set_order(Story, Value)
     , iterate_db:story({update, Updated})
-    , io:format("changing order ~p to ~p", [story_util:order(Story),
-        story_util:order(Updated)])
+    , iterate_log:log_debug(wf:f("changing order ~p to ~p"
+        , [story_util:order(Story), story_util:order(Updated)]))
     , Value;
 event(Event) -> 
-    io:format("~p received ~p event~n", [?MODULE, Event])
+    iterate_log:log_debug(wf:f("~p received ~p event~n", [?MODULE, Event]))
 .
 
 inplace_textbox_event(?COMPLETE_S(StoryId), Value) ->

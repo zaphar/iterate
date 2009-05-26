@@ -16,7 +16,8 @@ render() ->
 %%              refactor is in order.
 render(ControlId, Record) ->
     PanelId = wf:temp_id()
-    , io:format("the control id is ~p~n", [ControlId])
+    , Msg = wf:f("the control id is ~p~n", [ControlId])
+    , iterate_log:log_debug(Msg)
     , Filter = Record#backlog_panel.filter
     , Data    = case Record#backlog_panel.data of
         undefined ->
@@ -54,7 +55,8 @@ backlogs([], Id) ->
     ];
 backlogs([H|T], Id) ->
     Name = H#backlogs.backlog_name
-    , io:format("adding backlog: ~p~n", [H])
+    , Msg = wf:f("adding backlog: ~p~n", [H])
+    , iterate_log:log_debug(Msg)
     , [ #backlog{backlog_name=Name, container=Id} | backlogs(T, Id) ]
 .
 
@@ -98,15 +100,17 @@ event(?REFRESH(_Id)) ->
     wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
 event(?B_PANEL_SEARCH(Id, PanelId)) ->
     [Value] = wf:q(Id)
-    , io:format("~p searching for: ~p~n", [?MODULE, Value])
+    , Msg = wf:f("~p searching for: ~p~n", [?MODULE, Value])
+    , iterate_log:log_debug(Msg)
     , Results = iterate_wf:search_for_backlog(Value)
-    , io:format("~p found: ~p~n", [?MODULE, Results])
+    , iterate_log:log_debug(wf:f("~p found: ~p~n", [?MODULE, Results]))
     % TODO(jwall): the filter box needs to keep the search terms
     , wf:update(PanelId, #backlog_panel{data=Results, filter=Value})
     %%, wf:wire(?SEARCHBOX, "obj('me').focus(); obj('me').select();")
     , ok;
 event(Event) ->
-    io:format("~p recieved event: ~p~n", [?MODULE, Event]),
-    ok
+    Msg = wf:f("~p recieved event: ~p~n", [?MODULE, Event])
+    , iterate_log:log_debug(Msg)
+    , ok
 .
 

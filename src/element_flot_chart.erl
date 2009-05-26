@@ -11,7 +11,6 @@ rec() -> #flot_chart{}.
 render(ControlId, Record) ->
     %% handle multiple datasets
     Data = Record#flot_chart.values
-    , io:format("Creating a Chart with values: ~p~n", [Data])
     , DataSet = data_as_js(Data)
     %% description of the graph
     , _Title = Record#flot_chart.title
@@ -123,7 +122,6 @@ data_as_js(T) when is_tuple(T) ->
     data_as_js([T]);
 data_as_js(L) ->
     List = data_as_js_preparse(L)
-    , io:format("~p", [List])
     , "[" ++ string:join(List, ",") ++ "]"
 .
 

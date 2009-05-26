@@ -23,14 +23,13 @@ render(ControlId, R) ->
             wf:wire(Id, ?HIDE('timer', N, Id));
         Err ->
             % log error and don't expire
-            io:format("encountered unknown expire value: ~p", [Err])
+            iterate_log:log_warning(wf:f("encountered unknown expire value: ~p"
+                , [Err]))
             , undefined
     end
-    , io:format("Added notification: ~p~n", [Id])
-    %, io:format("Expire is: ~p Set Event: ~p~n", [R#notify.expire, Expire])
     , Link = #link{text="dismiss", actions=?HIDE(click, undefined, Id)}
     , InnerPanel = #panel{class=body=R#notify.msg}
-    , Panel = #panel{id=Id, class=["notify", R#notify.class]
+    , Panel = #panel{id=Id, class=["notify ", R#notify.class]
         , body=#singlerow{ 
             cells=[#tablecell{align=left, body=InnerPanel}
                 , #tablecell{align=right, body=Link}]}}

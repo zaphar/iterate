@@ -21,7 +21,8 @@ build_tasks(Name) ->
 
 build_rows(Name, PanelId) ->
     {atomic, TaskList} = iterate_db:task(?Q_STORY_TASKS(Name))
-    , io:format("our PanelId for tasks still is: ~p", [PanelId])
+    , iterate_log:log_debug(wf:f("our PanelId for tasks still is: ~p"
+        , [PanelId]))
     , Tasks = case TaskList of
         [] ->
             [];
@@ -73,25 +74,28 @@ event(?COMPLETE_TASK(CBId, Id)) ->
         [] ->
             false
     end
-    , io:format("The Checkbox is: ~p~n", [Value])
+    , iterate_log:log_debug(wf:f("The Checkbox is: ~p~n", [Value]))
     , case get_task(Id) of
         {ok, Task} ->
             iterate_db:task(?U_TASK(Task#tasks{complete=Value}));
         {abort, Err} ->
-            element_notify:msg(wf:f(
-                "whoops it looks we encountered an error [~p] while updating this task ~p"
-                , [Err, Id]), 1*60*1000)
+            Msg = wf:f("encountered an error [~p] while updating this task ~p"
+                , [Err, Id])
+            , iterate_log:log_warning(Msg)
+            , element_notify:msg("whoops we appear to have " ++ Msg, 1*60*1000)
     end;
 event(?DELETE_TASK(Id, PanelId, Story)) ->
     case iterate_db:task(?D_TASK(Id)) of
         {atomic, ok} ->
             wf:update(PanelId, build_rows(Story, PanelId));
         {abort, Err} ->
-            element_notify:msg(wf:f("whoops we appear to have encountered an error [~p] while deleting this task ~p",
-                [Err, Id]), 1*60*1000)
+            Msg = wf:f("encountered an error [~p] while deleting this task ~p"
+                , [Err, Id])
+            , iterate_log:log_warning(Msg)
+            , element_notify:msg("whoops we appear to have " ++ Msg, 1*60*1000)
     end;
 event(E) ->
-    io:format("warning: encountered unhandled event ~p", [E])
+    iterate_log:log_warning(wf:f("encountered unhandled event ~p", [E]))
 .
 
 inplace_textbox_event({update, Id, For}, Value) ->

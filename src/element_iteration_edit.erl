@@ -25,7 +25,7 @@ render(_ControlId, Record) ->
         _                       ->
             "Description goes here"
     end
-    , io:format("the description is: ~s~n", [Desc])
+    , iterate_log:log_debug(wf:f("the description is: ~s~n", [Desc]))
     , Panel = #panel{ id=Name
         , body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
@@ -37,14 +37,14 @@ render(_ControlId, Record) ->
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->
-    io:format("updating desc for ~s", [Name]),
-    case iterate_db:iteration(?Q_ITERATION(Name)) of
+    iterate_log:log_debug(wf:f("updating desc for ~s", [Name]))
+    , case iterate_db:iteration(?Q_ITERATION(Name)) of
         %%{error, Msg} ->
             %% what do I do for this one?
         [B | []] ->
-            B1 = B#iterations{desc=Value},
-            iterate_db:iteration(?UPDATEITER(B1))
-    end,
-    Value
+            B1 = B#iterations{desc=Value}
+            , iterate_db:iteration(?UPDATEITER(B1))
+    end
+    , Value
 .
 
