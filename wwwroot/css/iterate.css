@@ -76,6 +76,6 @@ textarea.story_desc {
 }
 
 .complete {
-    background-color: lightgreen;
+    background: lightgreen;
 }
 
