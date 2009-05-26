@@ -73,3 +73,7 @@ event(Event) ->
     ok
 .
 
+update_iteration_panel() ->
+    wf:update(iteration_panel
+        , #iteration_panel{data=iterate_wf:get_started_iterations()})
+.

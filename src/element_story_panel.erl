@@ -153,3 +153,15 @@ event(Event) ->
     , ok
 .
 
+update_story_list() ->
+    StoryList = case iterate_wf:working_in() of
+        {iteration, Name} ->
+            [ S#stories.story_name || S <- 
+                iterate_wf:get_iteration_stories(Name) ];
+        {backlog, Name} ->
+            [ S#stories.story_name || S <- 
+                iterate_wf:get_backlog_stories(Name) ]
+    end
+    , wf:update(story_box, #story_panel{data=StoryList} )
+    , wf:update(report_panel, #report_panel{})
+.
