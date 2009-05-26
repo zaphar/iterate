@@ -1,10 +1,2 @@
-Story Creation is broken?
-
-handle iterate_db todo's
 flesh out the identity widget and feature
     team identity?
-identify more locations where I need to log
-clean up the code
-    move all actions into a central module
-    move the logging into that module
-    work out user knowledge session access problems
