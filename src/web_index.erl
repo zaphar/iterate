@@ -6,7 +6,12 @@
 
 main() ->
 	%TODO(jwall): force identity
-    #template { file="./wwwroot/template.html"}
+    case iterate_wf:working_as() of
+        undefined ->
+            #template { file="./wwwroot/login.html"};
+        _ ->
+            #template { file="./wwwroot/template.html"}
+    end
 .
 
 title() ->
@@ -39,5 +44,6 @@ inplace_textbox_event(?IDENTIFY, Value) ->
 login_update(Value) ->
     io:format("now working as: ~p~n", [Value])
     , wf:user(Value)
+    , wf:redirect("/")
 .
 
