@@ -7,6 +7,7 @@
 
 
 %% TODO(jwall): should these be broken into story_wf, backlog_wf and so on?
+%% TODO(jwall): write tests for this :-)
 
 %% Backlog APIs
 
@@ -51,16 +52,20 @@ backlog_story_points(Name) ->
 
 %% Story APIs
 
-create_story(Title) ->
+create_story(Title) when is_list(Title) ->
+    create_story(list_to_binary(Title));
+create_story(Title) when is_binary(Title) ->
     #stories{story_name=iterate_db:uuid(), story_title=Title}
 .
 
-create_story_for(Title, {backlog, Backlog}) ->
+create_story_for(Title, {Type, Name}) when is_list(Title)  ->
+    create_story_for(list_to_binary(Title), {Type, Name});
+create_story_for(Title, {backlog, Backlog}) when is_binary(Title) ->
     iterate_stats:record(story, ?CREATE_STAT(Title))
     , Story = story_util:set_backlog(create_story(Title), Backlog)
     , iterate_db:story({new, Story})
     , commit_story(Story);
-create_story_for(Title, {iteration, Iteration}) ->
+create_story_for(Title, {iteration, Iteration}) when is_binary(Title) ->
     Story = story_util:set_iteration(create_story(Title), Iteration)
     , commit_story(Story)
 .
@@ -105,7 +110,6 @@ get_backlog_stories(Name) ->
     iterate_db:story(?Q_BACKLOG_STORY(Name))
 .
 
-%% TODO(jwall): write tests for this :-)
 move_story_to_backlog(Story, Backlog) ->
     [StoryRecord | []] = iterate_db:story(?Q_STORY(Story))
     , OldBacklog = StoryRecord#stories.backlog
@@ -175,7 +179,7 @@ log_story_stats(S) ->
 
 create_iteration(Name) ->
     iterate_stats:record(iteration, ?CREATE_STAT(Name))
-    , iterate_db:iteration(?NEWITER(Name, "fill in description here"))
+    , iterate_db:iteration(?NEWITER(Name, <<"fill in description here">>))
 .
 
 close_iteration(Name) ->
@@ -240,7 +244,7 @@ get_iteration(Name) ->
 %% Misc
 
 get_default_backlog() ->
-    {backlog, "Default"}
+    {backlog, <<"Default">>}
 .
 
 stop_working_in({Type, Name}) ->

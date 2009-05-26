@@ -27,9 +27,46 @@ transform_stories() ->
                 , sp=Sp
                 , backlog=Backlog
                 , meta=Meta
-            }
+            };
+        ({stories, StoryName, StoryTitle, Desc, Sp, Backlog, Meta})
+            when is_list(StoryTitle) orelse is_list(Desc) ->
+                Story = case is_list(StoryTitle) of
+                    true -> 
+                        #stories{story_name=StoryName
+                            , story_title=list_to_binary(StoryTitle)
+                            , desc=Desc
+                            , sp=Sp
+                            , backlog=Backlog
+                            , meta=Meta
+                        };
+                    false ->
+                        #stories{story_name=StoryName
+                            , story_title=StoryTitle
+                            , desc=Desc
+                            , sp=Sp
+                            , backlog=Backlog
+                            , meta=Meta
+                        }
+                end
+                , case is_list(Story#stories.desc) of
+                    true ->
+                        #stories{story_name=StoryName
+                            , story_title=StoryTitle
+                            , desc=list_to_binary(Desc)
+                            , sp=Sp
+                            , backlog=Backlog
+                            , meta=Meta
+                        };
+                    false ->
+                        #stories{story_name=StoryName
+                            , story_title=StoryTitle
+                            , desc=Desc
+                            , sp=Sp
+                            , backlog=Backlog
+                            , meta=Meta
+                        }
+                end
     end
-    %, get_transformed(stories, F)
     , mnesia:transform_table(stories, F, record_info(fields, stories))
 .
 
