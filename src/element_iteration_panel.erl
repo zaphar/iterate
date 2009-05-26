@@ -24,7 +24,7 @@ render(ControlId, Record) ->
         D when is_list(D) ->
             D
     end
-    , Panel = #rounded_panel{ class="iteration_panel", id=PanelId, body=[
+    , Panel = #panel{ class="iteration_panel", id=PanelId, body=[
         #panel{id=ButtonsId, body=[
             #span{text="Iterations", class=panel_title}, #br{}, #br{}
             , #link{text="Start Iteration"
@@ -33,7 +33,7 @@ render(ControlId, Record) ->
                         , delegate=?MODULE
                         , postback=?STARTITER(ContentId)}}]}
         , #panel{class="menu", id=ContentId, body=iterations(Data)}]}
-    , element_rounded_panel:render(ControlId, Panel)
+    , element_panel:render(ControlId, Panel)
 .
 
 %% generate our backlog list

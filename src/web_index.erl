@@ -5,15 +5,16 @@
 -compile(export_all).
 
 main() ->
-	#template { file="./wwwroot/template.html"}
+	%TODO(jwall): force identity
+    #template { file="./wwwroot/template.html"}
 .
 
 title() ->
-	"Iterate!"
+	<<"Iterate!">>
 .
 
 display_title() ->
-	"Iterate<i>!</i>"
+	<<"Iterate<i>!</i>">>
 .
 
 login() ->
@@ -21,32 +22,14 @@ login() ->
 .
 
 login_contents() ->
-    User = case wf:user() of
+    User = case iterate_wf:working_as() of
         undefined ->
-            "enter an identity";
+            <<"enter an identity">>;
         Name ->
             Name
     end
-    , ["Identity: "
+    , [<<"Identity: ">>
        , #inplace_textbox{ text=User, tag=?IDENTIFY }]
-.
-
-% TODO(jwall): change this to be like the story panel
-backlog_panel() ->
-    #backlog_panel{data=iterate_db:backlogs()}
-.
-
-iteration_panel() ->
-    element_iteration_panel:render()
-.
-
-story_panel() ->
-    element_story_panel:render()
-.
-
-event(Event) -> 
-    io:format("~p recieved event: ~p~n", [?MODULE, Event]),
-    ok
 .
 
 inplace_textbox_event(?IDENTIFY, Value) ->

@@ -1,24 +1,37 @@
-.story_panel {
-    max-height: 400px;
-    width: 650px;
-    overflow: auto;
-    padding: 3px;
-    border: 1px inset;
-}
-
 .panel_element {
     padding: 3px;
     margin-bottom: 6px;
-    border: 2px outset;
 
 }
 
-.complete {
-    background-color: lightgreen;
+.story_panel {
+    width: 650px;
+    padding: 3px;
+}
+
+.story_list {
+    max-height: 400px;
+    overflow: auto;
 }
 
 .story_element {
     width: 600px;
+    background-color: lightYellow;
+}
+
+/* Task styles */
+.task .task_complete {
+    width: 5px;
+}
+
+.task .task_title {
+    width: 450px;
+    text-align: left;
+}
+
+.task .task_actions {
+    width: 20px;
+    text-align: right;
 }
 
 textarea.story_desc {
@@ -28,6 +41,7 @@ textarea.story_desc {
 
 .backlog_element {
     width: 200px;
+    background-color: lightGrey;
 }
 
 .panel_title {
@@ -49,7 +63,7 @@ textarea.story_desc {
 }
 
 .selected {
-    background-color: lightblue;
+    border: 1px solid Green;
 }
 
 .inline {
@@ -59,3 +73,8 @@ textarea.story_desc {
 .bold {
     font-weight: bold;
 }
+
+.complete {
+    background-color: lightgreen;
+}
+

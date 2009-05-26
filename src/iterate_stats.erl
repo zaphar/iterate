@@ -2,7 +2,7 @@
 -behaviour(gen_event).
 -export([start/0, init/1, handle_event/2,
     handle_call/2, handle_info/2, terminate/2,
-    code_change/3, user/0]).
+    code_change/3]).
 -export([record/2]).
 
 start() ->
@@ -38,16 +38,9 @@ code_change(_Args1, _Args2, State) ->
     {ok, State}
 .
 
-%% return current nitrogen user or undefined
-user() ->
-    case catch wf:user() of
-        {'EXIT', _Err} ->
-            undefined;
-        User ->
-            User
-    end
-.
+user() -> iterate_wf:working_as().
 
+%% return current nitrogen user or undefined
 record(For, Entry) ->
     gen_event:notify(stats_logger, {For, user(), Entry})
 .

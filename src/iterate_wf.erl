@@ -281,6 +281,15 @@ session(Key) ->
     catch wf_session:session(Key)
 .
 
+working_as() ->
+    case catch wf:user() of
+        {'EXIT', _Err} ->
+            undefined;
+        User ->
+            User
+    end
+.
+
 total_story_points(iteration, Name) ->
     total_story_points(get_iteration_stories(Name));
 total_story_points(backlog, Name) ->

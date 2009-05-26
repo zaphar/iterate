@@ -50,9 +50,9 @@ build_task_row(T, PanelId) ->
         , delegate=?MODULE
         , postback=?DELETE_TASK(T#tasks.id, PanelId, T#tasks.story_name)}}
     , #tablerow{class="task", id=T#tasks.id, cells=[
-        #tablecell{body=#panel{class="task_complete", body=CheckBox}}
-        , #tablecell{body=#panel{class="task_title", body=TextBox}}
-        , #tablecell{body=#panel{class="task_actions", body=Delete}}
+        #tablecell{class="task_complete", body=#panel{body=CheckBox}}
+        , #tablecell{class="task_title", body=#panel{body=TextBox}}
+        , #tablecell{class="task_actions", body=#panel{body=Delete}}
         ]
     }
 .
