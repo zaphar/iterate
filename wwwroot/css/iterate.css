@@ -17,6 +17,7 @@
 .story_element {
     width: 600px;
     background-color: lightYellow;
+    background-image: url("/images/notepad_bg.png");
 }
 
 /* Task styles */
