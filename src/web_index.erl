@@ -29,7 +29,7 @@ login() ->
 login_contents() ->
     User = case iterate_wf:working_as() of
         undefined ->
-            <<"enter an identity">>;
+            <<"Please enter a name for yourself">>;
         Name ->
             Name
     end
@@ -43,6 +43,8 @@ inplace_textbox_event(?IDENTIFY, Value) ->
 
 login_update(Value) ->
     io:format("now working as: ~p~n", [Value])
+    %% TODO(jwall): users should get added to a db when they
+    %% haven't been encountered before
     , wf:user(Value)
     , wf:redirect("/")
 .
