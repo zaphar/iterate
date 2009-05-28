@@ -35,7 +35,7 @@
     , hover, click, select}).
 
 %% elements for the high level widgets
--record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter="Filter Backlogs"}).
+-record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter=""}).
 -record(iteration_panel, {?ELEMENT_BASE(element_iteration_panel), data=undefined}).
 -record(story_panel, {?ELEMENT_BASE(element_story_panel), data=undefined}).
 -record(report_panel, {?ELEMENT_BASE(element_report_panel), data=undefined}).

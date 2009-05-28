@@ -31,6 +31,7 @@ render(ControlId, Record) ->
     , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
     , Panel = #panel{ class="backlog_panel", body=[
         #span{text="Backlogs", class=panel_title}, #br{}, #br{}
+        , "Filter Backlogs:", #br{}
         , #textbox{id=SearchId, text=Filter
             , style="margin-bottom: 6px;"
             , class=input_box
@@ -95,6 +96,8 @@ event(?CREATE_B(Id, PanelId)) ->
             throw({error, unknown})
     end,
     ok;
+event(?REFRESH(undefined)) ->
+    wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
 event(?REFRESH(_Id)) ->
     refresh();
 event(?B_PANEL_SEARCH(_Id, _PanelId)) ->
@@ -109,7 +112,7 @@ refresh() ->
     case wf:q(?SEARCHBOX) of
         undefined  ->
             wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
-        ["Filter Backlogs"] ->
+        ["Filter Backlogs"] ->
             wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
         [] ->
             wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
