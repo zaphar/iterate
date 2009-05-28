@@ -1,4 +1,4 @@
--module (web_index).
+-module (web_login).
 -include_lib ("nitrogen/include/wf.inc").
 -include("elements.hrl").
 -include("events.hrl").
