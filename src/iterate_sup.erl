@@ -17,7 +17,7 @@ init(_) ->
         , permanent, 1000, supervisor, [nitrogen]}
     , StatsServer = {iterate_stats, {iterate_stats, start, []}
         , permanent, brutal_kill, worker, dynamic}
-    , LogServer = {iterate_logger, {iterate_log, start, []}
+    , LogServer = {iterate_logger, {iterate_log, start_link, []}
         , permanent, brutal_kill, worker, dynamic}
     , {ok, {SupervisorArgs, [NitrogenServer, StatsServer, LogServer]}} 
 .

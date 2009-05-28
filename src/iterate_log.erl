@@ -1,13 +1,19 @@
 -module(iterate_log).
 -behaviour(gen_event).
--export([start/0, init/1, handle_event/2,
+-export([start/0, start_link/0, init/1, handle_event/2,
     handle_call/2, handle_info/2, terminate/2,
     code_change/3]).
 -export([log_info/1, log_debug/1, log_warn/1, log_fatal/1, log/1]).
+-export([get_log_location/0]).
 
 start() ->
+    gen_event:start_link({local, iterate_logger})
+    , gen_event:add_handler(iterate_logger, ?MODULE, [])
+.
+
+start_link() ->
     Return = gen_event:start_link({local, iterate_logger})
-    , gen_event:add_handler(stats_logger, ?MODULE, [])
+    , gen_event:add_handler(iterate_logger, ?MODULE, [])
     , Return
 .
 
@@ -15,7 +21,6 @@ init(_Args) ->
     {ok, []}
 .
 
-%% handle the stats events
 handle_event({info, Msg}, State) ->
     log_it("INFO", Msg)
     , {ok, State}; 
@@ -30,6 +35,8 @@ handle_event({fatal, Msg}, State) ->
     , {ok, State} 
 .
 
+handle_call(view, State) ->
+    {ok, {state, State}, State};
 handle_call(_Call, State) ->
     {ok, State}
 .
@@ -55,7 +62,15 @@ log({Type, Msg}) -> gen_event:notify(iterate_logger, {Type, Msg});
 log(Msg) -> log({info, Msg}).
 
 log_it(Type, Msg) ->
-    Epoch = date_util:now_to_milliseconds()
-    , io:format("~s: [~p] ~p~n", [Type, Epoch, Msg])
+    {ok, File} = get_log_location()
+    , Epoch = date_util:now_to_milliseconds()
+    , io:format(File, "~s: [~p] ~p~n", [Type, Epoch, Msg])
+.
+
+get_log_location() ->
+    case application:get_env(iterate, log_file) of
+        undefined -> {ok, standard_io};
+        {ok, Value} -> file:open(Value, [append])
+    end
 .
 

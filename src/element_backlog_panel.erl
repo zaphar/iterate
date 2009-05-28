@@ -90,27 +90,40 @@ event(?CREATE_B(Id, PanelId)) ->
             element_notify:msg(io_lib:format("~p", [Msg]), 600);
         {atomic, ok} ->
             wf:update(PanelId, io_lib:format("Backlog ~p Created", [Value])),
-            event(?REFRESH(undefined)); 
+            refresh(); 
         _ ->
             throw({error, unknown})
     end,
     ok;
 event(?REFRESH(_Id)) ->
-    %% TODO(jwall): refresh should honor the search box
-    wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
-event(?B_PANEL_SEARCH(Id, PanelId)) ->
-    [Value] = wf:q(Id)
-    , Msg = wf:f("~p searching for: ~p~n", [?MODULE, Value])
-    , iterate_log:log_debug(Msg)
-    , Results = iterate_wf:search_for_backlog(Value)
-    , iterate_log:log_debug(wf:f("~p found: ~p~n", [?MODULE, Results]))
-    % TODO(jwall): the filter box needs to keep the search terms
-    , wf:update(PanelId, #backlog_panel{data=Results, filter=Value})
-    %%, wf:wire(?SEARCHBOX, "obj('me').focus(); obj('me').select();")
-    , ok;
+    refresh();
+event(?B_PANEL_SEARCH(_Id, _PanelId)) ->
+    refresh();
 event(Event) ->
     Msg = wf:f("~p recieved event: ~p~n", [?MODULE, Event])
     , iterate_log:log_debug(Msg)
     , ok
+.
+
+refresh() ->
+    case wf:q(?SEARCHBOX) of
+        undefined  ->
+            wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
+        ["Filter Backlogs"] ->
+            wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
+        [] ->
+            wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
+        [Value] ->
+            Msg = wf:f("~p searching for: ~p~n", [?MODULE, Value])
+            , iterate_log:log_debug(Msg)
+            , Results = iterate_wf:search_for_backlog(Value)
+            , iterate_log:log_debug(wf:f("~p found: ~p~n", [?MODULE, Results]))
+            , wf:update(backlogs, #backlog_panel{data=Results, filter=Value})
+    end
+    , ok
+.
+
+update_backlog_panel() ->
+    refresh()
 .
 

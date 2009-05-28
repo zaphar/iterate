@@ -60,6 +60,7 @@ comet() ->
     , wf:comet_flush()
     , element_story_panel:update_story_list()
     , element_iteration_panel:update_iteration_panel()
+    , element_iteration_panel:update_backlog_panel()
     , comet()
 .
 
