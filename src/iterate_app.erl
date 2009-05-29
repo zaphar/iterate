@@ -25,6 +25,8 @@ stop(_) -> iterate_sup:stop().
 %%
 %% route("/web/newroute/" ++ PathInfo) -> {web_index, PathInfo};
 
+route("/web/iterations") ->
+    web_iterations;
 route(Path) -> 
     iterate_log:log_debug(wf:f("getting route for: ~p", [Path]))
     , nitrogen:route(Path)

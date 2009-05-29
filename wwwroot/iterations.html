@@ -15,26 +15,15 @@
 <body>
 
 <h1>[[[page:display_title()]]]</h1>
-
+Iteration Reporting | <a href="/">home</a>
 [[[element_notify:render()]]]
-[[[page:login()]]] <a href="/web/iterations">Iterations</a>
 <hr />
+
 <table>
-    <tr>
-        <td valign="top">
-            [[[element_iteration_panel:render()]]]
-            [[[element_backlog_panel:render()]]]
-        </td>
-        <td valign="top">
-            [[[element_story_panel:render())]]]
-        </td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>[[[element_report_panel:render()]]]</td>
-    </tr>
+<tr><td>Closed iterations</td> <td>In Progress Iterations</td></tr>
+<tr><td>[[[page:closed]]]</td> <td>[[[page:in_progress]]]</td></tr>
 </table>
-[[[page:comet(start)]]]
+
 <script>
 [[[script]]]
 </script>
