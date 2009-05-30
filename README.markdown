@@ -13,8 +13,12 @@ Download the source to desired location, then:
 	git submodule update
 	make
 	make boot
+	./scripts/setup.erl
 	./start.sh
 
+Make sure that you have the same `-name' argument in both /scripts/setup.erl and your start.sh scripts!
+Otherwise you won't have any Mnesia tables.
+ 
 CREDITS
 =======
 
