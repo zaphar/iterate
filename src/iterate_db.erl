@@ -175,17 +175,21 @@ iterations() ->
 .
 
 iterations(started) ->
-    Trans = fun() ->
-        QH = qlc:q([I || I <-
-            mnesia:table(iterations), iteration_util:started(I) ])
-        , qlc:eval(QH)
+    F = fun (I) ->
+        iteration_util:started(I)
     end
-    , case mnesia:transaction(Trans) of
-        {atomic, RecordList} ->
-            RecordList;
-        {abort, Msg} ->
-            {error, Msg}
+    , run_iteration_qh(F);
+iterations(closed) ->
+    F = fun (I) ->
+        not iteration_util:started(I)
     end
+    , run_iteration_qh(F)
+.
+
+%TODO(jwall) do the same for all the queries
+run_iteration_qh(F) when is_function(F, 1) ->
+    QH = get_qh(mnesia:table(iterations), F)
+    , run_qh(QH)
 .
 
 iteration(?NEWITER(Name, Desc)) ->

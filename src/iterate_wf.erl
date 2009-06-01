@@ -188,6 +188,12 @@ close_iteration(Name) ->
     , iterate_db:iteration(?UPDATEITER(iteration_util:close(Iter)))
 .
 
+open_iteration(Name) ->
+    iterate_stats:record(iteration, ?CLOSE_STAT(iteration, Name))
+    , {ok, Iter} = get_iteration(Name) 
+    , iterate_db:iteration(?UPDATEITER(iteration_util:start(Iter)))
+.
+
 delete_iteration(Name) ->
     iterate_stats:record(iteration, ?DELETE_STAT(Name))
     , iterate_db:iteration(?DELITER(Name))
@@ -199,6 +205,10 @@ search_for_iteration(_Crit) ->
 
 get_started_iterations() ->
     iterate_db:iterations(started)
+.
+
+get_closed_iterations() ->
+    iterate_db:iterations(closed)
 .
 
 log_iteration_stats(Iter) ->

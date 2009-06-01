@@ -14,6 +14,11 @@ render() ->
         , body=#iteration_panel{data=iterate_db:iterations(started)}})
 .
 
+render(closed) ->
+    wf:render(#panel{id=iteration_panel
+        , body=#iteration_panel{data=iterate_db:iterations(closed)}})
+.
+
 render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , ButtonsId = wf:temp_id()
@@ -48,6 +53,12 @@ iterations([H|T]) ->
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
+event(?REFRESH(closed)) ->
+    wf:update(iteration_panel
+        , #iteration_panel{data=iterate_wf:get_closed_iterations()});
+event(?REFRESH(started)) ->
+    wf:update(iteration_panel
+        , #iteration_panel{data=iterate_wf:get_started_iterations()});
 event(?REFRESH(_Id)) ->
     wf:update(iteration_panel
         , #iteration_panel{data=iterate_wf:get_started_iterations()});

@@ -41,7 +41,14 @@ body(Name, PanelId) ->
             ++ "} else {" 
                ++ "$('.backlog_element.selected').removeClass('selected');" 
                ++ "$(obj('me')).addClass('selected');"
-            ++ "}" 
+            ++ "}"
+    , {CloseText, ClosePB} =
+        case iteration_util:started(hd(iterate_db:iteration(?Q_ITERATION(Name)))) of
+            false ->
+                {"restart", {reopen, Name, PanelId}};
+            true ->
+                {"close", ?CLOSE_I_EL(Name, PanelId)}
+        end
     , Title = wf:f("~s  ~.1f%"
         , [Name, iterate_wf:iteration_completion(Name)])
     , [#panel{ id=PanelId, actions=#event{type=click
@@ -62,10 +69,10 @@ body(Name, PanelId) ->
                              , postback=?DELETE_B_EL(Name, PanelId)
                          }
                  }
-                 , " " , #link{text="close"
+                 , " " , #link{text=CloseText
                          , actions=#event{type=click, delegate=?MODULE
                              , override=true
-                             , postback=?CLOSE_I_EL(Name, PanelId)
+                             , postback=ClosePB
                          }
                  }
              ]
@@ -92,6 +99,9 @@ event(?DELETE_B_EL(Name, Id)) ->
 event(?CLOSE_I_EL(Name, Id)) ->
     iterate_wf:close_iteration(Name)
     , event(?REMOVE_B_EL(Name, Id));
+event({reopen, Name, _}) ->
+    iterate_wf:open_iteration(Name)
+    , element_iteration_panel:event(?REFRESH(closed));
 event(?REMOVE_B_EL(Name, Id)) ->
     iterate_wf:stop_working_in({iteration, Name}) 
     , element_iteration_panel:event(?REFRESH(Id))
