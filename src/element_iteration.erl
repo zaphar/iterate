@@ -42,6 +42,7 @@ body(Name, PanelId) ->
                ++ "$('.backlog_element.selected').removeClass('selected');" 
                ++ "$(obj('me')).addClass('selected');"
             ++ "}"
+    %%TODO(jwall): same for delete and edit
     , {CloseText, ClosePB} =
         case iteration_util:started(hd(iterate_db:iteration(?Q_ITERATION(Name)))) of
             false ->
@@ -51,6 +52,7 @@ body(Name, PanelId) ->
         end
     , Title = wf:f("~s  ~.1f%"
         , [Name, iterate_wf:iteration_completion(Name)])
+    %TODO(jwall): the click event needs to be handled by the page
     , [#panel{ id=PanelId, actions=#event{type=click
                 , delegate=element_story_panel
                 , postback=?SHOW_STORIES(iteration, Name)
@@ -63,6 +65,7 @@ body(Name, PanelId) ->
                              , postback=?SHOW_B_EL(Name, PanelId)
                          }
                  }
+                 %TODO(jwall): delete and close events should delegate to their parent?
                  , " " , #link{text="delete"
                          , actions=#event{type=click, delegate=?MODULE
                              , override=true
@@ -102,10 +105,9 @@ event(?CLOSE_I_EL(Name, Id)) ->
 event({reopen, Name, _}) ->
     iterate_wf:open_iteration(Name)
     , element_iteration_panel:event(?REFRESH(closed));
-event(?REMOVE_B_EL(Name, Id)) ->
+event(?REMOVE_B_EL(Name, _)) ->
     iterate_wf:stop_working_in({iteration, Name}) 
-    , element_iteration_panel:event(?REFRESH(Id))
-    , element_story_panel:event(?REFRESH(undefined));
+    , element_iteration_panel:event(?REFRESH(undefined));
 event(Event) -> 
     iterate_log:log_debug(wf:f("received event: ~p~n", [Event]))
 .

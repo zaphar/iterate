@@ -9,14 +9,11 @@
 %% TODO(jwall): these panels are getting general enough I think a 
 %%              refactor is in order.
 
-render() ->
-    wf:render(#panel{id=iteration_panel
-        , body=#iteration_panel{data=iterate_db:iterations(started)}})
-.
+render() -> render(started).
 
-render(closed) ->
+render(Type) when Type == started orelse Type == closed ->
     wf:render(#panel{id=iteration_panel
-        , body=#iteration_panel{data=iterate_db:iterations(closed)}})
+        , body=#iteration_panel{data=iterate_db:iterations(Type), type=Type}})
 .
 
 render(ControlId, Record) ->
@@ -31,7 +28,8 @@ render(ControlId, Record) ->
     end
     , Panel = #panel{ class="iteration_panel", id=PanelId, body=[
         #panel{id=ButtonsId, body=[
-            #span{text="Iterations", class=panel_title}, #br{}, #br{}
+            #hidden{id=iteration_panel_type, text=Record#iteration_panel.type}
+            , #span{text="Iterations", class=panel_title}, #br{}, #br{}
             , #link{text="Start Iteration"
                     , actions=#event{
                         type=click
@@ -59,9 +57,18 @@ event(?REFRESH(closed)) ->
 event(?REFRESH(started)) ->
     wf:update(iteration_panel
         , #iteration_panel{data=iterate_wf:get_started_iterations()});
-event(?REFRESH(_Id)) ->
-    wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_started_iterations()});
+event(?REFRESH(_)) ->
+    case wf:q(iteration_panel_type) of
+        [] ->
+            %% error condition
+            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is");
+        undefined ->
+            %% error condition
+            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is");
+        [Type] ->
+            iterate_log:log_info(wf:f("refreshing iteration panel for ~p iterations", [list_to_atom(Type)]))
+            , event(?REFRESH(list_to_atom(Type)))
+    end;
 event(?STARTITER(IterPanelId)) ->
     PanelId = wf:temp_id()
     , TextBoxId = wf:temp_id()

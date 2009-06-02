@@ -29,6 +29,7 @@ comet() ->
     timer:sleep(10*60*1000)
     %% flush because we are looping
     , wf:comet_flush()
+    , element_iteration_panel:refresh(closed)
     , comet()
 .
 

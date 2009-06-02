@@ -8,16 +8,14 @@
 
 render(_ControlId, Record) ->
     Id       = Record#iteration_edit.iteration_id
-    , ElId     = Record#iteration_edit.el_id
     , Name     = Id ++ "_BacklogEditBox"
     , ButtonId = Name ++ "CloseButton"
     , Button   = #button{ 
         id=ButtonId
         , text="close"
-        , actions=#event{ type=click
-                  , delegate=element_iteration
-                  , postback=?REMOVE_B_EL(Id, ElId)
-                }
+        , actions=#event{ type=click, override=true
+                  , delegate=?MODULE
+                  , postback=close}
     }
     , Desc = case Record#iteration_edit.desc of
         List when is_list(List) ->
@@ -46,5 +44,9 @@ inplace_textbox_event(?UPDATEDESC(Name), Value) ->
             , iterate_db:iteration(?UPDATEITER(B1))
     end
     , Value
+.
+
+event(close) ->
+    element_iteration_panel:event(?REFRESH(undefined))
 .
 
