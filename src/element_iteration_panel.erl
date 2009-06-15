@@ -11,7 +11,7 @@
 
 render() -> render(started).
 
-render(Type) when Type == started orelse Type == closed ->
+render(Type) when Type == started orelse Type == closed orelse Type == all ->
     wf:render(#panel{id=iteration_panel
         , body=#iteration_panel{data=iterate_db:iterations(Type), type=Type}})
 .

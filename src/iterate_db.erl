@@ -174,6 +174,11 @@ iterations() ->
     iteration(?Q_ALL)
 .
 
+iterations(all) ->
+    F = fun (_) ->
+        true
+    end
+    , run_iteration_qh(F);
 iterations(started) ->
     F = fun (I) ->
         iteration_util:started(I)

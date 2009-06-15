@@ -14,7 +14,7 @@ display_title() -> "Iterate<i>!</i>".
 
 %% a list of closed iterations
 closed() ->
-    element_iteration_panel:render(closed)
+    element_iteration_panel:render(all)
 .
 
 %% a list of in_progress iterations
