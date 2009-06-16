@@ -19,6 +19,8 @@ render(Type) when Type == started orelse Type == closed orelse Type == all ->
 render(ControlId, Record) ->
     %% TODO(jwall): add a filter like in backlogs
     PanelId = wf:temp_id()
+    , iterate_log:log_debug(wf:f("creating an interation panel for ~p iterations~n",
+        [Record#iteration_panel.type]))
     , ButtonsId = wf:temp_id()
     , ContentId = wf:temp_id()
     , Data  = case Record#iteration_panel.data of
@@ -52,12 +54,17 @@ iterations([H|T]) ->
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
+event(?REFRESH(all)) ->
+    wf:update(iteration_panel
+        , #iteration_panel{data=iterate_wf:get_all_iterations(), type=all});
 event(?REFRESH(closed)) ->
     wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_closed_iterations()});
+        , #iteration_panel{data=iterate_wf:get_closed_iterations()
+            , type=closed});
 event(?REFRESH(started)) ->
     wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_started_iterations()});
+        , #iteration_panel{data=iterate_wf:get_started_iterations()
+            , type=started});
 event(?REFRESH(_)) ->
     case wf:q(iteration_panel_type) of
         [] ->

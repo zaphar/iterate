@@ -105,7 +105,7 @@ event(?CLOSE_I_EL(Name, Id)) ->
     , event(?REMOVE_B_EL(Name, Id));
 event({reopen, Name, _}) ->
     iterate_wf:open_iteration(Name)
-    , element_iteration_panel:event(?REFRESH(closed));
+    , element_iteration_panel:event(?REFRESH(all));
 event(?REMOVE_B_EL(Name, _)) ->
     iterate_wf:stop_working_in({iteration, Name}) 
     , element_iteration_panel:event(?REFRESH(undefined));

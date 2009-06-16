@@ -203,6 +203,10 @@ search_for_iteration(_Crit) ->
     ok
 .
 
+get_all_iterations() ->
+    iterate_db:iterations(all)
+.
+
 get_started_iterations() ->
     iterate_db:iterations(started)
 .
