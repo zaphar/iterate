@@ -81,7 +81,7 @@ event(?B_PANEL_CREATE(_Id)) ->
             actions=#event{ delegate=?MODULE, 
                 type=click, postback=?CREATE_B(TB_Id, PanelId)}
         }]
-    }),
+    }, {close, ButtonId}),
     ok;
 event(?CREATE_B(Id, PanelId)) ->
     [Value] = wf:q(Id),

@@ -27,6 +27,13 @@ render(ControlId, R) when is_record(R, notify) ->
                 , [Err]))
             , undefined
     end
+    , case R#notify.closebtn of
+        undefined ->
+            undefined;
+        Btn ->
+            % we expire in this many seconds
+            wf:wire(Btn, ?HIDE('click', 0, Id))
+    end
     , Link = #link{text="dismiss", actions=?HIDE(click, undefined, Id)}
     , InnerPanel = #panel{class="notify_inner", body=R#notify.msg}
     , Panel = #panel{id=Id
@@ -42,6 +49,8 @@ msg(Content) ->
     wf:insert_bottom(notification_area, #notify{msg=Content})
 .
 
-msg(Content, Expire) ->
+msg(Content, {close, Close}) ->
+    wf:insert_bottom(notification_area, #notify{msg=Content, closebtn=Close});
+msg(Content, Expire) when is_integer(Expire) ->
     wf:insert_bottom(notification_area, #notify{msg=Content, expire=Expire})
 .

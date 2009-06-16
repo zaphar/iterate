@@ -9,7 +9,8 @@
     delegate=?MODULE, input_class}).
 -record(delegated_droppable, {?ELEMENT_BASE(element_delegated_droppable),
     tag, body=[], accept_groups=all, active_class=active, hover_class=hover}).
--record(notify, {?ELEMENT_BASE(element_notify), expire=false, msg}).
+-record(notify, {?ELEMENT_BASE(element_notify), expire=false, msg
+    , closebtn=undefined}).
 
 %% elements for the building blocks of the widgets
 -record(backlog, {?ELEMENT_BASE(element_backlog), ?ITER_ELEMENT_BASE,
