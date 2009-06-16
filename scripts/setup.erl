@@ -1,6 +1,6 @@
 #!/usr/bin/env escript
 %% -*- mode: erlang -*-
-%%! -pa ebin
+%%! -pa ebin -name nitrogen@localhost
 -export([main/1]).
 
 -import(iterate_db).
