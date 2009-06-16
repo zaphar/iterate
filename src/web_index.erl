@@ -64,3 +64,7 @@ comet() ->
     , comet()
 .
 
+event({click, {iteration, Name}}) ->
+    element_story_panel:event(?SHOW_STORIES(iteration, Name))
+.
+

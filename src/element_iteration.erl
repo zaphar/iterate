@@ -54,8 +54,9 @@ body(Name, PanelId) ->
         , [Name, iterate_wf:iteration_completion(Name)])
     %TODO(jwall): the click event needs to be handled by the page
     , [#panel{ id=PanelId, actions=#event{type=click
-                , delegate=element_story_panel
-                , postback=?SHOW_STORIES(iteration, Name)
+                %, delegate=element_story_panel
+                %, postback=?SHOW_STORIES(iteration, Name)
+                , postback={click, {iteration, Name}}
                 , actions=Jscript
              }
              , body=[#panel{ class=bold, id=Name ++ "_name", body=Title}

@@ -17,6 +17,7 @@ render(Type) when Type == started orelse Type == closed orelse Type == all ->
 .
 
 render(ControlId, Record) ->
+    %% TODO(jwall): add a filter like in backlogs
     PanelId = wf:temp_id()
     , ButtonsId = wf:temp_id()
     , ContentId = wf:temp_id()

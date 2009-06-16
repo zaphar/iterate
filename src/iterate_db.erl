@@ -426,6 +426,18 @@ log_time(?Q_AMT(Story)) ->
 
 stat(?Q_ALL) ->
     stat(?Q_MATCH_STAT(#stats{_='_'}));
+stat({for, For}) ->
+    F = fun(S) ->
+        case S#stats.for == iteration of
+            true ->
+                Name = element(2, S#stats.entry)
+                , Name2 = element(1, S#stats.entry)
+                , Name == For orelse Name2 == For;
+            false ->
+                false
+        end
+    end
+    , stat(?Q_FILTER_STATS(F));
 stat(?Q_MATCH_STAT(MatchSpec)) ->
     Trans = fun() -> mnesia:match_object(MatchSpec) end
     , case mnesia:transaction(Trans) of

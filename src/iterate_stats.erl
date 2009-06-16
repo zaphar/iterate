@@ -40,7 +40,7 @@ code_change(_Args1, _Args2, State) ->
 
 user() -> iterate_wf:working_as().
 
-%% return current nitrogen user or undefined
+%% TODO(jwall): standardize the entry format
 record(For, Entry) ->
     gen_event:notify(stats_logger, {For, user(), Entry})
 .
