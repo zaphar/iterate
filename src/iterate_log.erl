@@ -61,10 +61,12 @@ log_fatal(Msg) -> gen_event:notify(iterate_logger, {fatal, Msg}).
 log({Type, Msg}) -> gen_event:notify(iterate_logger, {Type, Msg});
 log(Msg) -> log({info, Msg}).
 
+%% TODO(jwall): store filehandle in state?
 log_it(Type, Msg) ->
     {ok, File} = get_log_location()
     , Epoch = date_util:now_to_milliseconds()
     , io:format(File, "~s: [~p] ~p~n", [Type, Epoch, Msg])
+    , file:close(File)
 .
 
 get_log_location() ->

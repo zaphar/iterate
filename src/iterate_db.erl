@@ -456,10 +456,10 @@ new_stat(Type, Entry) ->
     new_stat(Type, Entry, wf:user())
 .
 
-new_stat(For, Entry, User) ->
+new_stat(Type, Entry, User) ->
     TS = erlang:now()
     , Trans = fun() ->
-        mnesia:write(#stats{for=For, user=User, entry=Entry, ts=TS})
+        mnesia:write(#stats{for=Type, user=User, entry=Entry, ts=TS})
     end
     , mnesia:transaction(Trans)
 .

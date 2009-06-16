@@ -2,6 +2,7 @@
 -compile(export_all).
 
 -include("iterate_records.hrl").
+-include("stats.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 
 get_transformed(T, F) ->
@@ -72,3 +73,17 @@ transform_stories() ->
     , mnesia:transform_table(stories, F, record_info(fields, stories))
 .
 
+transform_stats() ->
+    F = fun
+        (S) when is_record(S, stats) ->
+            case S#stats.entry of
+                ?MOVE_STAT_OLD(Item, To, From) ->
+                    S#stats{entry=?MOVE_STAT(Item, To, From)};
+                _ ->
+                    S
+            end;
+        (S) ->
+            S
+    end
+    , mnesia:transform_table(stats, F, record_info(fields, stats))
+.
