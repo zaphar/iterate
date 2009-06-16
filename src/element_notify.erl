@@ -11,7 +11,7 @@ render() ->
 .
 
 -define(HIDE(Type, Delay, Id), #event{type=Type, delay=Delay
-    , actions=#hide{effect=blind, target=Id}}).
+    , actions=#hide{effect=blind, target=Id, speed=2000}}).
 
 render(ControlId, R) when is_record(R, notify) ->
     Id = ControlId
