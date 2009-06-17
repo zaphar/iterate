@@ -148,6 +148,8 @@ backlog_id_filter(Value) ->
             Id = case B#backlogs.backlog_name of
                 undefined ->
                     "";
+                N when is_binary(N) ->
+                    binary_to_list(N);
                 N ->
                     N
             end
@@ -162,6 +164,8 @@ backlog_desc_filter(Value) ->
             Desc = case B#backlogs.desc of
                 undefined ->
                     "";
+                N when is_binary(N) ->
+                    binary_to_list(N);
                 N ->
                     N
             end
@@ -262,6 +266,8 @@ iteration_id_filter(Value) ->
             Id = case B#iterations.iteration_name of
                 undefined ->
                     "";
+                N when is_binary(N) ->
+                    binary_to_list(N);
                 N ->
                     N
             end
@@ -276,6 +282,8 @@ iteration_desc_filter(Value) ->
             Desc = case B#iterations.desc of
                 undefined ->
                     "";
+                N when is_binary(N) ->
+                    binary_to_list(N);
                 N ->
                     N
             end
