@@ -23,18 +23,18 @@ TIMELINE
 ========
 
 V1
- - create and delete iterations/backlogs/stories
- - manage stories in backlogs/iterations with drag and drop
- - basic reporting on iteration progress
+- create and delete iterations/backlogs/stories
+- manage stories in backlogs/iterations with drag and drop
+- basic reporting on iteration progress
 
 V2
- - Story discussion
- - Event Subscription based plugin architecture
- - Better reporting
+- Story discussion
+- Event Subscription based plugin architecture
+- Better reporting
 
 V3
- - Intelligence
- - Iteration planning tools
+- Intelligence
+- Iteration planning tools
 
 
 The Future: who knows what may be possible
