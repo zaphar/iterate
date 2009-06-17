@@ -50,7 +50,12 @@ render(ControlId, Record) ->
             , style="margin-bottom: 6px;"
             , class=input_box
             , actions=[SearchEvent
-                , SearchFocusEvent]}, #br{}
+                , SearchFocusEvent]}
+        , #link{text="reset", actions=#event{
+            type=click
+            , delegate=?MODULE
+            , actions=[wf:f("obj('~s').value = '';", [SearchId])]
+            , postback=?REFRESH(Record#iteration_panel.type)}}, #br{}
         , #panel{class="menu", id=ContentId, body=iterations(Data)}]}
     , element_panel:render(ControlId, Panel)
 .
