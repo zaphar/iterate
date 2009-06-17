@@ -113,15 +113,18 @@ event(?UPDATE_T_LOG(Name)) ->
                         , postback=?NEWTIME(Name, Id, PanelId)}
                     , #event{type=click, actions="obj('me').select();"}]}
           ]
-    })
+    }, {event, {change, Id}})
     , wf:wire(Id, #event{type='timer', delay=300, actions="obj('me').focus();"});
-event(?NEWTIME(Name, Id, PanelId)) ->
-    [ValueString] = wf:q(Id)
-    , Value = list_to_number(ValueString)
-    , iterate_db:log_time(?UPDATETIME(Name, Value))
-    , wf:update(PanelId, 
-        io_lib:format("Updated time for ~p to ~p", [Name, Value]))
-    %% TODO(jwall): update the iteration list also
+event(?NEWTIME(Name, Id, _PanelId)) ->
+    iterate_log:log_debug(wf:f("the time elements id is: ~p value: ~p",
+        [Id, wf:q(Id)]))
+    , case wf:q(Id) of
+        [] ->
+           undefined; 
+        [ValueString] ->
+            Value = list_to_number(ValueString)
+            , iterate_db:log_time(?UPDATETIME(Name, Value))
+    end
     , element_story:event(?SHOW_S_EL(Name));
 event(Event) ->
     iterate_log:log_warning(wf:f("~p recieved unknown event ~p~n"

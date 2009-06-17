@@ -102,7 +102,7 @@ event(?S_PANEL_CREATE(iteration, Backlog)) ->
                     type=click, postback=?CREATE_S(TB_Id, PanelId
                         , {iteration, Backlog})}
         }]
-    })
+    }, {close, ButtonId})
     , ok;
 event(?S_PANEL_CREATE(backlog, Backlog)) ->
     %% we need a create story widget
@@ -119,7 +119,7 @@ event(?S_PANEL_CREATE(backlog, Backlog)) ->
                     type=click, postback=?CREATE_S(TB_Id, PanelId
                         , {backlog, Backlog})}
         }]
-    })
+    }, {close, ButtonId})
     , ok;
 %% TODO(jwall): refactor these two they are identical
 event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->

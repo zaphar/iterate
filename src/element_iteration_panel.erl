@@ -105,7 +105,7 @@ event(?STARTITER(IterPanelId)) ->
                 , delegate=?MODULE
                 , postback=?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)}}
         , #button{id=ButtonId, text="Ok"}] }
-    , element_notify:msg(Panel);
+    , element_notify:msg(Panel, {close, ButtonId});
 event(?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)) ->
     [Value] = wf:q(TextBoxId)
     , iterate_wf:create_iteration(Value)
