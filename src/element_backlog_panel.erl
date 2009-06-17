@@ -27,7 +27,7 @@ render(ControlId, Record) ->
     end
     , SearchId = ?SEARCHBOX
     , SearchEvent = #event{type=change, delegate=?MODULE,
-        postback={search, SearchId, ControlId}}
+        postback=search}
     , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
     , Panel = #panel{ class="backlog_panel", body=[
         #span{text="Backlogs", class=panel_title}, #br{}, #br{}
@@ -96,8 +96,10 @@ event(?CREATE_B(Id, PanelId)) ->
             throw({error, unknown})
     end,
     ok;
+event(search) ->
+    event(?REFRESH(undefined));
 event(?REFRESH(undefined)) ->
-    wf:update(backlogs, #backlog_panel{data=iterate_wf:get_backlogs()});
+    refresh();
 event(?REFRESH(_Id)) ->
     refresh();
 event(?B_PANEL_SEARCH(_Id, _PanelId)) ->

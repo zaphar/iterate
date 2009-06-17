@@ -44,6 +44,8 @@
 %% access macros
 -define(BNAME(B), B#backlogs.backlog_name).
 -define(BDESC(B), B#backlogs.desc).
+-define(INAME(B), B#backlogs.backlog_name).
+-define(IDESC(B), B#backlogs.desc).
 -define(TVALUE(T), T#tags.value).
 
 %% tagging macros

@@ -145,7 +145,7 @@ backlog({do_search, QH}) ->
 backlog_id_filter(Value) ->
     fun
         (B) ->
-            Id = case ?BNAME(B) of
+            Id = case B#backlogs.backlog_name of
                 undefined ->
                     "";
                 N ->
@@ -159,7 +159,7 @@ backlog_id_filter(Value) ->
 backlog_desc_filter(Value) ->
     fun
         (B) ->
-            Desc = case ?BDESC(B) of
+            Desc = case B#backlogs.desc of
                 undefined ->
                     "";
                 N ->
@@ -213,6 +213,23 @@ iteration(?DELITER(Name)) ->
         mnesia:delete({iterations, Name})
     end
     , mnesia:transaction(Trans);
+iteration(?Q_SEARCH_BACKLOG(_Type, "")) ->
+    iteration(?Q_ALL);
+iteration(?Q_SEARCH_BACKLOG(id, Value)) ->
+    iteration({do_search, get_qh(mnesia:table(iterations)
+        , iteration_id_filter(Value))});
+iteration(?Q_SEARCH_BACKLOG(desc, Value)) ->
+    iteration({do_search, get_qh(mnesia:table(iterations)
+        , iteration_desc_filter(Value))});
+iteration(?Q_SEARCH_BACKLOG(all, Value)) ->
+    Fid = iteration_id_filter(Value)
+    , Fdesc = iteration_desc_filter(Value)
+    , F = fun(B) ->
+        Fid(B) orelse Fdesc(B)
+    end
+    , iteration({do_search, get_qh(mnesia:table(iterations), F)});
+iteration({do_search, QH}) ->
+    run_qh(QH);
 iteration(?Q_ALL) ->
     Trans = fun() ->
         mnesia:match_object(#iterations{_='_'})
@@ -239,6 +256,33 @@ iteration(?Q_ITERATION(Name)) ->
     end
 .
 
+iteration_id_filter(Value) ->
+    fun
+        (B) ->
+            Id = case B#iterations.iteration_name of
+                undefined ->
+                    "";
+                N ->
+                    N
+            end
+            , string:str(string:to_lower(Id)
+                , string:to_lower(Value)) /= 0
+    end
+.
+
+iteration_desc_filter(Value) ->
+    fun
+        (B) ->
+            Desc = case B#iterations.desc of
+                undefined ->
+                    "";
+                N ->
+                    N
+            end
+            , string:str(string:to_lower(Desc)
+                , string:to_lower(Value)) /= 0
+    end
+.
 story({delete, Record}) when is_record(Record, stories) ->
     iterate_stats:record(story, ?DELETE_STAT(Record#stories.story_name))
     , Trans = fun() ->

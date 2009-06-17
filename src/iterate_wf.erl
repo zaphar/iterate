@@ -199,9 +199,14 @@ delete_iteration(Name) ->
     , iterate_db:iteration(?DELITER(Name))
 .
 
-search_for_iteration(_Crit) ->
-    ok
+search_for_iteration("desc:" ++ Term) ->
+    iterate_db:iteration(?Q_SEARCH_BACKLOG(desc, Term));
+search_for_iteration("id:" ++ Term) ->
+    iterate_db:iteration(?Q_SEARCH_BACKLOG(id, Term));
+search_for_iteration(Term) ->
+    iterate_db:iteration(?Q_SEARCH_BACKLOG(all, Term))
 .
+
 
 get_all_iterations() ->
     iterate_db:iterations(all)

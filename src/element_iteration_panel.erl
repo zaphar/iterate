@@ -6,6 +6,8 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
+-define(SEARCHBOX, search_iterations_box).
+
 %% TODO(jwall): these panels are getting general enough I think a 
 %%              refactor is in order.
 
@@ -21,6 +23,7 @@ render(ControlId, Record) ->
     PanelId = wf:temp_id()
     , iterate_log:log_debug(wf:f("creating an interation panel for ~p iterations~n",
         [Record#iteration_panel.type]))
+    , Filter = Record#iteration_panel.filter
     , ButtonsId = wf:temp_id()
     , ContentId = wf:temp_id()
     , Data  = case Record#iteration_panel.data of
@@ -29,6 +32,10 @@ render(ControlId, Record) ->
         D when is_list(D) ->
             D
     end
+    , SearchId = ?SEARCHBOX
+    , SearchEvent = #event{type=change, delegate=?MODULE,
+        postback=search}
+    , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
     , Panel = #panel{ class="iteration_panel", id=PanelId, body=[
         #panel{id=ButtonsId, body=[
             #hidden{id=iteration_panel_type, text=Record#iteration_panel.type}
@@ -38,6 +45,12 @@ render(ControlId, Record) ->
                         type=click
                         , delegate=?MODULE
                         , postback=?STARTITER(ContentId)}}]}
+        , "Filter Iterations:", #br{}
+        , #textbox{id=SearchId, text=Filter
+            , style="margin-bottom: 6px;"
+            , class=input_box
+            , actions=[SearchEvent
+                , SearchFocusEvent]}, #br{}
         , #panel{class="menu", id=ContentId, body=iterations(Data)}]}
     , element_panel:render(ControlId, Panel)
 .
@@ -54,28 +67,27 @@ iterations([H|T]) ->
     , [ #iteration{iteration_name=Name} | iterations(T) ]
 .
 
+event(search) ->
+    event(?REFRESH(undefined));
 event(?REFRESH(all)) ->
-    wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_all_iterations(), type=all});
+    update_iteration_panel({all, iterate_wf:get_all_iterations()});
 event(?REFRESH(closed)) ->
-    wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_closed_iterations()
-            , type=closed});
+    update_iteration_panel({closed, iterate_wf:get_closed_iterations()});
 event(?REFRESH(started)) ->
-    wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_started_iterations()
-            , type=started});
+    update_iteration_panel({started, iterate_wf:get_started_iterations()});
 event(?REFRESH(_)) ->
-    case wf:q(iteration_panel_type) of
-        [] ->
-            %% error condition
-            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is");
-        undefined ->
-            %% error condition
-            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is");
-        [Type] ->
-            iterate_log:log_info(wf:f("refreshing iteration panel for ~p iterations", [list_to_atom(Type)]))
-            , event(?REFRESH(list_to_atom(Type)))
+    %% searchbox trumps panel type
+    case wf:q(?SEARCHBOX) of
+        undefined  ->
+            update_iteration_panel();
+        [""] ->
+            update_iteration_panel();
+        [Value] ->
+            Msg = wf:f("~p searching for: ~p~n", [?MODULE, Value])
+            , iterate_log:log_debug(Msg)
+            , Results = iterate_wf:search_for_iteration(Value)
+            , iterate_log:log_debug(wf:f("~p found: ~p~n", [?MODULE, Results]))
+            , update_iteration_panel_data(Results)
     end;
 event(?STARTITER(IterPanelId)) ->
     PanelId = wf:temp_id()
@@ -99,7 +111,43 @@ event(Event) ->
     ok
 .
 
-update_iteration_panel() ->
-    wf:update(iteration_panel
-        , #iteration_panel{data=iterate_wf:get_started_iterations()})
+update_iteration_panel_data(Data) ->
+    update_iteration_panel({get_panel_type(), Data})
 .
+
+update_iteration_panel({Type, Data}) ->
+    wf:update(iteration_panel, #iteration_panel{data=Data, type=Type, filter=get_search()})
+.
+
+update_iteration_panel() ->
+    event(?REFRESH(list_to_atom(get_panel_type())))
+.
+
+get_search() ->
+    case wf:q(?SEARCHBOX) of
+        undefined  ->
+            "";
+        [Value] ->
+            Value
+    end
+.
+
+get_panel_type() ->
+    case wf:q(iteration_panel_type) of
+        [] ->
+            %% error condition
+            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
+            , undefined;
+        [""] ->
+            %% error condition
+            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
+            , undefined;
+        undefined ->
+            %% error condition
+            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
+            , undefined;
+        [Type] ->
+            Type
+    end
+.
+
