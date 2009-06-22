@@ -1,10 +1,9 @@
 #!/bin/sh
-cd `dirname $0`
+cd $(dirname $0)
 
-ERL_LIBS=deps
 echo Starting Nitrogen.
-erl \
-	-name nitrogen@someplace.net \
+ERL_LIBS=deps erl \
+	-name nitrogen@$(hostname) \
 	-pa ./ebin -pa ./include \
 	-s make all \
 	-s reloader \
