@@ -1,3 +1,0 @@
-[submodule "lib/coverize"]
-	path = lib/coverize
-	url = git://github.com/mmullis/coverize.git
