@@ -16,8 +16,8 @@ init(_Args) ->
 .
 
 %% handle the stats events
-handle_event({For, User, Entry}, State) ->
-    Result = iterate_db:new_stat(For, Entry, User)
+handle_event({Type, User, Entry}, State) ->
+    Result = iterate_db:new_stat(Type, Entry, User)
     , iterate_log:log_info(wf:f("creating a new stat: ~p", [Result]))
     , {ok, State} 
 .
@@ -41,7 +41,7 @@ code_change(_Args1, _Args2, State) ->
 user() -> iterate_wf:working_as().
 
 %% TODO(jwall): standardize the entry format
-record(For, Entry) ->
-    gen_event:notify(stats_logger, {For, user(), Entry})
+record(Type, Entry) ->
+    gen_event:notify(stats_logger, {Type, user(), Entry})
 .
 

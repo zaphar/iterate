@@ -155,14 +155,14 @@ mk_is_change_stat_fun(Name, StatType, Type) ->
 
 mk_is_stat_type_fun(Type, F) ->
     fun
-        (Stat) when is_record(Stat, stats), Stat#stats.for == Type ->
+        (Stat) when is_record(Stat, stats), Stat#stats.type == Type ->
              F(Stat#stats.entry);
         (_) ->
             false
     end
 .
 
-get_date_time_for_stat(S) ->
+get_date_time_for_stat(S) when is_record(S, stats) ->
         calendar:now_to_local_time(S#stats.ts)
 .
 

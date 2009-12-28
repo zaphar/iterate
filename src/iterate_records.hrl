@@ -12,8 +12,8 @@
                      meta=[{started, false}
                      ]}
 ).
-%% TODO(jwall): are epochs sufficiently unique?
--record(stats, {ts, for, user=undefined, entry}).
+
+-record(stats, {id, ts, type, user=undefined, entry}).
 
 %% CRUD macros
 -define(Q_ALL, {qry, all}).

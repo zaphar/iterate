@@ -480,7 +480,7 @@ stat(?Q_ALL) ->
     stat(?Q_MATCH_STAT(#stats{_='_'}));
 stat({for, For}) ->
     F = fun(S) ->
-        case S#stats.for == iteration of
+        case S#stats.type == iteration of
             true ->
                 Name = element(2, S#stats.entry)
                 , Name2 = element(1, S#stats.entry)
@@ -511,7 +511,8 @@ new_stat(Type, Entry) ->
 new_stat(Type, Entry, User) ->
     TS = erlang:now()
     , Trans = fun() ->
-        mnesia:write(#stats{for=Type, user=User, entry=Entry, ts=TS})
+        mnesia:write(#stats{id=uuid(), ts=TS, type=Type, user=User
+            , entry=Entry})
     end
     , mnesia:transaction(Trans)
 .

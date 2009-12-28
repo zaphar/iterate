@@ -68,7 +68,9 @@ transform_stories() ->
                             , backlog=Backlog
                             , meta=Meta
                         }
-                end
+                end;
+        (S) ->
+                S
     end
     , mnesia:transform_table(stories, F, record_info(fields, stories))
 .
@@ -82,8 +84,18 @@ transform_stats() ->
                 _ ->
                     S
             end;
+        ({stats, Ts, Type, User, Entry}) ->
+                #stats{id=Ts
+                        , ts=Ts, user=User, type=Type
+                        , entry=Entry};
         (S) ->
             S
     end
     , mnesia:transform_table(stats, F, record_info(fields, stats))
 .
+
+upgrade_tables() ->
+        [transform_stories()
+        , transform_stats()]
+.
+
