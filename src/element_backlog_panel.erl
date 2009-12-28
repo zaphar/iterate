@@ -71,15 +71,17 @@ event(?B_EDIT_REMOVE(Name)) ->
     wf:update(Name ++ "_target", "");
 event(?B_PANEL_CREATE(_Id)) ->
     %% we need a create backlog widget
-    TB_Id = wf:temp_id(),
-    PanelId = wf:temp_id(),
-    ButtonId = wf:temp_id(),
-    element_notify:msg(#panel{ id=PanelId 
-        , body=[#textbox{ id=TB_Id, next=ButtonId,  text="Enter Name Here"}
-        , #button{ id=ButtonId,
-            text="Create",
-            actions=#event{ delegate=?MODULE, 
-                type=click, postback=?CREATE_B(TB_Id, PanelId)}
+    TB_Id = wf:temp_id()
+    , PanelId = wf:temp_id()
+    , ButtonId = wf:temp_id()
+    , TextBox = iterate_element_utils:autofocus_text_box(TB_Id
+        , "Enter Name Here")
+    , element_notify:msg(#panel{ id=PanelId 
+        , body=[TextBox#textbox{next=ButtonId}
+                , #button{ id=ButtonId
+                    , text="Create"
+                    , actions=#event{ delegate=?MODULE
+                        , type=click, postback=?CREATE_B(TB_Id, PanelId)}
         }]
     }, {close, ButtonId}),
     ok;

@@ -53,12 +53,12 @@ render(ControlId, Record) ->
                                 actions=#event{ delegate=?MODULE,
                                     postback=?UPDATE_T_LOG(Name)}}
                         , #br{}
-                        , #button{text="complete"
+                        , #link{text="complete"
                             , actions=#event{type=click
                                              , delegate=?MODULE
                                              , postback=?COMPLETE_S(Name)}
-                        }
-                        , #button{text="close"
+                        }, " | "
+                        , #link{text="close"
                             , actions=#event{type=click
                                              , delegate=element_story
                                              , postback=?REMOVE_S_EL(Name)}

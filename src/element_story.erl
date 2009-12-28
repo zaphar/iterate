@@ -54,6 +54,11 @@ render(_ControlId, Record) ->
                                     , delegate=?MODULE
                                     , postback=?DELETE_S_EL(StoryId, PanelId)
                                 }
+                            }, " | "
+                            , #link{text="complete"
+                                , actions=#event{type=click
+                                                 , delegate=element_story_edit
+                                                 , postback=?COMPLETE_S(StoryId)}
                             }, " ] - "
                             , #my_inplace_textbox{ class="inline", delegate=?MODULE,
                                 text=io_lib:format("~.10B%", [Percent]),

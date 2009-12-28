@@ -98,12 +98,13 @@ event(?STARTITER(IterPanelId)) ->
     PanelId = wf:temp_id()
     , TextBoxId = wf:temp_id()
     , ButtonId = wf:temp_id()
-    , Panel = #panel{ id=PanelId, body=[ "Enter an Iteration Name: "
-        , #textbox{ id=TextBoxId
-            , next=ButtonId
-            , actions=#event{ type=change
+    , TextBox = iterate_element_utils:autofocus_text_box(
+            TextBoxId, "Enter an Iteration Name: "
+            , #event{ type=change
                 , delegate=?MODULE
-                , postback=?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)}}
+                , postback=?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)})
+    , Panel = #panel{ id=PanelId, body=[ "Enter an Iteration Name: "
+        , TextBox#textbox{next=ButtonId}
         , #button{id=ButtonId, text="Ok"}] }
     , element_notify:msg(Panel, {close, ButtonId});
 event(?STARTITERTNAME(TextBoxId, PanelId, IterPanelId)) ->
