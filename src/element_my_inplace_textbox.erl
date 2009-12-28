@@ -17,7 +17,6 @@ render(ControlID, Record) ->
 	ViewPanelID = wf:temp_id(),
 	EditPanelID = wf:temp_id(),
 	LabelID = wf:temp_id(),
-	MouseOverID = wf:temp_id(),
 	TextBoxID = wf:temp_id(),
 	Tag = Record#my_inplace_textbox.tag,
 	OriginalText = Record#my_inplace_textbox.text,
@@ -37,16 +36,13 @@ render(ControlID, Record) ->
 			#panel { id=ViewPanelID, style="display:inline;", class="view ", body=[
 				#span { id=LabelID, class="label", text=Text, html_encode=Record#my_inplace_textbox.html_encode, actions=[
 					#buttonize { target=ViewPanelID }
-				]},
-				#span { id=MouseOverID, class="instructions", text="Click to edit", actions=#hide{} }
+				]}
 			], actions = [
 				#event { type=click, actions=[
 					#hide { target=ViewPanelID },
 					#show { target=EditPanelID },
 					#script { script = wf:f("obj('~s').focus(); obj('~s').select();", [TextBoxID, TextBoxID]) }
-				]},
-				#event { type=mouseover, target=MouseOverID, actions=#show{} },
-				#event { type=mouseout, target=MouseOverID, actions=#hide{} }
+				]}
 			]},
 			#panel { id=EditPanelID, style="display:inline;", class="edit", body=[
 				#textbox { id=TextBoxID, text=Text, next=OKButtonID },
