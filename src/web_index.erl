@@ -49,18 +49,18 @@ login_update(Value) ->
     , wf:redirect("/")
 .
 
-comet(start) ->
+comet("start") ->
     wf:comet(fun() -> comet() end)
     , ""
 .
 
 comet() ->
     timer:sleep(10*60*1000)
-    %% flush because we are looping
-    , wf:comet_flush()
     , element_story_panel:update_story_list()
     , element_iteration_panel:update_iteration_panel()
     , element_iteration_panel:update_backlog_panel()
+    % flush because we are looping
+    , wf:comet_flush()
     , comet()
 .
 

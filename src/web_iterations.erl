@@ -32,16 +32,16 @@ log_details(For) ->
     
 .
 
-comet(start) ->
+comet("start") ->
     wf:comet(fun() -> comet() end)
     , ""
 .
 
 comet() ->
     timer:sleep(10*60*1000)
+    , element_iteration_panel:refresh(closed)
     %% flush because we are looping
     , wf:comet_flush()
-    , element_iteration_panel:refresh(closed)
     , comet()
 .
 
