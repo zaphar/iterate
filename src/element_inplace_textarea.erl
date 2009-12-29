@@ -17,7 +17,6 @@ render(ControlID, Record) ->
 	ViewPanelID = wf:temp_id(),
 	EditPanelID = wf:temp_id(),
 	LabelID = wf:temp_id(),
-	MouseOverID = wf:temp_id(),
 	TextBoxID = wf:temp_id(),
 	Tag = Record#inplace_textarea.tag,
 	OriginalText = Record#inplace_textarea.text,
@@ -35,18 +34,15 @@ render(ControlID, Record) ->
 		style=Record#inplace_textarea.style,
 		body = [
 			#panel { id=ViewPanelID, class="view", body=[
-				#span { id=LabelID, class="label", text=Text, html_encode=Record#inplace_textarea.html_encode, actions=[
-					#buttonize { target=ViewPanelID }
-				]},
-				#span { id=MouseOverID, class="instructions", text="Click to edit", actions=#hide{} }
+				#span { id=LabelID, class="label", text=Text, html_encode=Record#inplace_textarea.html_encode
+                        , actions=[#buttonize { target=ViewPanelID }]
+                }
 			], actions = [
 				#event { type=click, actions=[
 					#hide { target=ViewPanelID },
 					#show { target=EditPanelID },
 					#script { script = wf:f("obj('~s').focus(); obj('~s').select();", [TextBoxID, TextBoxID]) }
-				]},
-				#event { type=mouseover, target=MouseOverID, actions=#show{} },
-				#event { type=mouseout, target=MouseOverID, actions=#hide{} }
+				]}
 			]},
 			#panel { id=EditPanelID, class="edit", body=[
 				#textarea { id=TextBoxID, text=Text, class=Record#inplace_textarea.input_class },

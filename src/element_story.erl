@@ -11,6 +11,7 @@ render(_ControlId, Record) ->
     , PanelId2 = wf:temp_id()
     , DraggableId = wf:temp_id()
     , OrderElId = wf:temp_id()
+    , EditId = wf:temp_id()
     , StoryId    = Record#story.story_name
     , [Story] = iterate_db:story(?Q_STORY(StoryId))
     , Order = story_util:order(Story)
@@ -43,7 +44,7 @@ render(_ControlId, Record) ->
                                     io_lib:format("~.10B", [Order]))}
                             , " - ", TitleEditBox
                             , "<br /> [ "
-                            , #link{text="edit"
+                            , #link{text="edit", id=EditId
                                 , actions=#event{ type=click, delegate=?MODULE
                                                 , postback=?SHOW_S_EL(StoryId)
                                 }
