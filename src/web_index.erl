@@ -27,6 +27,7 @@ login() ->
 .
 
 login_contents() ->
+    %comet2(start),
     User = case iterate_wf:working_as() of
         undefined ->
             <<"Please enter a name for yourself">>;
@@ -49,19 +50,42 @@ login_update(Value) ->
     , wf:redirect("/")
 .
 
-comet("start") ->
-    wf:comet(fun() -> comet() end)
+% comet needs a complete redesign
+comet(start) ->
+    wf:comet(fun() ->
+               io:format("Comet handler function was called~n")
+               , web_index:index_comet()
+               , io:format("Comet handler function finished~n")
+              end)
     , ""
 .
 
-comet() ->
-    timer:sleep(10*60*1000)
+comet2(start) ->
+    wf:comet2(fun(_) ->
+               io:format("Comet handler function was called~n")
+               , web_index:index_comet2()
+               , io:format("Comet handler function finished~n")
+              end)
+    , ""
+.
+
+index_comet2() ->
+    io:format("running a comet update~n", [])
+    , timer:sleep(1000)
+    %, io:format("Finished sleeping~n", [])
     , element_story_panel:update_story_list()
-    , element_iteration_panel:update_iteration_panel()
-    , element_iteration_panel:update_backlog_panel()
+    %, io:format("Updated story list~n", [])
+    , element_backlog_panel:update_backlog_panel()
+    %, io:format("Updated backlog list~n", [])
     % flush because we are looping
+    %, io:format("Flushing comet update~n", [])
+.
+
+index_comet() ->
+    index_comet2()
     , wf:comet_flush()
-    , comet()
+    %, io:format("Flushed comet update~n", [])
+    , index_comet()
 .
 
 event({click, {iteration, Name}}) ->

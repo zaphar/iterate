@@ -85,6 +85,8 @@ event(?REFRESH(_)) ->
     case wf:q(?SEARCHBOX) of
         undefined  ->
             update_iteration_panel();
+        []  ->
+            update_iteration_panel();
         [""] ->
             update_iteration_panel();
         [Value] ->
@@ -122,11 +124,17 @@ update_iteration_panel_data(Data) ->
 .
 
 update_iteration_panel({Type, Data}) ->
-    wf:update(iteration_panel, #iteration_panel{data=Data, type=Type, filter=get_search()})
+    Filter = get_search()
+    , update_iteration_panel({Type, Data, Filter});
+update_iteration_panel({Type, Data, Filter}) ->
+    wf:update(iteration_panel, #iteration_panel{data=Data
+                                                , type=Type
+                                                , filter=Filter})
 .
 
 update_iteration_panel() ->
-    event(?REFRESH(list_to_atom(get_panel_type())))
+    Type = get_panel_type()
+    , event(?REFRESH(Type))
 .
 
 get_search() ->
@@ -143,17 +151,20 @@ get_panel_type() ->
         [] ->
             %% error condition
             iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
-            , undefined;
+            , {error, undefined_panel_type};
         [""] ->
             %% error condition
             iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
-            , undefined;
+            , {error, undefined_panel_type};
         undefined ->
             %% error condition
             iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
-            , undefined;
+            , {error, undefined_panel_type};
         [Type] ->
-            Type
+            case is_atom(Type) of
+              true -> Type;
+              false -> list_to_atom(Type)
+            end
     end
 .
 

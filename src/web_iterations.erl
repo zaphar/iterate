@@ -14,6 +14,7 @@ display_title() -> "Iterate<i>!</i>".
 
 %% a list of closed iterations
 all() ->
+    comet(start),
     element_iteration_panel:render(all)
 .
 
@@ -32,7 +33,7 @@ log_details(For) ->
     
 .
 
-comet("start") ->
+comet(start) ->
     wf:comet(fun() -> comet() end)
     , ""
 .
@@ -40,8 +41,8 @@ comet("start") ->
 comet() ->
     timer:sleep(10*60*1000)
     , element_iteration_panel:refresh(closed)
-    %% flush because we are looping
-    , wf:comet_flush()
+    % flush because we are looping
+    %, wf:comet_flush()
     , comet()
 .
 
