@@ -1,13 +1,17 @@
 include ../include/globals.mk
 
-all: $(EBIN_FILES)
+all:
+	ERL_LIBS=../deps erl -make
 
-clean:
+clean_db:
+	rm -rf Mnesia.*@*
+
+clean: clean_db
 	rm -rf $(EBIN_FILES) erl_crash.dump
+	rm -rf Mnesia.*@*
 
 test: $(MODULES)
 
-./$(MODULES):
+./$(MODULES): clean_db
 	@echo "Running tests for $@"
-	@rm -rf Mnesia.*@*
-	@erl -pa ../ebin -run $@ start -run init stop -noshell
+	ERL_LIBS=../deps erl -pa ../ebin -run $@ start -run init stop -noshell

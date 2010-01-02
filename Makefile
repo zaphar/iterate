@@ -16,5 +16,6 @@ boot:
 	@(cd support/; $(MAKE))
 
 test:
+	@(cd deps/etap && make)
 	@(cd t/; $(MAKE))
 	@(cd t/; $(MAKE) test)

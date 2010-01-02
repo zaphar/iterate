@@ -1,17 +1,14 @@
 { './src/*', [
 	{ i, "./include" },
-	{ outdir, "./ebin" },
-	debug_info
+	{ outdir, "./ebin" }
 ]}.
 
 { './src/*/*', [
 	{ i, "./include" },
-	{ outdir, "./ebin" },
-	debug_info
+	{ outdir, "./ebin" }
 ]}.
 
 { './src/*/*/*', [
 	{ i, "./include" },
-	{ outdir, "./ebin" },
-	debug_info
+	{ outdir, "./ebin" }
 ]}.
