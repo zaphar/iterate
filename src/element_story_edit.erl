@@ -7,11 +7,12 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
-reflect() -> record_info(fields, story_edit).
+reflect() ->
+    record_info(fields, story_edit)
+.
 
 render(ControlId, Record) ->
     PanelId = wf:temp_id()
-    , Name = Record#story_edit.story_name
     , Name = Record#story_edit.story_name
     , Story = get_story(Name)
     , TagString = string:join(get_tags(Name), ",")
