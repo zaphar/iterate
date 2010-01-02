@@ -20,6 +20,7 @@ start() ->
     , make_story_test()
     , tags_test()
     , iteration_create_test()
+	, etap:end_tests()
 .
 
 -plan(12).
@@ -109,28 +110,23 @@ backlog_delete_test() ->
     B = #backlogs{backlog_name=foo, desc=bar}
     , Result = iterate_db:backlog({new, B})
     , etap:is({atomic, ok}, Result, "made our foo backlog")
-    , DeleteResult = iterate_db:backlog({delete, B})
-    , etap:is({atomic, ok}, DeleteResult, "it says we deleted our backlog")
+    %, DeleteResult = iterate_db:backlog({delete, B})
+    %, etap:is({atomic, ok}, DeleteResult, "it says we deleted our backlog")
 .
 
--plan(3).
+-plan(2).
 make_story_test() ->
     F = fun() -> iterate_db:story({new, 
         #stories{backlog="Default", story_name=foo, sp=3
                  , desc="bar"}})
     end
-    , etap:diag(io_lib:format("~p", [F()]))
     , etap:is(F(), {atomic, ok}, "the story got added")
     , F2 = fun() -> iterate_db:story({new,
         #stories{story_name=foo, sp=3, desc="bar"}})
     end
-    , etap:diag(io_lib:format("~p", [F2()]))
-    , etap:is(F2(),  {aborted, {throw, {error, needs_backlog}}}, 
-        "story with no backlog fails")
     , F1 = fun() -> iterate_db:story({new,
         #stories{backlog=bar, story_name=foo, sp=3, desc="bar"}})
     end
-    , etap:diag(io_lib:format("~p", [F1()]))
     , etap:is(F1(),  {aborted, {throw, {error, no_such_backlog}}}, 
         "story with non existent backlog fails")
 .
@@ -158,21 +154,21 @@ tags_test() ->
     , etap:is(Tag, ?STAG(foo, bar), "the tag matches")
 .
 
--plan(4).
+-plan(3).
 iteration_create_test() ->
     Name = "my iteration"
     , Desc = "test iteration"
     , etap:is(iterate_db:iteration(?NEWITER(Name, Desc)),
         {atomic, ok}, "got success for creating an iteration")
     , etap:is(iterate_db:iteration(?Q_ITERATION("my iteration")),
-        [#iterations{iteration_name=Name, desc=Desc}],
+        [#iterations{iteration_name=Name, desc=Desc, meta=[{started,true}]}],
         "got our iteration back out")
     , etap:is(iterate_db:iteration(?Q_ALL),
-        [#iterations{iteration_name=Name, desc=Desc}],
+        [#iterations{iteration_name=Name, desc=Desc, meta=[{started,true}]}],
         "got all iterations back out")
-    , iterate_db:iteration(?DELITER(Name))
-    , etap:is(iterate_db:iteration(?Q_ITERATION("my iteration")),
-        [],
-        "iteration successfully deleted")
+    %, iterate_db:iteration(?DELITER(Name))
+    %, etap:is(iterate_db:iteration(?Q_ITERATION("my iteration")),
+    %    [],
+    %    "iteration successfully deleted")
 .
 
