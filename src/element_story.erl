@@ -50,14 +50,17 @@ story_element_header(_TopId, Story) ->
     , [DragHandle, OrderElement, " - ", TitleEditBox, "<br />"]
 .
 
+mk_toggle_script(TopId) ->
+    wf:f("var link = $('#~s .editpanel').toggle();", [TopId])
+.
+
 story_element_operations(TopId, Story) ->
     EditId = wf:temp_id()
     , Percent = story_util:completion(Story)
     , StoryId = Story#stories.story_name
-    , EditLink = #link{text="edit", id=EditId
-        , actions=#event{ type=click, delegate=?MODULE
-                        , postback=?SHOW_S_EL(StoryId)
-        }
+    , EditLink = #link{text="view/hide", id=EditId
+        , actions=#event{type=click
+            , actions=mk_toggle_script(TopId)}
     }
     , DeleteLink = #link{text="delete"
         , actions=#event{ 
@@ -82,8 +85,10 @@ story_element_operations(TopId, Story) ->
 .
 
 story_edit_element(TopId, Story) ->
-    element_story_edit:render(TopId
+    EditPanel = element_story_edit:render(TopId
         , #story_edit{story_name=Story#stories.story_name})
+    , wf:render(#panel{body=EditPanel, class="editpanel"
+        , style="display:none"})
 .
 
 story_class(Story) ->

@@ -11,7 +11,7 @@ reflect() ->
     record_info(fields, story_edit)
 .
 
-render(ControlId, Record) ->
+render(StoryElementId, Record) ->
     PanelId = wf:temp_id()
     , Name = Record#story_edit.story_name
     , Story = get_story(Name)
@@ -59,14 +59,14 @@ render(ControlId, Record) ->
                                              , delegate=?MODULE
                                              , postback=?COMPLETE_S(Name)}
                         }, " | "
-                        , #link{text="close"
+                        , #link{text="hide"
                             , actions=#event{type=click
-                                             , delegate=element_story
-                                             , postback=?REMOVE_S_EL(Name)}
+                                , actions=element_story:
+                                    mk_toggle_script(StoryElementId)}
                         }
                     ]
     }
-    , element_panel:render(ControlId, Panel).
+    , element_panel:render(StoryElementId, Panel).
 
 map_entry(Id, Attr) when is_atom(Id) ->
     map_entry(atom_to_list(Id), Attr);
@@ -136,7 +136,6 @@ refresh_story_panel(Story) ->
     {Type, Name} = story_util:get_type(Story)
     , element_story_panel:event(?SHOW_STORIES(Type, Name))
 .
-
 
 list_to_number("." ++ L) ->
     list_to_number("0." ++ L);
