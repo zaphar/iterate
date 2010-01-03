@@ -28,8 +28,7 @@ mk_script(Id, Data, Opts) ->
 .
 
 render(Target, R) ->
-    Target = wf:temp_id()
-    , Script = mk_script(Target, R#sparkline.series
+    Script = mk_script(Target, R#sparkline.series
         , [{composite, R#sparkline.composite}])
     , Span = #span{id=Target}
     , wf:wire(Target, Script)
