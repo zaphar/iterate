@@ -22,12 +22,12 @@ mk_opts(Opts) ->
 .
 
 mk_script(Id, [], Opts) ->
-    wf:f("$('#~p').sparkline(~s);", [Id, mk_opts(Opts)]);
+    wf:f("$('#~s').sparkline(~s);", [Id, mk_opts(Opts)]);
 mk_script(Id, Data, Opts) ->
-    wf:f("$('#~p').sparkline('~s');", [Id, mk_series(Data), mk_opts(Opts)])
+    wf:f("$('#~s').sparkline([~s], ~s);", [Id, mk_series(Data), mk_opts(Opts)])
 .
 
-render(ControlId, R) ->
+render(Target, R) ->
     Target = wf:temp_id()
     , Script = mk_script(Target, R#sparkline.series
         , [{composite, R#sparkline.composite}])
