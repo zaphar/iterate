@@ -110,10 +110,11 @@ event(?S_PANEL_CREATE(backlog, Backlog)) ->
     TB_Id = wf:temp_id()
     , PanelId = wf:temp_id()
     , ButtonId = wf:temp_id()
+    , TextBox = iterate_element_utils:autofocus_text_box(TB_Id, "Enter Name Here")
     , element_notify:msg(#panel{ id=PanelId
         , body=[
             "creating story for backlog: " ++ Backlog, #br{ }
-            , #textbox{ id=TB_Id, next=ButtonId,  text="Enter Name Here"}
+            , TextBox
             , #button{ id=ButtonId,
                 text="Create",
                 actions=#event{ delegate=?MODULE,
