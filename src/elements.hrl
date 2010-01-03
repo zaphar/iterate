@@ -33,6 +33,8 @@
     , values, lines=true, points=true, bar=false, selectmode="xy"
     , placeholder, legend
     , hover, click, select}).
+-record(sparkline, {?ELEMENT_BASE(element_sparkline), series=[]
+    , composite=true}).
 
 %% elements for the high level widgets
 -record(backlog_panel, {?ELEMENT_BASE(element_backlog_panel), data=undefined, filter=""}).

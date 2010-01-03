@@ -4,9 +4,13 @@
 -include_lib("nitrogen/include/wf.inc").
 -include("elements.hrl").
 
-reflect() -> record_info(fields, flot_chart).
+reflect() ->
+    record_info(fields, flot_chart)
+.
 
-rec() -> #flot_chart{}.
+rec() ->
+    #flot_chart{}
+.
 
 render(ControlId, Record) ->
     %% handle multiple datasets

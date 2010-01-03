@@ -11,39 +11,40 @@ render() ->
 .
 
 -define(HIDE(Type, Delay, Id), #event{type=Type, delay=Delay
-    , actions=#hide{effect=blind, target=Id, speed=2000}}).
+    , actions=[wf:f("alert('hiding ~p');", [Id]),
+        #hide{effect=blind, target=Id, speed=2000}]}).
 
-render(ControlId, R) when is_record(R, notify) ->
-    Id = ControlId
-    , case R#notify.expire of
+render(Id, R) when is_record(R, notify) ->
+    LinkId = wf:temp_id()
+    , Actions = case R#notify.expire of
         false ->
             undefined;
         N when is_integer(N) ->
             % we expire in this many seconds
-            wf:wire(Id, ?HIDE('timer', N, Id));
+            ?HIDE(timer, N, Id);
         Err ->
             % log error and don't expire
             iterate_log:log_warning(wf:f("encountered unknown expire value: ~p"
                 , [Err]))
             , undefined
     end
+    % specify a close button
     , case R#notify.closebtn of
         undefined ->
             undefined;
         Btn ->
-            % we expire in this many seconds
             wf:wire(Btn, ?HIDE('click', 0, Id))
     end
+    % specify a different event to cause a hide
     , case R#notify.evt of
         undefined ->
             undefined;
         {Evt, Source} ->
-            % we expire in this many seconds
             wf:wire(Source, ?HIDE(Evt, 0, Id))
     end
-    , Link = #link{text="dismiss", actions=?HIDE(click, undefined, Id)}
+    , Link = #link{id=LinkId, text="dismiss", actions=?HIDE(click, undefined, Id)}
     , InnerPanel = #panel{class="notify_inner", body=R#notify.msg}
-    , Panel = #panel{id=Id
+    , Panel = #panel{id=Id, actions=Actions
         , class=["notify ", R#notify.class]
         , body=#singlerow{ 
             cells=[#tablecell{align=left, body=InnerPanel}
