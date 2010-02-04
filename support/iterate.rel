@@ -1,6 +1,7 @@
-{release,{"iterate","0.10.0"},
+{release,{"iterate","0.01.0"},
          {erts,"5.6.5"},
          [{kernel,"2.13.2"},
           {stdlib,"1.16.2"},
           {sasl,"2.1.6"},
-          {mnesia,"4.4.10"}]}.
+          {mnesia,"4.4.10"},
+          {iterate,"0.01.0"}]}.
