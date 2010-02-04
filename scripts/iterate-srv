@@ -1,0 +1,68 @@
+#! /bin/bash
+ 
+#The user that will run Iterate
+ITERATE_USER=user
+
+#Name of the screen-session
+NAME=iterate_screen
+
+#executable files in the following paths that are perhaps needed by the script
+#PATH=/bin:/usr/bin:/sbin:/usr/sbin:/home/jwall/bin
+
+#your path to the iterate server command
+ITERATE_CMD=/path/to/start.sh
+
+#Description
+DESC="Iterate Development server"
+
+start() {
+  if [[ $(sudo -u $ITERATE_USER screen -ls |grep $NAME) ]]
+     then
+     echo "Iterate is already running!"
+  else
+     echo "Starting $DESC: $NAME"
+     sudo -u $ITERATE_USER screen -dmS $NAME $ITERATE_CMD
+  fi
+}
+
+stop() {
+  if [[ $(sudo -u $ITERATE_USER screen -ls |grep $NAME) ]]
+     then
+     echo -n "Stopping $DESC: $NAME"
+     sudo -u $ITERATE_USER screen -S $NAME -X quit 
+     echo " ... done."
+  else
+     echo "Coulnd't find a running $DESC"
+  fi
+}
+
+status() {
+  if [[ $(sudo -u $ITERATE_USER screen -ls | grep $NAME) ]]
+     then
+     echo "Iterate is RUNNING"
+  else
+     echo "Iterate is DOWN"
+  fi
+}
+
+case "$1" in
+start)
+  start;
+  ;;
+stop)
+  stop;
+  ;;
+restart)
+  stop;
+  start;
+  ;;
+status)
+  status;
+  ;;
+*)
+  echo "Usage: $0 {start|stop|status|restart}"
+  exit 1
+  ;;
+esac
+
+exit 0
