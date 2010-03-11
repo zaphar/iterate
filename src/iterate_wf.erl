@@ -238,6 +238,10 @@ log_iteration_story_points(Iter) ->
     , iterate_stats:record(iteration, ?CHANGE_STAT(Iter, complete_sp, Complete))
 .
 
+story_completion(Name) ->
+    story_util:completion(get_story(Name))
+.
+
 iteration_completion(Name) ->
     story_util:aggregate_completion(get_iteration_stories(Name))
 .
@@ -313,6 +317,9 @@ working_as() ->
     end
 .
 
+total_story_points(story, Name) ->
+    S = get_story(Name),
+    S#stories.sp;
 total_story_points(iteration, Name) ->
     total_story_points(get_iteration_stories(Name));
 total_story_points(backlog, Name) ->

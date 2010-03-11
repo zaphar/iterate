@@ -4,6 +4,7 @@
 -include_lib("nitrogen/include/wf.inc").
 -include("events.hrl").
 -include("elements.hrl").
+-include("stats.hrl").
 -include("iterate_records.hrl").
 
 reflect() ->
@@ -78,11 +79,12 @@ story_element_operations(TopId, Story) ->
         text=io_lib:format("~.10B%", [Percent]),
         tag=?COMPLETE_S(StoryId)
     }
+    , StoryPercentStats = iterate_report:stats(percent, story, StoryId)
     , ["[ ", EditLink, " | "
             , DeleteLink, " | "
             , CompleteLink, " ] - "
             , PercentBox
-            ,#sparkline{series=[1, 1, 1, 1, 2, 3, 4, 5, 5, 5, 6, 10]}]
+            ,#sparkline{series=lists:map(fun(S) -> S#tsentry.value end, StoryPercentStats)}]
 .
 
 story_edit_element(TopId, Story) ->

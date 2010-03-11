@@ -113,6 +113,15 @@ current_stat({backlog, Name}, percent, Date, Time, Epoch) ->
 current_stat({iteration, Name}, percent, Date, Time, Epoch) ->
     Value = iterate_wf:iteration_completion(Name)
     , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Value, percent);
+current_stat({story, Name}, complete_sp, Date, Time, Epoch) ->
+    Story = iterate_wf:get_story(Name)
+    , ?TIMESERIES(trunc(Epoch), Date, Time
+            , Story#stories.sp, percent);
+current_stat({story, Name}, percent, Date, Time, Epoch) ->
+    [Story] = iterate_wf:get_story(Name)
+    , Value = story_util:completion(Story)
+    , ?TIMESERIES(trunc(Epoch), Date, Time
             , Value, percent)
 .
 
