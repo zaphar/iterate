@@ -1,3 +1,5 @@
+all: compile boot
+
 compile: deps 
 	(cd deps/nitrogen && make)
 	(cd deps/mochiweb && make)
