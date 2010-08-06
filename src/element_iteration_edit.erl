@@ -13,7 +13,7 @@ render(_ControlId, Record) ->
     , Button   = #button{ 
         id=ButtonId
         , text="close"
-        , actions=#event{ type=click, override=true
+        , actions=#event{ type=click%, override=true
                   , delegate=?MODULE
                   , postback=close}
     }

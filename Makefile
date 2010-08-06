@@ -15,6 +15,9 @@ clean:
 boot:
 	@(cd support/; $(MAKE))
 
+release:
+	@(cd support/; $(MAKE) tar)
+
 test:
 	@(cd deps/etap && make)
 	@(cd t/; $(MAKE))

@@ -1,11 +1,11 @@
 -define(ITER_ELEMENT_BASE, data).
 
--record(my_inplace_textbox, {?CONTROL_BASE(element_my_inplace_textbox),
+-record(my_inplace_textbox, {?ELEMENT_BASE(element_my_inplace_textbox),
     text="", html_encode=true, start_mode=view, validators=[],
-    delegate=?MODULE}).
--record(inplace_textarea, {?CONTROL_BASE(element_inplace_textarea),
+    delegate=?MODULE, tag}).
+-record(my_inplace_textarea, {?ELEMENT_BASE(element_inplace_textarea),
     text="", html_encode=true, start_mode=view, validators=[],
-    delegate=?MODULE, input_class}).
+    delegate=?MODULE, input_class, tag}).
 -record(delegated_droppable, {?ELEMENT_BASE(element_delegated_droppable),
     tag, body=[], accept_groups=all, active_class=active, hover_class=hover}).
 -record(notify, {?ELEMENT_BASE(element_notify), expire=false, msg
@@ -33,7 +33,7 @@
     , values, lines=true, points=true, bar=false, selectmode="xy"
     , placeholder, legend
     , hover, click, select}).
--record(sparkline, {?ELEMENT_BASE(element_sparkline), series=[]
+-record(my_sparkline, {?ELEMENT_BASE(element_sparkline), series=[]
     , composite=true}).
 
 %% elements for the high level widgets

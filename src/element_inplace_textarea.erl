@@ -45,7 +45,7 @@ render(ControlID, Record) ->
 				]}
 			]},
 			#panel { id=EditPanelID, class="edit", body=[
-				#textarea { id=TextBoxID, text=Text, class=Record#inplace_textarea.input_class },
+				#textarea { id=TextBoxID, text=Text, class=Record#my_inplace_textarea.input_class },
 				#button { id=OKButtonID, text="OK", actions=OKEvent#event { type=click } },
 				#button { id=CancelButtonID, text="Cancel", actions=CancelEvent#event { type=click } }
 			]}

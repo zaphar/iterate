@@ -5,11 +5,11 @@
 -include("elements.hrl").
 
 reflect() ->
-    record_info(fields, sparkline)
+    record_info(fields, my_sparkline)
 .
 
 rec() ->
-    #sparkline{}
+    #my_sparkline{}
 .
 
 mk_series(Data) ->
@@ -28,8 +28,8 @@ mk_script(Id, Data, Opts) ->
 .
 
 render(Target, R) ->
-    Script = mk_script(Target, R#sparkline.series
-        , [{composite, R#sparkline.composite}])
+    Script = mk_script(Target, R#my_sparkline.series
+        , [{composite, R#my_sparkline.composite}])
     , Span = #span{id=Target}
     , wf:wire(Target, Script)
     , wf:render(Span)

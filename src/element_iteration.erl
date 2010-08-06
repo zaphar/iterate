@@ -62,20 +62,20 @@ body(Name, PanelId) ->
              , body=[#panel{ class=bold, id=Name ++ "_name", body=Title}
                  , " " , #link{text="edit"
                          , actions=#event{type=click, delegate=?MODULE
-                             , override=true
+                             %, override=true
                              , postback=?SHOW_B_EL(Name, PanelId)
                          }
                  }
                  %TODO(jwall): delete and close events should delegate to their parent?
                  , " " , #link{text="delete"
                          , actions=#event{type=click, delegate=?MODULE
-                             , override=true
+                             %, override=true
                              , postback=?DELETE_B_EL(Name, PanelId)
                          }
                  }
                  , " " , #link{text=CloseText
                          , actions=#event{type=click, delegate=?MODULE
-                             , override=true
+                             %, override=true
                              , postback=ClosePB
                          }
                  }
