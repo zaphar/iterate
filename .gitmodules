@@ -1,9 +1,6 @@
 [submodule "deps/nitrogen"]
 	path = deps/nitrogen
 	url = git://github.com/zaphar/nitrogen.git
-[submodule "deps/mochiweb"]
-	path = deps/mochiweb
-	url = git://github.com/toddlipcon/mochiweb.git
 [submodule "deps/etap"]
 	path = deps/etap
 	url = git://github.com/zaphar/etap.git
