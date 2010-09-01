@@ -1,10 +1,12 @@
 include ../include/globals.mk
  
-all:
-	ERL_LIBS=../deps erl -pa ../ebin -run  systools make_script iterate -run init stop -noshell
+all: boot
 	mv *.boot ../
 
-tar:
+boot:
+	ERL_LIBS=../deps erl -pa ../ebin -run  systools make_script iterate -run init stop -noshell
+
+tar: boot
 	ERL_LIBS=../deps erl -pa ../ebin -run  systools make_tar iterate -run init stop -noshell
        
 clean:

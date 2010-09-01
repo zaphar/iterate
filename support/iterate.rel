@@ -1,4 +1,4 @@
-{release, {"iterate", "0.01.0"}, {erts, "5.6.5"},
+{release, {"iterate", "0.01.0_rc5"}, {erts, "5.6.5"},
  [{kernel, "2.14"},
   {stdlib, "1.17"},
   {sasl, "2.1.9.2"},
