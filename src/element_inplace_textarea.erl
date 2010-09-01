@@ -8,7 +8,7 @@
 
 -compile(export_all).
 
-reflect() -> record_info(fields, inplace_textarea).
+reflect() -> record_info(fields, my_inplace_textarea).
 
 render(ControlID, Record) -> 
 	% Get vars...
@@ -18,9 +18,9 @@ render(ControlID, Record) ->
 	EditPanelID = wf:temp_id(),
 	LabelID = wf:temp_id(),
 	TextBoxID = wf:temp_id(),
-	Tag = Record#inplace_textarea.tag,
-	OriginalText = Record#inplace_textarea.text,
-    Delegate = Record#inplace_textarea.delegate,
+	Tag = Record#my_inplace_textarea.tag,
+	OriginalText = Record#my_inplace_textarea.text,
+    Delegate = Record#my_inplace_textarea.delegate,
 
 	% Set up the events...
 	Controls = {ViewPanelID, LabelID, EditPanelID, TextBoxID},
@@ -28,13 +28,13 @@ render(ControlID, Record) ->
 	CancelEvent = #event { delegate=?MODULE, postback={cancel, Controls, Tag, OriginalText} },
 	
 	% Create the view...
-	Text = Record#inplace_textarea.text,
+	Text = Record#my_inplace_textarea.text,
 	Terms = #panel { 
-		class="inplace_textarea " ++ wf:to_list(Record#inplace_textarea.class),
-		style=Record#inplace_textarea.style,
+		class="my_inplace_textarea " ++ wf:to_list(Record#my_inplace_textarea.class),
+		style=Record#my_inplace_textarea.style,
 		body = [
 			#panel { id=ViewPanelID, class="view", body=[
-				#span { id=LabelID, class="label", text=Text, html_encode=Record#inplace_textarea.html_encode
+				#span { id=LabelID, class="label", text=Text, html_encode=Record#my_inplace_textarea.html_encode
                         , actions=[#buttonize { target=ViewPanelID }]
                 }
 			], actions = [
@@ -52,14 +52,14 @@ render(ControlID, Record) ->
 		]
 	},
 	
-	case Record#inplace_textarea.start_mode of
+	case Record#my_inplace_textarea.start_mode of
 		view -> wf:wire(EditPanelID, #hide{});
 		edit -> 
 			wf:wire(ViewPanelID, #hide{}),
 			wf:wire(TextBoxID, "obj('me').focus(); obj('me').select();")
 	end,
 	
-	wf:wire(OKButtonID, TextBoxID, #validate { attach_to=CancelButtonID, validators=Record#inplace_textarea.validators }),
+	wf:wire(OKButtonID, TextBoxID, #validate { attach_to=CancelButtonID, validators=Record#my_inplace_textarea.validators }),
 	
 	element_panel:render(ControlID, Terms).
 
