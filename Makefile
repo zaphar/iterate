@@ -10,6 +10,8 @@ debug: deps
 
 clean:
 	(cd deps/nitrogen && make clean)
+	(cd deps/mochiweb && make clean)
+	(cd support && make clean)
 	rm -rf ./ebin/*.beam
 
 boot:
