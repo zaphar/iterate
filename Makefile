@@ -1,5 +1,5 @@
 compile: deps 
-	(cd deps/nitrogen && make)
+	(cd deps/nitrogen && make && cp src/nitrogen.app ebin/nitrogen.app)
 	(cd deps/mochiweb && make)
 	ERL_LIBS=deps:deps/nitrogen/apps erl -make
 
