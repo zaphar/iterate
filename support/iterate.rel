@@ -4,6 +4,7 @@
   {sasl, "2.1.9.2"},
   {mnesia, "4.4.14", permanent},
   {mochiweb, "0.01", permanent},
+  {nitrogen, "0.01", none},
   {iterate, "0.01.0", permanent}
   ]
 }.
