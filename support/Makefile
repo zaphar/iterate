@@ -13,4 +13,4 @@ target-system:
 	ERL_LIBS=../deps escript install.erl create iterate
 
 clean:
-	rm -f iterate.boot iterate.script *.tgz *.tar.gz
+	rm -f iterate.boot iterate.script plain.rel *.tgz *.tar.gz
