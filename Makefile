@@ -20,6 +20,9 @@ boot:
 release:
 	@(cd support/; $(MAKE) tar)
 
+target-system:
+	@(cd support/; $(MAKE) target-system)
+
 test:
 	@(cd deps/etap && make)
 	@(cd t/; $(MAKE))
