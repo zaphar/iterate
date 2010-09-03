@@ -17,7 +17,7 @@ clean:
 boot:
 	@(cd support/; $(MAKE))
 
-release:
+release-tar:
 	@(cd support/; $(MAKE) tar)
 
 target-system:
