@@ -9,7 +9,7 @@ boot:
 tar: boot
 	ERL_LIBS=../deps erl -pa ../ebin -run systools make_tar iterate -run init stop -noshell
 
-target-system:
+target-system: tar
 	ERL_LIBS=../deps escript install.erl create iterate
 
 clean:

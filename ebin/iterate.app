@@ -3,7 +3,7 @@
     {id, "iterate"},
     {vsn, "rc5"},
     {modules, [
-        src/web_login.erl
+        date_util
         , db_migrate_tools
         , element_backlog
         , element_backlog_edit

@@ -7,20 +7,23 @@ function get_mods() {
 }
 
 function mk_mod_list() {
-  first=$1
+  local first=$1
   shift
-  echo "        ${mod}"
-  for mod in $@; do
+  local mods=$@
+  echo "        ${first}"
+  for mod in $mods; do
       echo "        , ${mod}"
   done
 }
 
 function mk_app_file() {
-    vsn=$1
+    local vsn=$1
     shift
-    mods=$@
-    mod_list=$(mk_mod_list $mods)
-
+    local mods=$@
+    local mod_list=$(mk_mod_list $mods)
+    #echo "mods: $mods" 1>&2
+    #echo "mod_list: $mod_list" 1>&2
+    
 cat << EOF
 {application, iterate, [
     {description,  "Iterate! project management"},
