@@ -1,4 +1,4 @@
-{release, {"iterate", "0.01.0_rc5"}, {erts, "5.8"},
+{release, {"iterate", "rc5"}, {erts, "5.8"},
  [{kernel, "2.14"},
   {stdlib, "1.17"},
   {inets, "5.4"},
@@ -6,6 +6,6 @@
   {mnesia, "4.4.14", permanent},
   {mochiweb, "0.01", permanent},
   {nitrogen, "0.01", none},
-  {iterate, "0.01.0", permanent}
+  {iterate, "rc5", permanent}
   ]
 }.
