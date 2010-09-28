@@ -1,34 +1,94 @@
--module (index).
+-module (web_index).
+-include_lib ("nitrogen/include/wf.inc").
+-include("elements.hrl").
+-include("events.hrl").
 -compile(export_all).
--include_lib("nitrogen/include/wf.hrl").
 
-main() -> #template { file="./site/templates/bare.html" }.
+main() ->
+	%TODO(jwall): force identity
+    case iterate_wf:working_as() of
+        undefined ->
+            #template { file="./wwwroot/login.html"};
+        _ ->
+            #template { file="./wwwroot/template.html"}
+    end
+.
 
-title() -> "Welcome to Nitrogen".
+title() ->
+	<<"Iterate!">>
+.
 
-body() ->
-    #container_12 { body=[
-        #grid_8 { alpha=true, prefix=2, suffix=2, omega=true, body=inner_body() }
-    ]}.
+display_title() ->
+	<<"Iterate<i>!</i>">>
+.
 
-inner_body() -> 
-    [
-        #h1 { text="Welcome to Nitrogen" },
-        #p{},
-        "
-        If you can see this page, then your Nitrogen server is up and
-        running. Click the button below to test postbacks.
-        ",
-        #p{}, 	
-        #button { id=button, text="Click me!", postback=click },
-        #p{},
-        "
-        Run <b>./bin/dev help</b> to see some useful developer commands.
-        "
-    ].
-	
-event(click) ->
-    wf:replace(button, #panel { 
-        body="You clicked the button!", 
-        actions=#effect { effect=highlight }
-    }).
+login() ->
+    #panel{ id=login, body=login_contents() }
+.
+
+login_contents() ->
+    %comet2(start),
+    User = case iterate_wf:working_as() of
+        undefined ->
+            <<"Please enter a name for yourself">>;
+        Name ->
+            Name
+    end
+    , [<<"Identity: ">>
+       , #inplace_textbox{ text=User, tag=?IDENTIFY }]
+.
+
+inplace_textbox_event(?IDENTIFY, Value) ->
+   login_update(Value) 
+.
+
+login_update(Value) ->
+    iterate_log:log_info(wf:f("now working as: ~p~n", [Value]))
+    %% TODO(jwall): users should get added to a db when they
+    %% haven't been encountered before
+    , wf:user(Value)
+    , wf:redirect("/")
+.
+
+% comet needs a complete redesign
+comet(start) ->
+    wf:comet(fun() ->
+               io:format("Comet handler function was called~n")
+               , web_index:index_comet()
+               , io:format("Comet handler function finished~n")
+              end)
+    , ""
+.
+
+comet2(start) ->
+    wf:comet2(fun(_) ->
+               io:format("Comet handler function was called~n")
+               , web_index:index_comet2()
+               , io:format("Comet handler function finished~n")
+              end)
+    , ""
+.
+
+index_comet2() ->
+    io:format("running a comet update~n", [])
+    , timer:sleep(1000)
+    %, io:format("Finished sleeping~n", [])
+    , element_story_panel:update_story_list()
+    %, io:format("Updated story list~n", [])
+    , element_backlog_panel:update_backlog_panel()
+    %, io:format("Updated backlog list~n", [])
+    % flush because we are looping
+    %, io:format("Flushing comet update~n", [])
+.
+
+index_comet() ->
+    index_comet2()
+    , wf:comet_flush()
+    %, io:format("Flushed comet update~n", [])
+    , index_comet()
+.
+
+event({click, {iteration, Name}}) ->
+    element_story_panel:event(?SHOW_STORIES(iteration, Name))
+.
+
