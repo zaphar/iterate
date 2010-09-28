@@ -1,6 +1,7 @@
 -module (login).
 -include_lib ("nitrogen/include/wf.inc").
 -include("records.hrl").
+-include("events.hrl").
 -compile(export_all).
 
 main() ->
