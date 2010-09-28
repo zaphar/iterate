@@ -1,3 +1,4 @@
 flesh out the identity widget and feature
     team identity?
-recreate the nitrogen app file.
+move iterate.app contents to the nitrogen_mochiweb.app file
+move our nitrogen_sup.erl stuff to nitrogen_init.erl
