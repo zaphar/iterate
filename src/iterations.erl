@@ -1,11 +1,10 @@
--module(web_iterations).
+-module(iterations).
+-include_lib ("nitrogen/include/wf.inc").
+-include("records.hrl").
 -compile(export_all).
 
--include_lib("nitrogen/include/wf.inc").
--include("elements.hrl").
-
 main() ->
-    #template{ file="./wwwroot/iterations.html" }
+    #template{ file="./site/templates/iterations.html" }
 .
 
 title() -> "Iterate!".

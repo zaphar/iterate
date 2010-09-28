@@ -1,12 +1,11 @@
--module (web_login).
+-module (login).
 -include_lib ("nitrogen/include/wf.inc").
--include("elements.hrl").
--include("events.hrl").
+-include("records.hrl").
 -compile(export_all).
 
 main() ->
 	%TODO(jwall): force identity
-    #template { file="./wwwroot/login.html"}
+    #template { file="./site/templates/login.html"}
 .
 
 title() ->

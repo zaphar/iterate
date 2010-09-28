@@ -1,16 +1,15 @@
--module (web_index).
+-module (index).
 -include_lib ("nitrogen/include/wf.inc").
--include("elements.hrl").
--include("events.hrl").
+-include("records.hrl").
 -compile(export_all).
 
 main() ->
 	%TODO(jwall): force identity
     case iterate_wf:working_as() of
         undefined ->
-            #template { file="./wwwroot/login.html"};
+            #template { file="./site/templates/login.html"};
         _ ->
-            #template { file="./wwwroot/template.html"}
+            #template { file="./site/templates/template.html"}
     end
 .
 
