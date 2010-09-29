@@ -1,15 +1,10 @@
 -module(iterate_sup).
 -behaviour(supervisor).
 
--export([start/0, stop/0, init/1]).
+-export([start/0, init/1]).
 
 start() ->
     supervisor:start_link(?MODULE, [])
-.
-
-stop() ->
-    iterate_stats:stop()
-    , iterate_logger:stop()
 .
 
 init(_) ->

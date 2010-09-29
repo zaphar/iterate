@@ -10,7 +10,8 @@ main() ->
         undefined ->
             #template { file="./site/templates/login.html"};
         _ ->
-            #template { file="./site/templates/template.html"}
+            #template { file="./site/templates/login.html"}
+            %#template { file="./site/templates/template.html"}
     end
 .
 
@@ -22,6 +23,7 @@ display_title() ->
 	<<"Iterate<i>!</i>">>
 .
 
+% TODO(jwall): should be abstracted to it's own module
 login() ->
     #panel{ id=login, body=login_contents() }
 .
@@ -70,22 +72,24 @@ comet2(start) ->
 .
 
 index_comet2() ->
-    io:format("running a comet update~n", [])
-    , timer:sleep(1000)
-    %, io:format("Finished sleeping~n", [])
-    , element_story_panel:update_story_list()
-    %, io:format("Updated story list~n", [])
-    , element_backlog_panel:update_backlog_panel()
-    %, io:format("Updated backlog list~n", [])
-    % flush because we are looping
-    %, io:format("Flushing comet update~n", [])
+    undefined
+    %io:format("running a comet update~n", [])
+    %, timer:sleep(1000)
+    %%, io:format("Finished sleeping~n", [])
+    %, element_story_panel:update_story_list()
+    %%, io:format("Updated story list~n", [])
+    %, element_backlog_panel:update_backlog_panel()
+    %%, io:format("Updated backlog list~n", [])
+    %% flush because we are looping
+    %%, io:format("Flushing comet update~n", [])
 .
 
 index_comet() ->
-    index_comet2()
-    , wf:comet_flush()
-    %, io:format("Flushed comet update~n", [])
-    , index_comet()
+    undefined
+    %index_comet2()
+    %, wf:comet_flush()
+    %%, io:format("Flushed comet update~n", [])
+    %, index_comet()
 .
 
 event({click, {iteration, Name}}) ->
