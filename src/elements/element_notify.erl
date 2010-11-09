@@ -7,7 +7,7 @@
 reflect() -> record_info(fields, notify).
 
 render() ->
-    wf:render(#panel{id=notification_area})
+    #panel{id=notification_area}
 .
 
 -define(HIDE(Type, Delay, Id), #event{type=Type, delay=Delay

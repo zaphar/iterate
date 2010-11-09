@@ -11,6 +11,8 @@ start(_, _) ->
 
     io:format("Starting Mochiweb Server (~s) on ~s:~p, root: '~s'~n", [ServerName, BindAddress, Port, DocRoot]),
 
+    io:format("Starting iterate processes~n", []),
+    iterate_sup:start(),
     % Start Mochiweb...
     Options = [
         {name, ServerName},

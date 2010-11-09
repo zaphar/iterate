@@ -1,14 +1,20 @@
 -module(iterate_stats).
 -behaviour(gen_event).
--export([start/0, init/1, handle_event/2,
+-export([start/0, start_link/0, init/1, handle_event/2,
     handle_call/2, handle_info/2, terminate/2,
     code_change/3]).
 -export([record/2]).
 
 start() ->
-    Return = gen_event:start_link({local, stats_logger})
-    , gen_event:add_handler(stats_logger, ?MODULE, [])
+    io:format("Starting iterate_stats server~n", [])
+    , Return = gen_event:start_link({local, iterate_stats})
+    , io:format("Started iterate_stats server: [~p]~n", [Return])
+    , gen_event:add_handler(iterate_stats, ?MODULE, [])
     , Return
+.
+
+start_link() ->
+    start()
 .
 
 init(_Args) ->
@@ -31,6 +37,7 @@ handle_info(_Info, State) ->
 .
 
 terminate(_Args, State) ->
+    io:format("Terminating iterate_stats~n", []),
     {ok, State}
 .
 
@@ -42,6 +49,6 @@ user() -> iterate_wf:working_as().
 
 %% TODO(jwall): standardize the entry format
 record(Type, Entry) ->
-    gen_event:notify(stats_logger, {Type, user(), Entry})
+    gen_event:notify(iterate_stats, {Type, user(), Entry})
 .
 

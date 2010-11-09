@@ -10,8 +10,7 @@ main() ->
         undefined ->
             #template { file="./site/templates/login.html"};
         _ ->
-            #template { file="./site/templates/login.html"}
-            %#template { file="./site/templates/template.html"}
+            #template { file="./site/templates/template.html"}
     end
 .
 

@@ -14,11 +14,11 @@
 render() -> render(started).
 
 render(Type) when Type == started orelse Type == closed orelse Type == all ->
-    wf:render(#panel{id=iteration_panel
-        , body=#iteration_panel{data=iterate_db:iterations(Type), type=Type}})
+    #panel{id=iteration_panel
+      , body=#iteration_panel{data=iterate_db:iterations(Type), type=Type}}
 .
 
-render(ControlId, Record) ->
+render_element(Record) ->
     %% TODO(jwall): add a filter like in backlogs
     PanelId = wf:temp_id()
     , iterate_log:log_debug(wf:f("creating an interation panel for ~p iterations~n",
@@ -57,7 +57,7 @@ render(ControlId, Record) ->
             , actions=[wf:f("obj('~s').value = '';", [SearchId])]
             , postback=?REFRESH(Record#iteration_panel.type)}}, #br{}
         , #panel{class="menu", id=ContentId, body=iterations(Data)}]}
-    , element_panel:render(ControlId, Panel)
+    , element_panel:render_element(Panel)
 .
 
 %% generate our backlog list

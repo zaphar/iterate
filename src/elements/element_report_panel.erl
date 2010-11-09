@@ -13,10 +13,10 @@
 reflect() -> record_info(fields, report_panel).
 
 render() ->
-    wf:render(#panel{id=report_panel, body=#report_panel{}})
+    #panel{id=report_panel, body=#report_panel{}}
 .
 
-render(ControlId, _Record) ->
+render_element(_Record) ->
     PanelId = wf:temp_id()
     , iterate_log:log_debug(wf:f("Creating report for: ~p~n"
         , [iterate_wf:working_in()]))
@@ -25,7 +25,7 @@ render(ControlId, _Record) ->
     , Panel = #panel{class="report_panel"
         , id=PanelId, body=["Completion/Story Point chart"
         , CChart, "Tag Spread Chart", TagChart]}
-    , element_panel:render(ControlId, Panel)
+    , element_panel:render_element(Panel)
 .
 
 build_tag_chart(undefined) ->

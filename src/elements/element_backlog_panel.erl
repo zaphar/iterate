@@ -9,15 +9,14 @@
 -define(SEARCHBOX, search_backlogs_box).
 
 render() ->
-    wf:render(#panel{id="backlogs"
-        , body=#backlog_panel{data=iterate_wf:get_backlogs()}}).
+    #panel{id="backlogs"
+      , body=#backlog_panel{data=iterate_wf:get_backlogs()}}
+.
 
 %% TODO(jwall): these panels are getting general enough I think a 
 %%              refactor is in order.
-render(ControlId, Record) ->
+render_element(Record) ->
     PanelId = wf:temp_id()
-    , Msg = wf:f("the control id is ~p~n", [ControlId])
-    , iterate_log:log_debug(Msg)
     , Filter = Record#backlog_panel.filter
     , Data    = case Record#backlog_panel.data of
         undefined ->
@@ -37,8 +36,9 @@ render(ControlId, Record) ->
             , class=input_box
             , actions=[SearchEvent
                 , SearchFocusEvent]}, #br{}
-        , #panel{class="menu", id=PanelId, body=backlogs(Data, ControlId)}]}
-    , element_panel:render(ControlId, Panel)
+	%% at some point we no longer want to hard code this id :-).
+        , #panel{class="menu", id=PanelId, body=backlogs(Data, "backlogs")}]}
+    , element_panel:render_element(Panel)
 .
 
 %% generate our backlog list

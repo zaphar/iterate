@@ -7,10 +7,10 @@
 -include("iterate_records.hrl").
 
 render() ->
-    wf:render(#panel{id=story_box, body=#story_panel{data=undefined}})
+    #panel{id=story_box, body=#story_panel{data=undefined}}
 .
 
-render(ControlId, Record) ->
+render_element(Record) ->
     PanelId = wf:temp_id()
     , Data = stories(Record#story_panel.data)
     , {Type, Name} = for_what()
@@ -30,7 +30,7 @@ render(ControlId, Record) ->
               , #panel{class="story_list", id=?SPANELID
                 , body=Data }] ++ Actions
     }
-    , element_panel:render(ControlId, Panel)
+    , element_panel:render_element(Panel)
 .
 
 stories(undefined) ->

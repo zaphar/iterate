@@ -12,7 +12,7 @@ rec() ->
     #flot_chart{}
 .
 
-render(ControlId, Record) ->
+render_element(Record) ->
     %% handle multiple datasets
     Data = Record#flot_chart.values
     , DataSet = data_as_js(Data)
@@ -118,7 +118,8 @@ render(ControlId, Record) ->
     , Panel = #panel{id=TargetId, style=wf:f("width:~ppx;height:~ppx", [Width, Height])}
     , wf:wire(TargetId, #event{type='timer', delay=10
         , actions=#script{script=Script}})
-    , element_singlerow:render(ControlId, #singlerow{id=GraphId, cells=[#tablecell{body=Panel}
+    , element_singlerow:render_element(
+      #singlerow{id=GraphId, cells=[#tablecell{body=Panel}
         , #tablecell{body=LegendPanel}]})
 .
 

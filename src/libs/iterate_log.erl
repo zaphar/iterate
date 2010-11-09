@@ -7,14 +7,15 @@
 -export([get_log_location/0]).
 
 start() ->
-    gen_event:start_link({local, iterate_logger})
+    io:format("Starting iterate_log server~n", [])
+    , Return = gen_event:start_link({local, iterate_logger})
+    , io:format("Started iterate_log server: [~p]~n", [Return])
     , gen_event:add_handler(iterate_logger, ?MODULE, [])
+    , Return
 .
 
 start_link() ->
-    Return = gen_event:start_link({local, iterate_logger})
-    , gen_event:add_handler(iterate_logger, ?MODULE, [])
-    , Return
+    start()
 .
 
 init(_Args) ->
@@ -45,7 +46,12 @@ handle_info(_Info, State) ->
     {ok, State}
 .
 
-terminate(_Args, State) ->
+terminate(Args, State) ->
+    try throw(a)
+    catch throw:a ->
+	io:format("STACKTRACE: ~p~n", [erlang:get_stacktrace()])
+    end,
+    io:format("Terminating iterate_logger: ~p ~n", [Args]),
     {ok, State}
 .
 
@@ -53,6 +59,7 @@ code_change(_Args1, _Args2, State) ->
     {ok, State}
 .
 
+% TODO(jwall): these should all reuse the log call below
 log_info(Msg) -> gen_event:notify(iterate_logger, {info, Msg}).
 log_debug(Msg) -> gen_event:notify(iterate_logger, {debug, Msg}).
 log_warn(Msg) -> gen_event:notify(iterate_logger, {warning, Msg}).
