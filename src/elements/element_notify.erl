@@ -14,8 +14,9 @@ render() ->
     , actions=[wf:f("alert('hiding ~p');", [Id]),
         #hide{effect=blind, target=Id, speed=2000}]}).
 
-render(Id, R) when is_record(R, notify) ->
-    LinkId = wf:temp_id()
+render_element(R) when is_record(R, notify) ->
+    Id = wf:temp_id()
+    , LinkId = wf:temp_id()
     , Actions = case R#notify.expire of
         false ->
             undefined;
@@ -44,13 +45,12 @@ render(Id, R) when is_record(R, notify) ->
     end
     , Link = #link{id=LinkId, text="dismiss", actions=?HIDE(click, undefined, Id)}
     , InnerPanel = #panel{class="notify_inner", body=R#notify.msg}
-    , Panel = #panel{id=Id, actions=Actions
+    , #panel{id=Id, actions=Actions
         , class=["notify ", R#notify.class]
         , body=#singlerow{ 
             cells=[#tablecell{align=left, body=InnerPanel}
                 , #tablecell{align=right, body=Link}]}
     }
-    , element_panel:render(Id, Panel)
 .
 
 msg(Content) ->
