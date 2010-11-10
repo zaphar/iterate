@@ -7,7 +7,7 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-render(Record) ->
+render_element(Record) ->
     Name    = Record#iteration.iteration_name
     , PanelId = wf:temp_id()
     , Panel = #delegated_droppable{ id=PanelId

@@ -6,7 +6,7 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
-render(Record) ->
+render_element(Record) ->
     PanelId = wf:temp_id()
     , PanelId2 = wf:temp_id()
     , DraggableId = wf:temp_id()
