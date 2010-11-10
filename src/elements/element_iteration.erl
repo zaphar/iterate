@@ -7,9 +7,9 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-render(ControlId, Record) ->
+render(Record) ->
     Name    = Record#iteration.iteration_name
-    , PanelId = ControlId
+    , PanelId = wf:temp_id()
     , Panel = #delegated_droppable{ id=PanelId
         , class="panel_element backlog_element iteration_element" ++ selection_class(Name)
         , hover_class=drop_hover
@@ -17,7 +17,7 @@ render(ControlId, Record) ->
         , body=body(Name, PanelId) }
     , iterate_log:log_debug(wf:f("the panel id for ~s is ~s~n"
         , [Name, PanelId]))
-    , element_delegated_droppable:render(PanelId, Panel)
+    , Panel
 .
 
 is_working_in({iteration, Name}, Me) ->

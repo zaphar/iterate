@@ -6,7 +6,7 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-render(_ControlId, Record) ->
+render(Record) ->
     Id       = Record#iteration_edit.iteration_id
     , Name     = Id ++ "_BacklogEditBox"
     , ButtonId = Name ++ "CloseButton"
@@ -31,7 +31,7 @@ render(_ControlId, Record) ->
            , Button
         ]
     }
-    , element_panel:render(Name, Panel)
+    , Panel
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->

@@ -6,7 +6,7 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
-render(_ControlId, Record) ->
+render(Record) ->
     PanelId = wf:temp_id()
     , PanelId2 = wf:temp_id()
     , DraggableId = wf:temp_id()
@@ -26,7 +26,7 @@ render(_ControlId, Record) ->
         false ->
             "panel_element story_element"
     end
-    , Panel = #panel{ id=PanelId2
+    , #panel{ id=PanelId2
                     , class=Class
                     , body=#panel{id=PanelId
                         , body=[
@@ -68,7 +68,7 @@ render(_ControlId, Record) ->
                             , #panel{id=StoryId ++ "_target"}
                         ]
     }}
-    , element_panel:render(PanelId2, Panel).
+.
 
 event(?SHOW_S_EL(StoryId)) ->
     wf:update(StoryId ++ "_target",

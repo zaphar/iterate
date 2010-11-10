@@ -27,10 +27,11 @@ mk_script(Id, Data, Opts) ->
     wf:f("$('#~s').sparkline([~s], ~s);", [Id, mk_series(Data), mk_opts(Opts)])
 .
 
-render(Target, R) ->
-    Script = mk_script(Target, R#my_sparkline.series
+render_element(R) ->
+    Target = wf:temp_id()
+    , Script = mk_script(Target, R#my_sparkline.series
         , [{composite, R#my_sparkline.composite}])
     , Span = #span{id=Target}
     , wf:wire(Target, Script)
-    , wf:render(Span)
+    , Span
 .

@@ -10,7 +10,7 @@
 
 reflect() -> record_info(fields, my_inplace_textbox).
 
-render(ControlID, Record) -> 
+render_element(Record) -> 
 	% Get vars...
 	OKButtonID = wf:temp_id(),
 	CancelButtonID = wf:temp_id(),
@@ -61,7 +61,7 @@ render(ControlID, Record) ->
 	
 	wf:wire(OKButtonID, TextBoxID, #validate { attach_to=CancelButtonID, validators=Record#my_inplace_textbox.validators }),
 	
-	element_panel:render(ControlID, Terms).
+	Terms.
 
 event({ok, {ViewPanelID, LabelID, EditPanelID, TextBoxID}, Tag, Delegate}) -> 
 	[Value] = wf:q(TextBoxID),

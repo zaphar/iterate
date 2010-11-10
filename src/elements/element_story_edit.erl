@@ -9,7 +9,7 @@
 
 reflect() -> record_info(fields, story_edit).
 
-render(ControlId, Record) ->
+render_element(Record) ->
     PanelId = wf:temp_id()
     , Name = Record#story_edit.story_name
     , Name = Record#story_edit.story_name
@@ -32,7 +32,7 @@ render(ControlId, Record) ->
         N when is_integer(N) ->
             integer_to_list(N)
     end
-    , Panel = #panel{ id=PanelId
+    , #panel{ id=PanelId
                     , body=[
                         "Description: ", #my_inplace_textarea{
                             html_encode=false, input_class=story_desc
@@ -65,7 +65,7 @@ render(ControlId, Record) ->
                         }
                     ]
     }
-    , element_panel:render(ControlId, Panel).
+.
 
 map_entry(Id, Attr) when is_atom(Id) ->
     map_entry(atom_to_list(Id), Attr);

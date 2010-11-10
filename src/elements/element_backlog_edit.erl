@@ -7,7 +7,7 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
-render(_, Record) ->
+render_element(Record) ->
     Id       = Record#backlog_edit.backlog_id
     , ElId     = Record#backlog_edit.el_id
     , Name     = Id ++ "_BacklogEditBox"
@@ -28,14 +28,13 @@ render(_, Record) ->
     end
     , Msg = wf:f("the description is: ~s~n", [Desc])
     , iterate_log:log_debug(Msg)
-    , Panel = #panel{ class="edit_panel", id=Name
+    , #panel{ class="edit_panel", id=Name
         , body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
                 delegate=?MODULE, text=Desc }, #br{}
            , Button
         ]
     }
-    , element_panel:render(Name, Panel)
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->

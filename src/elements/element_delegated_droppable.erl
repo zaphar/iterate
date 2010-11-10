@@ -9,6 +9,7 @@
 
 reflect() -> record_info(fields, delegated_droppable).
 
+%% TODO(jwall): replace this with nitrogens version
 render(ControlID, Record) -> 
 	% Get properties...
 	PickledPostbackInfo = action_event:make_postback_info(Record#delegated_droppable.tag, sort, ControlID, ControlID, ?MODULE),

@@ -7,10 +7,10 @@
 -include("elements.hrl").
 -include("iterate_records.hrl").
 
-render(_, T) ->
+render_element(T) ->
     Story = T#story_tasks.story
     , {Id, Panel} = build_tasks(Story)
-    , element_panel:render(Id, Panel)
+    , Panel
 .
 
 build_tasks(Name) ->
