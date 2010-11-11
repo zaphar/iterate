@@ -10,10 +10,11 @@
 render_element(Record) ->
     Name    = Record#backlog.backlog_name
     , PanelId = wf:temp_id()
-    , Panel = #delegated_droppable{ id=PanelId
+    , Panel = #droppable{ id=PanelId
         , class="panel_element backlog_element" ++ selection_class(Name)
         , hover_class=drop_hover
-        , tag={Name, {delegate, ?MODULE}}
+        , delegate=?MODULE
+        , tag=Name
         , body=body(Name, PanelId) 
     }
     , iterate_log:log_debug(wf:f("the panel id for ~s is ~s~n", [Name, PanelId]))

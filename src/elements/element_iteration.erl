@@ -8,13 +8,17 @@
 -include("iterate_records.hrl").
 
 render_element(Record) ->
-    Name    = Record#iteration.iteration_name
+    Name = Record#iteration.iteration_name
     , PanelId = wf:temp_id()
-    , Panel = #delegated_droppable{ id=PanelId
+    , Body = body(Name, PanelId)
+    %, iterate_log:log_info(wf:f("Body: ~p~n", [Body]))
+    , Panel = #droppable{ id=PanelId
         , class="panel_element backlog_element iteration_element" ++ selection_class(Name)
         , hover_class=drop_hover
-        , tag={Name, {delegate, ?MODULE}}
-        , body=body(Name, PanelId) }
+        , delegate=?MODULE
+        , tag=Name
+        , body=Body
+    }
     , iterate_log:log_debug(wf:f("the panel id for ~s is ~s~n"
         , [Name, PanelId]))
     , Panel
@@ -27,7 +31,7 @@ is_working_in(_, _) ->
 .
 
 selection_class(Me) ->
-    case is_working_in(wf_session:session(working_in), Me) of
+    case is_working_in(wf:session(working_in), Me) of
         true ->
             " selected";
         false ->
@@ -35,8 +39,12 @@ selection_class(Me) ->
     end
 .
 
+is_whitespace(C) -> lists:any(fun (C2) -> C2 == C end, " \n\r\t").
+
 body(Name, PanelId) ->
-    Jscript = "if ($(obj('me')).hasClass('selected')) {"
+    NameStripped = lists:filter(fun (C) -> not is_whitespace(C) end, Name)
+    , iterate_log:log_info(wf:f("NameStripped: ~p~n", [NameStripped]))
+    , Jscript = "if ($(obj('me')).hasClass('selected')) {"
                ++ "$(obj('me')).addClass('selected');"
             ++ "} else {" 
                ++ "$('.backlog_element.selected').removeClass('selected');" 
@@ -59,7 +67,9 @@ body(Name, PanelId) ->
                 , postback={click, {iteration, Name}}
                 , actions=Jscript
              }
-             , body=[#panel{ class=bold, id=Name ++ "_name", body=Title}
+             , body=[#panel{ class=bold
+                             , id=NameStripped ++ "_name", body=Title
+                           }
                  , " " , #link{text="edit"
                          , actions=#event{type=click, delegate=?MODULE
                              %, override=true
@@ -81,7 +91,7 @@ body(Name, PanelId) ->
                  }
              ]
     }
-    , #panel{id=Name ++ "_target"}]
+    , #panel{id=[NameStripped ++ "_target"]}]
 .
 
 %% showing iteration info

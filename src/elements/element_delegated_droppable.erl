@@ -10,9 +10,10 @@
 reflect() -> record_info(fields, delegated_droppable).
 
 %% TODO(jwall): replace this with nitrogens version
-render_element(ControlID, Record) -> 
+render_element(Record) ->
+        ControlID = wf:temp_id(), 
 	% Get properties...
-	PickledPostbackInfo = action_event:make_postback_info(Record#delegated_droppable.tag, sort, ControlID, ControlID, ?MODULE),
+	PickledPostbackInfo = wf:pickle([Record#delegated_droppable.tag, sort, ControlID, ControlID, ?MODULE]),
 	ActiveClass = Record#delegated_droppable.active_class, 
 	HoverClass = Record#delegated_droppable.hover_class,
 	AcceptGroups = groups_to_accept(Record#delegated_droppable.accept_groups),

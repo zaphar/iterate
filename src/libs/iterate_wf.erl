@@ -276,7 +276,7 @@ stop_working_in({Type, Name}) ->
 .
 
 stop_working_in() ->
-        wf_session:session(working_in, undefined)
+        wf:session(working_in, undefined)
         , working_in()
 .
 
@@ -297,11 +297,11 @@ working_in() ->
 .
 
 session(Key, Val) ->
-    catch wf_session:session(Key, Val)
+    catch wf:session(Key, Val)
 .
 
 session(Key) ->
-    catch wf_session:session(Key)
+    catch wf:session(Key)
 .
 
 working_as() ->
