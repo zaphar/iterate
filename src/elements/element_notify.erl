@@ -11,8 +11,7 @@ render() ->
 .
 
 -define(HIDE(Type, Delay, Id), #event{type=Type, delay=Delay
-    , actions=[wf:f("alert('hiding ~p');", [Id]),
-        #hide{effect=blind, target=Id, speed=2000}]}).
+    , actions=[#hide{effect=blind, target=Id, speed=2000}]}).
 
 render_element(R) when is_record(R, notify) ->
     Id = wf:temp_id()
