@@ -36,7 +36,7 @@ render_element(Record) ->
     , SearchEvent = #event{type=change, delegate=?MODULE,
         postback=search}
     , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
-    , Panel = #panel{ class="iteration_panel", id=PanelId, body=[
+    , #panel{ class="iteration_panel", id=PanelId, body=[
         #panel{id=ButtonsId, body=[
             #hidden{id=iteration_panel_type, text=Record#iteration_panel.type}
             , #span{text="Iterations", class=panel_title}, #br{}, #br{}
@@ -57,7 +57,6 @@ render_element(Record) ->
             , actions=[wf:f("obj('~s').value = '';", [SearchId])]
             , postback=?REFRESH(Record#iteration_panel.type)}}, #br{}
         , #panel{class="menu", id=ContentId, body=iterations(Data)}]}
-    , element_panel:render_element(Panel)
 .
 
 %% generate our backlog list
@@ -97,7 +96,8 @@ event(?REFRESH(_)) ->
             , update_iteration_panel_data(Results)
     end;
 event(?STARTITER(IterPanelId)) ->
-    PanelId = wf:temp_id()
+    iterate_log:log_info("got startiter event")
+    , PanelId = wf:temp_id()
     , TextBoxId = wf:temp_id()
     , ButtonId = wf:temp_id()
     , TextBox = iterate_element_utils:autofocus_text_box(

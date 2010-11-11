@@ -54,13 +54,17 @@ render_element(R) when is_record(R, notify) ->
 .
 
 msg(Content) ->
+    iterate_log:log_info("in the msg area for regulaync: notifications"),
     wf:insert_bottom(notification_area, #notify{msg=Content})
 .
 
 msg(Content, {event, {Evt, Id}}) ->
+    iterate_log:log_info("in the msg area for event notifications"),
     wf:insert_bottom(notification_area, #notify{msg=Content, evt={Evt, Id}});
 msg(Content, {close, Close}) ->
+    iterate_log:log_info("in the msg area for close notifications"),
     wf:insert_bottom(notification_area, #notify{msg=Content, closebtn=Close});
 msg(Content, Expire) when is_integer(Expire) ->
+    iterate_log:log_info("in the msg area for expire notifications"),
     wf:insert_bottom(notification_area, #notify{msg=Content, expire=Expire})
 .

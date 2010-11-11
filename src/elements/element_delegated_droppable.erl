@@ -28,11 +28,12 @@ render_element(ControlID, Record) ->
 	wf:wire(Script),
 
 	% Render as a panel.
-	element_panel:render(ControlID, #panel {
+	#panel {
 		class="droppable " ++ wf:to_list(Record#delegated_droppable.class),
 		style=Record#delegated_droppable.style,
 		body=Record#delegated_droppable.body
-	}).
+	}
+.
 
 event({DropTag, {delegate, Module}}) ->
 	[DragItem] = wf:q(drag_item),
