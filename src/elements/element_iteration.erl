@@ -7,6 +7,8 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
+-import(iterate_element_utils, [strip_whitespace/1]).
+
 render_element(Record) ->
     Name = Record#iteration.iteration_name
     , PanelId = wf:temp_id()
@@ -39,10 +41,8 @@ selection_class(Me) ->
     end
 .
 
-is_whitespace(C) -> lists:any(fun (C2) -> C2 == C end, " \n\r\t").
-
 body(Name, PanelId) ->
-    NameStripped = lists:filter(fun (C) -> not is_whitespace(C) end, Name)
+    NameStripped = strip_whitespace(Name)
     , iterate_log:log_info(wf:f("NameStripped: ~p~n", [NameStripped]))
     , Jscript = "if ($(obj('me')).hasClass('selected')) {"
                ++ "$(obj('me')).addClass('selected');"

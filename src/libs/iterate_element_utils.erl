@@ -18,3 +18,7 @@ autofocus_text_box(Id, Default, Action) ->
         script=wf:f("var box = obj('~s');box.focus();box.select();"
                 , [Id])}, Action]}
 .
+
+is_whitespace(C) -> lists:any(fun (C2) -> C2 == C end, " \n\r\t").
+
+strip_whitespace(L) -> lists:filter(fun (C) -> not is_whitespace(C) end, L).
