@@ -7,7 +7,7 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
--import(iterate_element_utils, [strip_whitespace/1]).
+-import(iterate_element_utils, [normalize_id/1]).
 
 render_element(Record) ->
     Name = Record#iteration.iteration_name
@@ -42,7 +42,7 @@ selection_class(Me) ->
 .
 
 body(Name, PanelId) ->
-    NameStripped = strip_whitespace(Name)
+    NameStripped = normalize_id(Name)
     , iterate_log:log_info(wf:f("NameStripped: ~p~n", [NameStripped]))
     , Jscript = "if ($(obj('me')).hasClass('selected')) {"
                ++ "$(obj('me')).addClass('selected');"

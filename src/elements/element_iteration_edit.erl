@@ -6,11 +6,11 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
--import(iterate_element_utils, [strip_whitespace/1]).
+-import(iterate_element_utils, [normalize_id/1]).
 
 render_element(Record) ->
     Id       = Record#iteration_edit.iteration_id
-    , Name     = strip_whitespace(Id ++ "_BacklogEditBox")
+    , Name     = normalize_id(Id ++ "_BacklogEditBox")
     , ButtonId = Name ++ "CloseButton"
     , Button   = #button{ 
         id=ButtonId
