@@ -26,14 +26,13 @@ render_element(Record) ->
             "Description goes here"
     end
     , iterate_log:log_debug(wf:f("the description is: ~s~n", [Desc]))
-    , Panel = #panel{ id=Name
+    , #panel{ id=Name
         , body=[
            #my_inplace_textbox{ tag=?UPDATEDESC(Id),
                 delegate=?MODULE, text=Desc }, #br{}
            , Button
         ]
     }
-    , Panel
 .
 
 inplace_textbox_event(?UPDATEDESC(Name), Value) ->

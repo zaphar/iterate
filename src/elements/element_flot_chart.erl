@@ -32,13 +32,13 @@ render_element(Record) ->
         PlaceHolder ->
             PlaceHolder
     end
-    , PlotId = case Record#flot_chart.id of
+    , [_ | PlotId] = case Record#flot_chart.id of
         undefined ->
             wf:temp_id();
         Id ->
             Id
     end
-    , LegendId = case Record#flot_chart.legend of
+    , [_ |LegendId] = case Record#flot_chart.legend of
         undefined ->
             wf:temp_id();
         Legend ->

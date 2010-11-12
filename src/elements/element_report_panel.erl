@@ -22,10 +22,10 @@ render_element(_Record) ->
         , [iterate_wf:working_in()]))
     , CChart = build_completion_chart(iterate_wf:working_in())
     , TagChart = build_tag_chart(iterate_wf:working_in())
-    , Panel = #panel{class="report_panel"
+    , #panel{class="report_panel"
         , id=PanelId, body=["Completion/Story Point chart"
         , CChart, "Tag Spread Chart", TagChart]}
-    , element_panel:render_element(Panel)
+    , #panel{} %% TODO(jwall): figure out why flot_charts aren't working
 .
 
 build_tag_chart(undefined) ->

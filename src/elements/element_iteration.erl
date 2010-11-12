@@ -101,9 +101,10 @@ event(?UPDATE_B_EL(Name, Id)) ->
             wf:update(Id, body(Name, Id))
     end;
 event(?SHOW_B_EL(Name, Id)) ->
-    case iterate_db:iteration(?Q_ITERATION(Name)) of
+    NameStripped = normalize_id(Name)
+    , case iterate_db:iteration(?Q_ITERATION(Name)) of
         [B | []] ->
-            wf:update(Name ++ "_target",
+            wf:update(NameStripped ++ "_target",
                 #iteration_edit{ iteration_id=Name, el_id=Id, 
                     desc=B#iterations.desc })
     end;
