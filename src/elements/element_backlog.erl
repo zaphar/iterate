@@ -7,6 +7,8 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
+-import(iterate_element_utils, [normalize_id/1]).
+
 render_element(Record) ->
     Name    = Record#backlog.backlog_name
     , PanelId = wf:temp_id()
@@ -37,7 +39,8 @@ selection_class(Me) ->
 .
 
 body(Name, PanelId) ->
-    Jscript = "if ($(obj('me')).hasClass('selected')) {"
+    NameStripped = normalize_id(Name)
+    , Jscript = "if ($(obj('me')).hasClass('selected')) {"
                ++ "$(obj('me')).addClass('selected');"
             ++ "} else {" 
                ++ "$('.backlog_element.selected').removeClass('selected');" 
@@ -48,7 +51,7 @@ body(Name, PanelId) ->
                 , postback=?SHOW_STORIES(backlog, Name)
                 , actions=Jscript
             }
-            , body=[#panel{ class=bold, id=Name ++ "_name", body=Name}
+            , body=[#panel{ class=bold, id=NameStripped ++ "_name", body=Name}
                 , " " , #link{text="edit"
                         , actions=#event{type=click, delegate=?MODULE
                             , postback=?SHOW_B_EL(Name, PanelId)
@@ -61,7 +64,7 @@ body(Name, PanelId) ->
                 }
             ]
     }
-    , #panel{id=Name ++ "_target"}]
+    , #panel{id=NameStripped ++ "_target"}]
 .
 
 %% showing backlog info

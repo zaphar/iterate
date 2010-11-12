@@ -119,9 +119,11 @@ event(?NEWTIME(Name, Id, _PanelId)) ->
     iterate_log:log_debug(wf:f("the time elements id is: ~p value: ~p",
         [Id, wf:q(Id)]))
     , case wf:q(Id) of
+        undefined ->
+           undefined; 
         [] ->
            undefined; 
-        [ValueString] ->
+        ValueString ->
             Value = list_to_number(ValueString)
             , iterate_db:log_time(?UPDATETIME(Name, Value))
     end

@@ -7,10 +7,13 @@
 -include("events.hrl").
 -include("iterate_records.hrl").
 
+-import(iterate_element_utils, [normalize_id/1]).
+
 render_element(Record) ->
     Id       = Record#backlog_edit.backlog_id
+    , IdStripped = normalize_id(Id)
     , ElId     = Record#backlog_edit.el_id
-    , Name     = Id ++ "_BacklogEditBox"
+    , Name     = IdStripped ++ "_BacklogEditBox"
     , ButtonId = Name ++ "CloseButton"
     , Button   = #button{ 
         id=ButtonId

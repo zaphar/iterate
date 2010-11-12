@@ -125,7 +125,7 @@ event(?S_PANEL_CREATE(backlog, Backlog)) ->
     , ok;
 %% TODO(jwall): refactor these two they are identical
 event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->
-    [Value] = wf:q(Id)
+    Value = wf:q(Id)
     , try 
         iterate_wf:create_story_for(Value, {iteration, Backlog})
         , wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))
@@ -138,7 +138,7 @@ event(?CREATE_S(Id, PanelId, {iteration, Backlog})) ->
     end
     , ok;
 event(?CREATE_S(Id, PanelId, {backlog, Backlog})) ->
-    [Value] = wf:q(Id)
+    Value = wf:q(Id)
     , try 
         iterate_wf:create_story_for(Value, {backlog, Backlog})
         , wf:update(PanelId, io_lib:format("Story ~p Created", [Value]))

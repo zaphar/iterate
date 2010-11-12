@@ -37,7 +37,7 @@ render_element(Record) ->
 .
 
 event({DropTag, {delegate, Module}}) ->
-	[DragItem] = wf:q(drag_item),
+	DragItem = wf:q(drag_item),
 	DragTag = wf:depickle(DragItem),
 	Module:drop_event(DragTag, DropTag);
 event(DropTag) ->

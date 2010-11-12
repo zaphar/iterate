@@ -8,6 +8,8 @@
 
 -define(SEARCHBOX, search_backlogs_box).
 
+-import(iterate_element_utils, [normalize_id/1]).
+
 render() ->
     #panel{id="backlogs"
       , body=#backlog_panel{data=iterate_wf:get_backlogs()}}
@@ -28,7 +30,7 @@ render_element(Record) ->
     , SearchEvent = #event{type=change, delegate=?MODULE,
         postback=search}
     , SearchFocusEvent = #event{type=focus, actions=["obj('me').select();"]}
-    , Panel = #panel{ class="backlog_panel", body=[
+    , #panel{ class="backlog_panel", body=[
         #span{text="Backlogs", class=panel_title}, #br{}, #br{}
         , "Filter Backlogs:", #br{}
         , #textbox{id=SearchId, text=Filter
@@ -38,7 +40,6 @@ render_element(Record) ->
                 , SearchFocusEvent]}, #br{}
 	%% at some point we no longer want to hard code this id :-).
         , #panel{class="menu", id=PanelId, body=backlogs(Data, "backlogs")}]}
-    , element_panel:render_element(Panel)
 .
 
 %% generate our backlog list
@@ -65,10 +66,12 @@ backlogs([H|T], Id) ->
 %5              out to a general panel callback module?
 %% showing backlog info
 event(?B_EDIT_SHOW(Name)) ->
-    wf:update(Name ++ "_target",
-        #backlog_edit{backlog_id=Name, desc="A description"});
+    NameStripped = normalize_id(Name)
+    , wf:update(NameStripped ++ "_target",
+        #backlog_edit{backlog_id=NameStripped, desc="A description"});
 event(?B_EDIT_REMOVE(Name)) ->
-    wf:update(Name ++ "_target", "");
+    NameStripped = normalize_id(Name)
+    , wf:update(NameStripped ++ "_target", "");
 event(?B_PANEL_CREATE(_Id)) ->
     %% we need a create backlog widget
     TB_Id = wf:temp_id()
@@ -86,7 +89,7 @@ event(?B_PANEL_CREATE(_Id)) ->
     }, {close, ButtonId}),
     ok;
 event(?CREATE_B(Id, PanelId)) ->
-    [Value] = wf:q(Id),
+    Value = wf:q(Id),
     case iterate_wf:create_backlog(Value) of
         {error, Msg} ->
             wf:update(PanelId, "Failed!!"),

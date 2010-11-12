@@ -64,7 +64,7 @@ render_element(Record) ->
 	Terms.
 
 event({ok, {ViewPanelID, LabelID, EditPanelID, TextBoxID}, Tag, Delegate}) -> 
-	[Value] = wf:q(TextBoxID),
+	Value = wf:q(TextBoxID),
     Value1 = Delegate:inplace_textbox_event(Tag, Value),
 	wf:update(LabelID, Value1),
 	wf:set(TextBoxID, Value1),

@@ -86,9 +86,7 @@ event(?REFRESH(_)) ->
             update_iteration_panel();
         []  ->
             update_iteration_panel();
-        [""] ->
-            update_iteration_panel();
-        [Value] ->
+        Value ->
             Msg = wf:f("~p searching for: ~p~n", [?MODULE, Value])
             , iterate_log:log_debug(Msg)
             , Results = iterate_wf:search_for_iteration(Value)
@@ -144,7 +142,7 @@ get_search() ->
             "";
         []         ->
             "";
-        [Value]    ->
+        Value    ->
             Value
     end
 .
@@ -155,20 +153,10 @@ get_panel_type() ->
             %% error condition
             iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
             , {error, undefined_panel_type};
-        [""] ->
-            %% error condition
-            iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
-            , {error, undefined_panel_type};
         undefined ->
             %% error condition
             iterate_log:log_debug("trying to render an iteration panel that doesn't know what type of panel he is")
             , {error, undefined_panel_type};
-        [Type] ->
-            iterate_log:log_info(wf:f("got a 1 item list back ~p", [Type]))
-            , case is_atom(Type) of
-              true -> Type;
-              false -> list_to_atom(Type)
-            end;
         Type ->
             iterate_log:log_info(wf:f("got an item back ~p", [Type]))
             , case is_atom(Type) of

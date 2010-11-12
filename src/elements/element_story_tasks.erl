@@ -69,9 +69,9 @@ event({refresh, Id, Story}) ->
     wf:update(Id, build_rows(Story, Id));
 event(?COMPLETE_TASK(CBId, Id)) ->
     Value = case wf:q(CBId) of
-        ["on"] ->
+        "on" ->
             true;
-        [] ->
+        _ ->
             false
     end
     , iterate_log:log_debug(wf:f("The Checkbox is: ~p~n", [Value]))
